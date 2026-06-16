@@ -1,0 +1,2495 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>【foodpanda】品牌需求表單｜v64 換頁置頂預覽</title>
+<style>
+:root{
+  --pink:#ff2b85; --pink-dark:#e01970; --bg:#fff7fa;
+  --text:#0f172a; --muted:#64748b; --light:#f8fafc; --border:#e2e8f0; --green:#059669;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--text)}
+.container{max-width:1080px;margin:0 auto;padding:32px 18px 56px}
+.header,.steps,.card{background:#fff;border:1px solid #fce7f3;box-shadow:0 8px 28px rgba(15,23,42,.07)}
+.header{border-radius:28px;padding:30px;margin-bottom:22px}
+.header-row{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+.badge{display:inline-flex;gap:8px;background:#f1f5f9;color:#475569;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700}
+h1{font-size:34px;margin:18px 0 10px}
+.desc{color:var(--muted);line-height:1.7;max-width:760px;margin:0}
+.status{background:var(--pink);color:white;border-radius:18px;padding:16px 22px;min-width:120px}
+.status small{display:block;opacity:.75;margin-bottom:5px}.status b{font-size:18px}
+.steps{border-radius:24px;padding:18px;margin-bottom:22px;display:flex;align-items:center;gap:12px;overflow:auto}
+.step{display:flex;align-items:center;gap:10px;color:#94a3b8;font-weight:800;font-size:14px;white-space:nowrap}
+.circle{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#f1f5f9;color:#64748b}
+.step.active{color:#0f172a}.step.active .circle{background:var(--pink);color:#fff}.step.done .circle{background:var(--green);color:#fff}
+.line{height:1px;background:#e2e8f0;flex:1;min-width:40px}
+.card{border-radius:28px;padding:30px}
+.page{display:none}.page.active{display:block}
+.title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px}
+h2{margin:0;font-size:22px}.sub{color:#94a3b8;font-size:13px;margin-top:7px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.field{margin-bottom:18px} label{display:block;font-size:14px;font-weight:700;color:#334155;margin-bottom:8px}
+input,select,textarea{width:100%;border:1px solid var(--border);border-radius:14px;padding:14px 15px;font-size:14px;outline:none;background:#fff}
+textarea{min-height:110px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--pink);box-shadow:0 0 0 4px #fce7f3}
+.required-error{border-color:#ef4444!important;background:#fff1f2!important;box-shadow:0 0 0 4px #fecdd3!important}
+.required-error-text{margin-top:8px;margin-bottom:14px;padding-left:2px;color:#dc2626;font-size:12px;font-weight:700}
+input[readonly]{background:#f8fafc;color:#475569}
+
+.case-subject-card{
+  width:100%;
+  background:#f1f5f9;
+  border:1px solid #e2e8f0;
+  border-radius:14px;
+  padding:14px 16px;
+  color:#64748b;
+  font-size:14px;
+  font-weight:400;
+  line-height:1.6;
+  cursor:not-allowed;
+}
+.case-subject-card.empty{
+  color:#94a3b8;
+  font-weight:400;
+}
+.notice{display:flex;gap:8px;background:#f8fafc;border-radius:14px;padding:12px;color:#64748b;font-size:13px;line-height:1.6;margin-bottom:18px}
+.btn-row{display:flex;justify-content:space-between;gap:12px;margin-top:26px}
+button{border:0;border-radius:14px;padding:12px 18px;font-size:14px;font-weight:800;cursor:pointer}
+.btn-primary{background:var(--pink);color:white}.btn-primary:hover{background:var(--pink-dark)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.btn-outline{background:#fff;color:#334155;border:1px solid var(--border)}
+.group{margin-bottom:28px}
+.group.category-brand{border:1px solid #fbcfe8;background:#fff7fa;border-radius:24px;padding:18px}
+.group.category-all{border:1px solid #bfdbfe;background:#eff6ff;border-radius:24px;padding:18px}
+.group.category-store{border:1px solid #fde68a;background:#fffbeb;border-radius:24px;padding:18px}
+.group-title{display:flex;align-items:center;gap:12px;font-weight:900;color:#334155;margin-bottom:14px}
+.group-title:after{content:"";height:1px;background:#e2e8f0;flex:1}
+.category-brand .group-title{color:#be185d}
+.category-brand .group-title:after{background:#f9a8d4}
+.category-all .group-title{color:#1d4ed8}
+.category-all .group-title:after{background:#93c5fd}
+.category-store .group-title{color:#b45309}
+.category-store .group-title:after{background:#fcd34d}
+.category-label{display:inline-flex;align-items:center;width:max-content;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;margin-bottom:12px}
+.category-brand .category-label{background:#fce7f3;color:#be185d}
+.category-all .category-label{background:#dbeafe;color:#1d4ed8}
+.category-store .category-label{background:#fef3c7;color:#b45309}
+.request-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.request{text-align:left;background:#fff;border:1px solid var(--border);border-radius:20px;padding:18px;transition:.15s;color:#0f172a}
+.request:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.08)}
+.request.selected{background:var(--pink);border-color:var(--pink);color:white}
+.category-brand .request.selected{background:var(--pink);border-color:var(--pink);color:white}
+.category-all .request.selected{background:#2563eb;border-color:#2563eb;color:white}
+.category-store .request.selected{background:#f59e0b;border-color:#f59e0b;color:white}
+.request p{margin:8px 0 0;color:#64748b;font-weight:400;line-height:1.5}.request.selected p{color:#ffe4f1}
+.category-all .request.selected p{color:#dbeafe}
+.category-store .request.selected p{color:#fffbeb}
+.pill{background:#f1f5f9;color:#475569;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:700}
+.box{border:1px solid var(--border);border-radius:20px;background:#fff;padding:20px;margin-bottom:18px}
+.box.pink{background:var(--bg)}.box h3{font-size:15px;margin:0 0 14px;color:#334155}
+.upload{border:1px dashed #cbd5e1;border-radius:22px;background:var(--bg);padding:20px;margin-top:18px}
+.upload h3{margin:0 0 6px}.upload p,.muted{margin:0;color:#94a3b8;font-size:13px;line-height:1.6}
+.summary{background:var(--bg);border-radius:22px;padding:18px;margin-top:24px}
+.summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.summary-row{background:#fff;border:1px solid #f1f5f9;border-radius:14px;padding:12px;display:grid;grid-template-columns:180px 1fr;gap:10px;font-size:14px}
+.summary-row b{color:#64748b}.summary-row span{white-space:pre-line;line-height:1.6}.hidden{display:none!important}
+@media(max-width:760px){.header-row,.title-row{flex-direction:column}.grid,.request-grid,.summary-grid{grid-template-columns:1fr}.step span{display:none}h1{font-size:26px}.summary-row{grid-template-columns:1fr}}
+
+.workstream-menu{
+  background:#fff0f6 !important;
+  border:2px solid #ff2b85 !important;
+}
+.workstream-menu.selected{
+  background:#ff2b85 !important;
+  border-color:#ff2b85 !important;
+  color:#fff !important;
+}
+.workstream-menu.selected p{color:#ffe4f1 !important;}
+
+.workstream-project{
+  background:#eff6ff !important;
+  border:2px solid #3b82f6 !important;
+}
+.workstream-project.selected{
+  background:#3b82f6 !important;
+  border-color:#3b82f6 !important;
+  color:#fff !important;
+}
+.workstream-project.selected p{color:#dbeafe !important;}
+
+
+.project-purple{
+  border:1px solid #ddd6fe !important;
+  background:#f5f3ff !important;
+  border-radius:24px;
+  padding:18px;
+}
+.project-purple .category-label{
+  background:#ede9fe !important;
+  color:#6d28d9 !important;
+}
+.project-purple .group-title{
+  color:#6d28d9 !important;
+}
+.project-purple .group-title:after{
+  background:#c4b5fd !important;
+}
+.project-purple .request.selected{
+  background:#7c3aed !important;
+  border-color:#7c3aed !important;
+  color:#fff !important;
+}
+.project-purple .request.selected p{
+  color:#ede9fe !important;
+}
+
+
+.all-merchant-subgroup{
+  background:#ffffff;
+  border:1px solid #bbf7d0;
+  border-radius:20px;
+  padding:16px;
+  margin-top:16px;
+}
+.all-merchant-subtitle{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#166534;
+  font-size:14px;
+  font-weight:900;
+  margin-bottom:12px;
+}
+.all-merchant-subtitle:after{
+  content:"";
+  height:1px;
+  background:#bbf7d0;
+  flex:1;
+}
+.all-merchant-subgroup .request-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.all-merchant-subgroup .request{
+  border-color:#dcfce7;
+  background:#f8fffb;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.all-merchant-subgroup .request:hover{
+  border-color:#86efac;
+  box-shadow:0 8px 20px rgba(22,163,74,.14);
+}
+.all-merchant-subgroup .request.selected{
+  background:#16a34a !important;
+  border-color:#16a34a !important;
+  color:#fff !important;
+  box-shadow:0 8px 20px rgba(22,163,74,.25);
+}
+.all-merchant-subgroup .request.selected b{
+  color:#fff !important;
+}
+.all-merchant-subgroup .request.selected::after{
+  content:"✓";
+  display:grid;
+  place-items:center;
+  width:24px;
+  height:24px;
+  border-radius:999px;
+  background:#dcfce7;
+  color:#16a34a;
+  font-size:14px;
+  font-weight:900;
+  flex:0 0 auto;
+}
+.portal-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;
+  height:28px;
+  border-radius:10px;
+  margin-right:8px;
+  background:#dcfce7;
+  color:#166534;
+  font-size:15px;
+}
+.all-merchant-subgroup .request.selected .portal-icon{
+  background:#dcfce7;
+  color:#166534;
+}
+.portal-template-box{
+  background:#f0fdf4 !important;
+  border-color:#bbf7d0 !important;
+}
+.portal-template-box h3{
+  color:#166534 !important;
+}
+@media(max-width:760px){.all-merchant-subgroup .request-grid{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header class="header">
+  <div class="header-row">
+    <div>
+      <div class="badge">📋 Menu Request Portal</div>
+      <h1>【foodpanda】品牌需求表單</h1>
+      <p class="desc">請填寫品牌基本資料，選擇需求類型後，系統會產生對應 Case Subject，並可上傳相關附件。</p>
+    </div>
+    <div class="status"><small>目前狀態</small><b id="statusText">填寫中</b></div>
+  </div>
+</header>
+
+<div class="steps">
+  <div class="step active" id="s1"><div class="circle">1</div><span>基本資料</span></div><div class="line"></div>
+  <div class="step" id="s2"><div class="circle">2</div><span>需求類別</span></div><div class="line"></div>
+  <div class="step" id="s3"><div class="circle">3</div><span>選擇需求</span></div><div class="line"></div>
+  <div class="step" id="s4"><div class="circle">4</div><span>填寫模板</span></div><div class="line"></div>
+  <div class="step" id="s5"><div class="circle">5</div><span>確認資料</span></div><div class="line"></div>
+  <div class="step" id="s6"><div class="circle">6</div><span>完成</span></div>
+</div>
+
+<main class="card">
+<section class="page active" id="page1">
+  <div class="title-row"><div><h2>第一頁｜基本資料</h2><div class="sub">請填寫品牌與負責窗口資訊。</div></div></div>
+  <div class="grid">
+    <div class="field"><label>品牌 / 門市完整名稱（必填）</label><input id="brand" placeholder="範例：星巴克、青鳥旅行 (誠品站前店)" oninput="validateBasic()"></div>
+    <div class="field"><label>負責窗口（必填）</label><input id="am" placeholder="範例：Aries Liu、Iris Wei" oninput="validateBasic()"></div>
+  </div>
+  <div id="basicNotice" class="notice">⚠️ 請填寫品牌 / 門市完整名稱與負責窗口。</div>
+  <div class="btn-row" style="justify-content:flex-end"><button id="nextBasicBtn" class="btn-primary" onclick="go(2)" disabled style="opacity:.45;cursor:not-allowed">下一步 ›</button></div>
+</section>
+
+<section class="page" id="page2">
+  <div class="title-row">
+    <div>
+      <h2>第二頁｜需求類別</h2>
+      <div class="sub">請先選擇這次要建立 Menu 需求或 Project 需求。</div>
+    </div>
+  </div>
+  <div class="request-grid">
+    <button class="request workstream-menu" data-workstream="menu" onclick="selectWorkstream('menu')">
+      <b>Menu</b><p>目前既有需求流程</p>
+      <p>菜單修改、菜單複製、照片、店內價、匯出菜單等既有流程</p>
+    </button>
+    <button class="request workstream-project" data-workstream="project" onclick="selectWorkstream('project')">
+      <b>Project</b><p>新專案 / 特殊需求</p>
+      <p>專案型需求，後續可新增獨立 Project 模板</p>
+    </button>
+  </div>
+  <div class="btn-row">
+    <button class="btn-outline" onclick="go(1)">‹ 上一步</button>
+    <button id="nextWorkstreamBtn" class="btn-primary" onclick="go(3)" disabled style="opacity:.45;cursor:not-allowed">下一步 ›</button>
+  </div>
+</section>
+
+<section class="page" id="page3">
+  <div class="title-row"><div><h2>第三頁｜選擇需求</h2><div class="sub">請依需求類型選擇欲申請項目。</div></div></div>
+  <div id="menuRequestSection">
+  <div class="group category-brand"><div class="category-label">品牌限定</div><div class="group-title">【僅開放品牌進線】</div><div class="request-grid">
+    <button class="request" data-type="menu_modify" onclick="selectType('menu_modify')"><b>菜單修改</b><p>既有菜單內容、價格、品項或照片調整</p></button>
+    <button class="request" data-type="menu_copy" onclick="selectType('menu_copy')"><b>菜單複製</b><p>將既有菜單內容複製到指定店家或品牌</p></button>
+    <button class="request" data-type="plastic_bag" onclick="selectType('plastic_bag')"><b>塑膠袋設定</b><p>僅限更新塑膠袋設定使用</p></button>
+    <button class="request" data-type="consumer_note" onclick="selectType('consumer_note')"><b>備註功能</b><p>開 / 關消費者備註功能（以品牌為單位，不可單店開關）</p></button>
+    <button class="request" data-type="restaurant_info" onclick="selectType('restaurant_info')"><b>餐廳資訊</b><p>協助更新或確認餐廳基本資訊</p></button>
+    <button class="request" data-type="pos_issue" onclick="selectType('pos_issue')"><b>POS 串接異常</b><p>協助回報或追蹤 POS 串接異常問題</p></button>
+  </div></div>
+
+  <div class="group category-all"><div class="category-label">品牌 / 一般店皆可</div><div class="group-title">【品牌、一般店皆適用】</div><div class="request-grid">
+    <button class="request" data-type="store_price_label" onclick="selectType('store_price_label')"><b>店內價標籤</b><p>協助設定或調整店內價相關標籤</p></button>
+    <button class="request" data-type="export_menu" onclick="selectType('export_menu')"><b>匯出菜單</b><p>協助匯出指定品牌、門市或 校稿版菜單 菜單資料</p></button>
+  </div></div>
+
+  <div class="group category-store"><div class="category-label">一般店限定</div><div class="group-title">【僅限一般店】</div><div class="request-grid">
+    <button class="request" data-type="use_branch_photos" onclick="selectType('use_branch_photos')"><b>使用既有分店照片</b><p>10 間以上門市</p></button>
+    <button class="request" data-type="upload_photo_to_preview" onclick="selectType('upload_photo_to_preview')"><b>上傳餐點照至校稿用</b><p>不開放單店</p></button>
+    <button class="request" data-type="shooting_service" onclick="selectType('shooting_service')"><b>拍攝服務申請</b><p>符合行銷 / 補拍資格</p></button>
+    <button class="request" data-type="pos_menu_fix" onclick="selectType('pos_menu_fix')"><b>修改菜單</b><p>僅限 POS 串接錯誤</p></button>
+    <button class="request" data-type="preview_menu_fix" onclick="selectType('preview_menu_fix')"><b>修改校稿用菜單</b><p>不開放單店</p></button>
+    <button class="request" data-type="schedule_menu_sync" onclick="selectType('schedule_menu_sync')"><b>安排日期複製</b><p>校稿完成後安排指定日期複製</p></button>
+    <button class="request" data-type="chain_adjust" onclick="selectType('chain_adjust')"><b>Chain 調整</b><p>商家退出加盟需調整 Chain</p></button>
+  </div></div>
+  </div>
+  <div id="projectRequestSection" class="hidden">
+<div class="group category-brand"><div class="category-label">AAA</div><div class="group-title">【僅限麥當勞、星巴克、漢堡王、達美樂、必勝客、肯德基】</div><div class="request-grid">
+<button class="request" data-type="project_aaa_deal_menu" onclick="selectType('project_aaa_deal_menu')"><b>活動設定 + 活動菜單修改</b></button>
+<button class="request" data-type="project_aaa_device_replacement" onclick="selectType('project_aaa_device_replacement')"><b>換機申請</b></button>
+</div></div>
+
+<div class="group project-purple"><div class="category-label">AAA、KA、LH</div><div class="group-title">【一般店不可申請】</div><div class="request-grid">
+<button class="request" data-type="project_aaakalh_deal_create" onclick="selectType('project_aaakalh_deal_create')"><b>🎯 建立 Deal 活動</b><p>General / PRO / Targeting / BOGO / POS 專區活動</p></button>
+<button class="request" data-type="project_aaakalh_deal_cancel" onclick="selectType('project_aaakalh_deal_cancel')"><b>❌ Deal 活動取消</b><p>單店、多店（&gt;10）活動取消</p></button>
+</div></div>
+
+<div class="group category-all"><div class="category-label">KA、LH</div><div class="group-title">【KA、LH】</div><div class="request-grid">
+<button class="request" data-type="project_kalh_deal_menu_update" onclick="selectType('project_kalh_deal_menu_update')"><b>📢 活動設定 + 修改菜單</b><p>整合單店 / 多店與校稿用活動菜單修改</p></button>
+<button class="request" data-type="project_kalh_deal_menu_sync" onclick="selectType('project_kalh_deal_menu_sync')"><b>🔄 活動複製菜單</b><p>整合排程、STAT、純上架活動品項</p></button>
+</div></div>
+
+<div class="group category-store"><div class="category-label">一般店</div><div class="group-title">【僅限一般店】</div><div class="request-grid">
+<button class="request" data-type="project_store_cancel_deal" onclick="selectType('project_store_cancel_deal')"><b>取消活動並恢復店內價菜單</b></button>
+<button class="request" data-type="project_store_join_deal" onclick="selectType('project_store_join_deal')"><b>新參加 / 更換 活動+修改活動菜單</b></button>
+<button class="request" data-type="project_store_preview_menu" onclick="selectType('project_store_preview_menu')"><b>修改校稿用菜單</b></button>
+<button class="request" data-type="project_store_menu_sync" onclick="selectType('project_store_menu_sync')"><b>複製</b></button>
+</div></div>
+
+<div class="group" style="border:1px solid #bbf7d0;background:#f0fdf4;border-radius:24px;padding:18px">
+<div class="category-label" style="background:#dcfce7;color:#166534">全部皆適用</div>
+<div class="group-title">【全商家皆適用】</div>
+
+<div class="all-merchant-subgroup">
+  <div class="all-merchant-subtitle">🔑 Portal 帳號綁定（綁定權限申請）</div>
+  <div class="request-grid">
+    <button class="request" data-type="project_portal_change_email" onclick="selectType('project_portal_change_email')"><b><span class="portal-icon">✉️</span>商家修改信箱</b></button>
+    <button class="request" data-type="project_portal_create_account" onclick="selectType('project_portal_create_account')"><b><span class="portal-icon">👤</span>創建Protal帳號</b></button>
+    <button class="request" data-type="project_portal_bind_account" onclick="selectType('project_portal_bind_account')"><b><span class="portal-icon">🔗</span>商家綁定帳號</b></button>
+    <button class="request" data-type="project_portal_radmin_remove" onclick="selectType('project_portal_radmin_remove')"><b><span class="portal-icon">✕</span>Radmin移除商家</b></button>
+    <button class="request" data-type="project_portal_adjust_permission" onclick="selectType('project_portal_adjust_permission')"><b><span class="portal-icon">🛡️</span>商家調整權限</b></button>
+    <button class="request" data-type="project_portal_copy_branch_button" onclick="selectType('project_portal_copy_branch_button')"><b><span class="portal-icon">📋</span>複製到分店按鈕</b></button>
+  </div>
+</div>
+
+<div class="all-merchant-subgroup">
+  <div class="all-merchant-subtitle">🔐 後台登入問題</div>
+  <div class="request-grid">
+    <button class="request" data-type="project_login_forgot_password" onclick="selectType('project_login_forgot_password')"><b><span class="portal-icon">🔑</span>商家忘記密碼</b></button>
+    <button class="request" data-type="project_login_add_phone" onclick="selectType('project_login_add_phone')"><b><span class="portal-icon">📱</span>新增手機號碼作為第二登入方式</b></button>
+  </div>
+</div>
+
+<div class="all-merchant-subgroup">
+  <div class="all-merchant-subtitle">🕒 營業時間／特殊休息時間設置</div>
+  <div class="request-grid">
+    <button class="request" data-type="project_special_hours" onclick="selectType('project_special_hours')"><b><span class="portal-icon">📅</span>Backoffice 設置特殊營業時間</b></button>
+  </div>
+</div>
+
+<div class="all-merchant-subgroup">
+  <div class="all-merchant-subtitle">🛍️ 外帶自取設置</div>
+  <div class="request-grid">
+    <button class="request" data-type="project_takeout_setting" onclick="selectType('project_takeout_setting')"><b><span class="portal-icon">🥡</span>商家外帶自取設定</b></button>
+    <button class="request" data-type="project_takeout_time" onclick="selectType('project_takeout_time')"><b><span class="portal-icon">⏰</span>更改外帶自取時間</b></button>
+  </div>
+</div>
+
+<div class="all-merchant-subgroup">
+  <div class="all-merchant-subtitle">⚠️ 前後台顯示、設備串接異常回報</div>
+  <div class="request-grid">
+    <button class="request" data-type="project_display_device_issue" onclick="selectType('project_display_device_issue')"><b><span class="portal-icon">🔌</span>前後台顯示、設備串接異常回報</b></button>
+  </div>
+</div>
+
+<div class="all-merchant-subgroup">
+  <div class="all-merchant-subtitle">📅 預訂單問題</div>
+  <div class="request-grid">
+    <button class="request" data-type="project_preorder_adjust" onclick="selectType('project_preorder_adjust')"><b><span class="portal-icon">📦</span>預訂單功能調整</b></button>
+  </div>
+</div>
+
+<div class="all-merchant-subgroup">
+  <div class="all-merchant-subtitle">🤖 自動接單／特殊狀況</div>
+  <div class="request-grid">
+    <button class="request" data-type="project_auto_accept_adjust" onclick="selectType('project_auto_accept_adjust')"><b><span class="portal-icon">🤖</span>自動接單調整</b></button>
+    <button class="request" data-type="project_prep_time_adjust" onclick="selectType('project_prep_time_adjust')"><b><span class="portal-icon">🍳</span>製餐時間調整</b></button>
+    <button class="request" data-type="project_prep_time_query" onclick="selectType('project_prep_time_query')"><b><span class="portal-icon">🔎</span>製餐時間查詢</b></button>
+    <button class="request" data-type="project_bug_issue" onclick="selectType('project_bug_issue')"><b><span class="portal-icon">🐞</span>BUG異常</b></button>
+    <button class="request" data-type="project_order_system_issue" onclick="selectType('project_order_system_issue')"><b><span class="portal-icon">🚨</span>接單系統異常</b></button>
+  </div>
+</div>
+
+<div class="all-merchant-subgroup">
+  <div class="all-merchant-subtitle">🖥️ 設備問題</div>
+  <div class="request-grid">
+    <button class="request" data-type="project_transmission_device" onclick="selectType('project_transmission_device')"><b><span class="portal-icon">💻</span>設備問題</b></button>
+  </div>
+</div>
+</div>
+</div>
+<div class="btn-row"><button class="btn-outline" onclick="go(2)">‹ 上一步</button><button class="btn-primary" onclick="go(4)">下一步 ›</button></div>
+</section>
+
+<section class="page" id="page4">
+  <div class="title-row">
+    <div><h2>第四頁｜填寫模板</h2><div class="sub">目前選擇：<span id="selectedName">未選擇</span></div></div>
+    <span class="pill" id="selectedDesc">請先選擇需求</span>
+  </div>
+  <div id="templateArea"></div>
+  <div id="globalUpload" class="upload"><h3>附件上傳</h3><p>可上傳菜單檔、照片、修改清單或其他補充資料。</p><div class="field" style="margin-top:14px"><input type="file" multiple></div></div>
+  <div id="requiredWarning" class="notice hidden" style="border:1px solid #fecdd3;background:#fff1f2;color:#dc2626;font-weight:700">⚠️ 還有必填欄位未完成，請先填寫紅框欄位後再送出。</div>
+  <div class="btn-row"><button class="btn-outline" onclick="go(3)">‹ 上一步</button><button class="btn-primary" onclick="submitPreview()">送出表單</button></div>
+</section>
+
+<section class="page" id="page5">
+  <div style="text-align:center"><div style="font-size:48px;color:#ff2b85">📋</div><h2>送出前確認</h2><div class="sub">請再次確認填寫內容是否正確，確認後才會正式送出。</div></div>
+  <div class="summary"><h3>送出摘要</h3><div class="summary-grid" id="summaryBasic"></div><div style="border-top:1px solid #f9a8d4;margin:18px 0"></div><h3>填寫內容</h3><div id="summaryDetails"></div></div>
+  <div class="btn-row" style="justify-content:center"><button class="btn-outline" onclick="go(4)">返回修改</button><button class="btn-primary" onclick="confirmSubmit()">確認送出</button></div>
+</section>
+
+<section class="page" id="page6">
+  <div style="text-align:center">
+    <div style="font-size:48px;color:#059669">✓</div>
+    <h2>需求已送出</h2>
+    <div class="sub">這是 HTML 完整預覽版，資料不會真的送出。</div>
+    <div class="btn-row" style="justify-content:center"><button class="btn-primary" onclick="resetPreview()">建立另一筆需求</button></div>
+  </div>
+</section>
+</main>
+</div>
+
+<script>
+let currentWorkstream = "";
+let currentType = "";
+let templateRenderedFor = "";
+let menuModifyExtraRenderedFor = "";
+let storePriceExtraRenderedFor = "";
+const typeInfo = {
+  menu_modify:["菜單修改","既有菜單內容、價格、品項或照片調整"],
+  menu_copy:["菜單複製","將既有菜單內容複製到指定店家或品牌"],
+  plastic_bag:["塑膠袋設定","僅限更新塑膠袋設定使用"],
+  consumer_note:["備註功能","開 / 關消費者備註功能（以品牌為單位，不可單店開關）"],
+  store_price_label:["店內價標籤","協助設定或調整店內價相關標籤"],
+  export_menu:["匯出菜單","協助匯出指定品牌、門市或 校稿版菜單 菜單資料"],
+  restaurant_info:["餐廳資訊","協助更新或確認餐廳基本資訊"],
+  pos_issue:["POS 串接異常","協助回報或追蹤 POS 串接異常問題"],
+  use_branch_photos:["使用既有分店照片","10 間以上門市"],
+  upload_photo_to_preview:["上傳餐點照至校稿用","不開放單店"],
+  shooting_service:["拍攝服務申請","符合行銷 / 補拍資格"],
+  pos_menu_fix:["修改菜單","僅限 POS 串接錯誤"],
+  preview_menu_fix:["修改校稿用菜單","不開放單店"],
+  schedule_menu_sync:["安排日期複製","校稿完成後安排指定日期複製"],
+  chain_adjust:["Chain 調整","商家退出加盟需調整 Chain"],
+  project_general:["Project 需求","專案型需求入口，模板欄位後續新增"],
+  project_other:["其他 Project 需求","預留 Project 子項目，之後可依流程擴充"],
+  project_aaa_deal_menu:["活動設定 + 活動菜單修改","AAA 活動設定、活動校稿菜單修改或活動菜單複製 / 版本同步"],
+  project_aaa_device_replacement:["換機申請","設備異常換機評估"],
+  project_aaakalh_deal_create:["建立 Deal 活動","AAA、KA、LH 一般店不可申請活動建立"],
+  project_aaakalh_deal_cancel:["Deal 活動取消","AAA、KA、LH 單店、多店活動取消"],
+  project_kalh_deal_menu_update:["活動設定 + 修改菜單","KA、LH 活動內容建立與菜單修改"],
+  project_kalh_deal_menu_sync:["活動複製菜單","KA、LH 活動菜單複製、排程或純上架活動品項"],
+  project_store_cancel_deal:["取消活動並恢復店內價菜單","一般店活動取消"],
+  project_store_join_deal:["新參加 / 更換 活動+修改活動菜單","一般店活動設定"],
+  project_store_preview_menu:["修改校稿用菜單","一般店校稿菜單修改"],
+  project_store_menu_sync:["複製","一般店菜單複製"],
+  project_portal_change_email:["商家修改信箱","Portal 帳號綁定（綁定權限申請）"],
+  project_portal_create_account:["創建Protal帳號","Portal 帳號綁定（綁定權限申請）"],
+  project_portal_bind_account:["商家綁定帳號","Portal 帳號綁定（綁定權限申請）"],
+  project_portal_radmin_remove:["Radmin移除商家","Portal 帳號綁定（綁定權限申請）"],
+  project_portal_adjust_permission:["商家調整權限","Portal 帳號綁定（綁定權限申請）"],
+  project_portal_copy_branch_button:["複製到分店按鈕","Portal 帳號綁定（綁定權限申請）"],
+  project_login_forgot_password:["商家忘記密碼","後台登入問題"],
+  project_login_add_phone:["新增手機號碼作為第二登入方式","後台登入問題"],
+  project_special_hours:["Backoffice 設置特殊營業時間","營業時間／特殊休息時間設置"],
+  project_takeout_setting:["商家外帶自取設定","外帶自取設置"],
+  project_takeout_time:["更改外帶自取時間","外帶自取設置"],
+  project_display_device_issue:["前後台顯示、設備串接異常回報","前後台顯示、設備串接異常回報"],
+  project_preorder_adjust:["預訂單功能調整","預訂單問題"],
+  project_auto_accept_adjust:["自動接單調整","自動接單／特殊狀況"],
+  project_prep_time_adjust:["製餐時間調整","自動接單／特殊狀況"],
+  project_prep_time_query:["製餐時間查詢","自動接單／特殊狀況"],
+  project_bug_issue:["BUG異常","自動接單／特殊狀況"],
+  project_order_system_issue:["接單系統異常","自動接單／特殊狀況"],
+  project_transmission_device:["設備問題","設備問題"]
+};
+const photoOnly = ["純封面照片修改 (品牌共用)","純封面照片修改 (指定門市)","純餐點照片修改 (校稿用)","純餐點照片修改 (無校稿)","Logo 照片修改"];
+const photoFixedDetail = "upload listing photo by chain level, no need to resize the images, remove all outlet listing photos at the vendor level.";
+const photoFixedDetailByType = {
+  "純封面照片修改 (品牌共用)": "upload listing photo by chain level, no need to resize the images, remove all outlet listing photos at the vendor level.",
+  "純封面照片修改 (指定門市)": "upload listing photo by vendor level",
+  "純餐點照片修改 (無校稿)": "please help update all the photos that have the same product names",
+  "純餐點照片修改 (校稿用)": "please help update all the photos that have the same product names, no need to resize the images",
+  "Logo 照片修改": "upload listing photo by chain level, no need to resize the images, remove all outlet listing photos at the vendor level."
+};
+function getPhotoFixedDetail(type){
+  return photoFixedDetailByType[type] || photoFixedDetail;
+}
+function needsMenuModifyContact(type){
+  return type === "校稿用修改" || type === "純餐點照片修改 (校稿用)";
+}
+
+function b(){ return document.getElementById("brand").value.trim() || "brand"; }
+function isBasicValid(){
+  return !!(document.getElementById("brand").value.trim() && document.getElementById("am").value.trim());
+}
+function validateBasic(){
+  const valid = isBasicValid();
+  const btn = document.getElementById("nextBasicBtn");
+  const notice = document.getElementById("basicNotice");
+  if(btn){
+    btn.disabled = !valid;
+    btn.style.opacity = valid ? "1" : ".45";
+    btn.style.cursor = valid ? "pointer" : "not-allowed";
+  }
+  if(notice) notice.classList.toggle("hidden", valid);
+}
+
+function clearRequiredErrors(scope=document){
+  scope.querySelectorAll(".required-error").forEach(el=>el.classList.remove("required-error"));
+  scope.querySelectorAll(".required-error-text").forEach(el=>el.remove());
+}
+
+function markRequiredError(field){
+  if(!field || field.classList.contains("hidden")) return;
+  field.classList.add("required-error");
+  const wrapper = field.closest(".field") || field.parentElement;
+  if(wrapper && !wrapper.querySelector(".required-error-text")){
+    const msg = document.createElement("div");
+    msg.className = "required-error-text";
+    msg.textContent = "此欄位為必填，請先填寫";
+    wrapper.appendChild(msg);
+  }
+}
+
+function getVisibleRequiredFields(){
+  const area = document.getElementById("templateArea");
+  if(!area) return [];
+  const fields = [];
+  area.querySelectorAll(".field").forEach(wrapper=>{
+    if(wrapper.offsetParent === null) return;
+    const label = wrapper.querySelector("label");
+    if(!label || !label.textContent.includes("必填")) return;
+    const input = wrapper.querySelector("input, select, textarea");
+    if(input) fields.push(input);
+  });
+  return fields;
+}
+
+function validateRequiredVisible(showErrors=true){
+  const area = document.getElementById("templateArea");
+  if(showErrors) clearRequiredErrors(area || document);
+
+  const fields = getVisibleRequiredFields();
+  let valid = true;
+
+  fields.forEach(field=>{
+    if(!String(field.value || "").trim()){
+      valid = false;
+      if(showErrors) markRequiredError(field);
+    }
+  });
+
+  const warning = document.getElementById("requiredWarning");
+  if(warning) warning.classList.toggle("hidden", valid || !showErrors);
+
+  return valid;
+}
+
+function val(id){ const el=document.getElementById(id); return el ? (el.value || "") : ""; }
+function showVal(id){ return val(id) || "未填寫"; }
+function showMultilineVal(id){ return val(id) || "未填寫"; }
+function getPhotoUpdateDateTimeSummary(){
+  const mode = val("photoUpdateMode");
+  if(!mode) return "未填寫";
+  if(mode === "NOW") return "NOW";
+  const date = val("photoUpdateDate");
+  const time = val("photoUpdateTime");
+  if(date && time) return `${date} before ${time} as TW time`;
+  if(date || time) return `${date || "未填日期"} before ${time || "未填時間"} as TW time`;
+  return mode;
+}
+
+function go(n){
+  if(n === 2 && !isBasicValid()){
+    validateBasic();
+    return;
+  }
+  if(n === 3 && !currentWorkstream){
+    updateWorkstreamUI();
+    return;
+  }
+  const status = document.getElementById("statusText");
+  if(status){
+    if(n === 5) status.textContent = "送出前確認";
+    if(n < 5) status.textContent = "填寫中";
+  }
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page"+n).classList.add("active");
+  for(let i=1;i<=6;i++){ const s=document.getElementById("s"+i); s.classList.remove("active","done"); if(i<n)s.classList.add("done"); if(i===n)s.classList.add("active"); }
+  if(n===3) renderRequestSelection();
+  if(n===4){
+    if(templateRenderedFor !== currentType){
+      renderTemplate();
+      templateRenderedFor = currentType;
+    }else{
+      updateSelectedHeader();
+      renderConditionalBlocks();
+      refreshSubject();
+    }
+  }
+  if(n===5) renderSummary();
+
+  // 換頁後固定回到頁面最上方，避免從上一頁的捲動位置開始顯示
+  requestAnimationFrame(() => {
+    window.scrollTo(0, 0);
+  });
+}
+function selectWorkstream(type){
+  if(currentWorkstream !== type){
+    currentWorkstream = type;
+    currentType = "";
+    templateRenderedFor = "";
+    menuModifyExtraRenderedFor = "";
+    storePriceExtraRenderedFor = "";
+    document.querySelectorAll(".request").forEach(btn=>{
+      if(btn.dataset.type) btn.classList.remove("selected");
+    });
+  }
+  updateWorkstreamUI();
+}
+function updateWorkstreamUI(){
+  document.querySelectorAll("[data-workstream]").forEach(btn=>{
+    btn.classList.toggle("selected", btn.dataset.workstream === currentWorkstream);
+  });
+  const btn = document.getElementById("nextWorkstreamBtn");
+  if(btn){
+    const valid = !!currentWorkstream;
+    btn.disabled = !valid;
+    btn.style.opacity = valid ? "1" : ".45";
+    btn.style.cursor = valid ? "pointer" : "not-allowed";
+  }
+}
+function renderRequestSelection(){
+  const menuSection = document.getElementById("menuRequestSection");
+  const projectSection = document.getElementById("projectRequestSection");
+  if(menuSection) menuSection.classList.toggle("hidden", currentWorkstream !== "menu");
+  if(projectSection) projectSection.classList.toggle("hidden", currentWorkstream !== "project");
+  document.querySelectorAll(".request").forEach(btn=>{
+    if(btn.dataset.type) btn.classList.toggle("selected", btn.dataset.type === currentType);
+  });
+}
+function selectType(type){
+  if(currentType !== type){
+    currentType=type;
+    templateRenderedFor="";
+    menuModifyExtraRenderedFor="";
+    storePriceExtraRenderedFor="";
+  }
+  document.querySelectorAll(".request").forEach(btn=>btn.classList.toggle("selected",btn.dataset.type===type));
+}
+function field(id,label,type="text",placeholder="請填寫"){
+  return `<div class="field"><label>${label}</label><input id="${id}" type="${type}" placeholder="${placeholder}" oninput="refreshSubject(); validateRequiredVisible(false)"></div>`;
+}
+function select(id,label,options){
+  return `<div class="field"><label>${label}</label><select id="${id}" onchange="refreshSubject(); renderConditionalBlocks(); validateRequiredVisible(false);"><option value="">請選擇</option>${options.map(o=>`<option value="${o}">${o}</option>`).join("")}</select></div>`;
+}
+function textarea(id,label,placeholder="請填寫",rows=4){
+  return `<div class="field"><label>${label}</label><textarea id="${id}" rows="${rows}" placeholder="${placeholder}" oninput="validateRequiredVisible(false)"></textarea></div>`;
+}
+function subjectInput(){
+  return `<div id="subjectWrap" class="field hidden"><label>Case Subject</label><div id="caseSubject" class="case-subject-card empty">尚未產生</div></div>`;
+}
+function fixedCard(id,label,emptyText="選擇活動類型後自動帶入"){
+  return `<div class="field"><label>${label}</label><input id="${id}" type="hidden"><div id="${id}Display" class="case-subject-card empty">${emptyText}</div></div>`;
+}
+function setFixedCard(id,value,emptyText="選擇活動類型後自動帶入"){
+  const input=document.getElementById(id);
+  if(input) input.value=value || "";
+  const card=document.getElementById(id+"Display");
+  if(card){
+    card.textContent = value || emptyText;
+    card.classList.toggle("empty", !value);
+  }
+}
+function portalVendorGrid(){
+  return `<div class="grid">${field("portalVendorCode","店家代碼（必填）","text","請填寫店家代碼")}${field("portalVendorName","店家名稱（必填）","text","請填寫店家名稱")}</div>`;
+}
+function portalNote(){
+  return `${textarea("portalRemark","備註","請填寫補充說明，可留空",3)}`;
+}
+function updateSelectedHeader(){
+  document.getElementById("selectedName").textContent = currentType ? typeInfo[currentType][0] : "未選擇";
+  document.getElementById("selectedDesc").textContent = currentType ? typeInfo[currentType][1] : "請先選擇需求";
+}
+
+
+function markupNote(id){
+  return `<div id="${id}" class="notice hidden" style="margin-top:-10px;color:#dc2626;font-style:italic;font-size:12px;font-weight:500;"></div>`;
+}
+function updateMarkupNote(selectId, noteId){
+  const selectEl = document.getElementById(selectId);
+  const noteEl = document.getElementById(noteId);
+  if(!selectEl || !noteEl) return;
+  const v = selectEl.value;
+  if(v === "12%" || v === "20%"){
+    noteEl.textContent = "💡 需附主管同意截圖";
+    noteEl.classList.remove("hidden");
+  }else if(v === "0%"){
+    noteEl.textContent = "💡 以店內價做活動";
+    noteEl.classList.remove("hidden");
+  }else{
+    noteEl.textContent = "";
+    noteEl.classList.add("hidden");
+  }
+}
+
+function renderTemplate(){
+  updateSelectedHeader();
+  const area=document.getElementById("templateArea");
+  const upload=document.getElementById("globalUpload");
+  upload.classList.remove("hidden");
+  if(!currentType){
+    area.innerHTML = `<div class="notice">⚠️ 請先回到第二頁選擇需求。</div>`;
+    return;
+  }
+
+  if(currentType==="menu_modify"){
+    area.innerHTML = `
+      ${select("menuVendorType","店家類型（必填）",["AAA","KA","LH"])}
+      ${select("menuRequestType","菜單需求類型（必填）",["校稿用修改","單店修改","純封面照片修改 (品牌共用)","純封面照片修改 (指定門市)","純餐點照片修改 (校稿用)","純餐點照片修改 (無校稿)","Logo 照片修改"])}
+      <div id="bannerPhotoNotice" class="notice hidden" style="margin-top:-6px;color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 品牌共用封面照片適用於所有門市；如門市另有設定指定門市封面照片，則以指定門市封面照片為準。</div>
+      <div id="menuModifyNotice" class="notice">⚠️ 請先選擇店家類型與菜單需求類型，系統才會產生對應的 Case Subject 與模板欄位。</div>
+      ${subjectInput()}
+      <div class="grid hidden" id="menuModifyContactBlock">
+        ${field("contact","主要校稿信箱（必填）","email","請填寫主要校稿信箱")}
+        ${field("cc","CC Email（選填）","email","請填寫 CC Email，可留空")}
+      </div>
+      <div id="menuModifyExtra"></div>
+    `;
+  }
+
+  if(currentType==="menu_copy"){
+    area.innerHTML = `
+      ${select("menuCopyVendorType","店家類型（必填）",["AAA","KA"])}
+      ${select("menuCopyRequestType","菜單需求類型（必填）",["菜單複製"])}
+      <div id="kaCaseTypeBlock" class="hidden">${select("menuCopyCaseSubjectType","KA Case Subject 類型（必填）",["STAT","複製日期"])}</div>
+      <div id="menuCopyNotice" class="notice">⚠️ 請先選擇店家類型；若選 KA，請再選擇 STAT 或複製日期，系統才會產生 Case Subject。</div>
+      ${subjectInput()}
+      ${field("muCase","承 MU case","text","請填寫承接的 MU Case 編號或連結")}
+      <div class="grid">
+        ${field("updateDate","更新日期【非假日】","date")}
+        ${field("updateTime","更新時間","time")}
+        ${field("updateDateNote","特殊時段更新備註 / 原因簡述","text","※若需於特殊時段更新，請備註告知原因")}
+        ${field("chainCode","Chain code","text","請填寫 Chain code")}
+      </div>
+      ${field("copyMasterMenu","校稿版菜單","text","請填寫要複製的 校稿版菜單 名稱或連結")}
+      ${select("itemSupplyStatus","既有品項供應狀態【擇一】",["Same as Master Vendor (品項同校稿版狀態)","Keep as Outlet Vendor (品項維持原分店狀態)"])}
+      ${field("vendorListLink","商家名單（連結）","text","請貼上 商家名單 連結")}
+      <div class="box pink"><h3>【如有全門市塑膠袋更新請備註以下文字】</h3><p class="box" style="font-size:13px;color:#64748b">全門市塑膠袋更新XX元，再協請更新菜單後額外設定於門市內</p>${textarea("plasticBagNote","全門市塑膠袋更新備註","例如：全門市塑膠袋更新 2 元，再協請更新菜單後額外設定於門市內",3)}</div>
+    `;
+  }
+
+  if(currentType==="plastic_bag"){
+    area.innerHTML = `${subjectInput()}<div class="box pink"><h3>塑膠袋設定</h3><p class="muted">此需求僅限更新塑膠袋設定使用。</p></div><div class="grid">${select("plasticBagAmount","塑膠袋金額（必填）",["$1","$2","$3","$4","$5"])}${field("plasticBagVendorList","適用門市 / 商家名單","text","請貼上 商家名單 或填寫適用範圍")}</div>`;
+  }
+
+  if(currentType==="consumer_note"){
+    area.innerHTML = `${select("consumerNoteStoreType","店家類型（必填）",["AAA","KA、LH"])}
+    <div id="consumerNoteNotice" class="notice">⚠️ 請先選擇 AAA 或 KA、LH，系統才會產生對應的 Case Subject。</div>
+    ${subjectInput()}
+    <div class="box pink"><h3>備註功能</h3><p class="muted">開 / 關消費者備註功能，以品牌為單位，不可單店開關。</p></div>
+    ${select("consumerNoteMode","操作類型",["開啟消費者備註功能","關閉消費者備註功能"])}
+    ${field("specialVendorList","品牌 / Chain code","text","請填寫品牌或 Chain code")}`;
+  }
+
+  if(currentType==="store_price_label"){
+    upload.classList.add("hidden");
+    area.innerHTML = `${select("storePriceVendorType","店家類型（必填）",["AAA","KA、LH","一般店"])}<div id="storePriceNotice" class="notice">⚠️ 請先選擇 AAA、KA / LH 或一般店，系統才會產生對應的 Case Subject 與欄位。</div>${subjectInput()}<div id="storePriceExtra"></div>`;
+  }
+
+  if(currentType==="export_menu"){
+    area.innerHTML = `${select("exportMenuVendorType","店家類型（必填）",["KA、LH","一般店"])}<div id="exportMenuNotice" class="notice">⚠️ 請先選擇 KA、LH 或一般店，系統才會產生對應的 Case Subject 與欄位。</div>${subjectInput()}<div id="exportMenuExtra"></div>`;
+  }
+
+  if(currentType==="restaurant_info"){
+    upload.classList.add("hidden");
+    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["AAA","KA、LH"])}<div id="restaurantNotice" class="notice">⚠️ 請先選擇 AAA 或 KA、LH，系統才會產生對應的 Case Subject 與欄位。</div>${subjectInput()}${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}<div class="box pink"><h3>調整內容</h3>${textarea("restaurantVendorList","調整內容","請填寫調整內容，或使用下方新增檔案上傳名單")}<div class="upload" style="background:white"><h3>新增檔案</h3><p>可上傳包含調整內容的 Excel、CSV 或補充檔案。</p><div class="field" style="margin-top:14px"><input type="file" multiple></div></div></div>`;
+  }
+
+  if(currentType==="pos_issue"){
+    area.innerHTML = `${subjectInput()}${field("posVendorCode","店家代碼")}${field("posVendorName","店家名稱")}${textarea("posIssueDescription","狀況描述","請描述 POS 串接異常狀況",5)}`;
+  }
+
+
+  if(currentType==="use_branch_photos"){
+    area.innerHTML = `${subjectInput()}
+      ${field("branchPhotoSource","Please help sync photos from：（必填）","text","code + 店家名稱")}
+      ${textarea("branchPhotoVendorList","商家名單（必填）","請填寫 商家名單",4)}
+    `;
+  }
+
+  if(currentType==="upload_photo_to_preview"){
+    area.innerHTML = `${subjectInput()}
+      ${field("previewPhotoMasterMenu","校稿版菜單：code + name（必填）","text","請填寫 校稿版菜單：code + name")}
+    `;
+  }
+
+  if(currentType==="shooting_service"){
+    area.innerHTML = `${subjectInput()}
+      ${field("shootingAvailableTime","可聯繫時段（必填）","text","請填寫可聯繫時段")}
+      ${field("shootingContactPerson","聯絡人（必填）","text","請填寫聯絡人")}
+      ${field("shootingPhone","電話（必填）","text","請填寫電話")}
+    `;
+  }
+
+  if(currentType==="pos_menu_fix"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink">
+        <h3>固定內容</h3>
+        <p class="muted">【AMops需先向國際提此商家斷串，斷串後再建case】</p>
+        <p class="muted" style="margin-top:8px">此商家菜單遭到POS廠商誤串接．導致菜單被覆蓋，再請協助移除目前所有品項，並依照以下內容建置，謝謝。</p>
+      </div>
+      ${field("posMenuFixVendor","店家代碼 + 店家名稱（必填）","text","請填寫店家代碼 + 店家名稱")}
+      ${field("posMenuFixProvider","POS廠商（必填）","text","請填寫 POS 廠商")}
+      ${select("posMenuFixReconnect","菜單回復後是否需重新串接（必填）",["Y","N"])}
+      ${field("posMenuFixMenuLink","菜單連結：(link)（必填）","text","請貼上菜單連結")}
+      ${textarea("posMenuFixBuildNote","菜單、客製化建置說明（必填）","請填寫菜單、客製化建置說明",5)}
+    `;
+  }
+
+  if(currentType==="preview_menu_fix"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink">
+        <h3>【菜單更新內容】</h3>
+        ${field("previewMenuFixVendor","修改校稿版本：code + 店家名稱（必填）","text","請填寫 code + 店家名稱")}
+      </div>
+      <div class="box">
+        <h3>※ 以下請依實際需求選擇填寫，勿全部複製貼上</h3>
+        ${select("previewMenuFullUpdate","是否依照店內菜單更新整份平台菜單(含價格、新增品項、下架品項)",["是","否"])}
+        ${select("previewMenuPriceOnly","僅需調整金額，不需另外上架餐點",["是","否"])}
+        ${select("previewMenuPriceAndItem","調整金額，同時新增或更改餐點",["是","否"])}
+        ${field("previewMenuPlasticBagAmount","統一塑膠袋金額","text","___元 ※5元(含)以上再請附上相關公告佐證")}
+        ${textarea("previewMenuPlasticBagException","未統一塑膠袋金額之分店","code + 店家 + 塑膠袋金額：___元",3)}
+      </div>
+    `;
+  }
+
+  if(currentType==="schedule_menu_sync"){
+    area.innerHTML = `${subjectInput()}
+      ${field("scheduleMuCase","承MU CASE（必填）","text","請填寫承 MU CASE")}
+      <div class="box pink">
+        <h3>【菜單更新內容】</h3>
+        ${field("scheduleMasterMenu","校稿版菜單：code + 店家名稱（必填）","text","請填寫 校稿版菜單：code + 店家名稱")}
+        ${field("schedulePlasticBagAmount","統一塑膠袋金額","text","___元 ※5元(含)以上再請附上相關公告佐證")}
+        ${textarea("schedulePlasticBagException","未統一塑膠袋金額之分店","code + 店家 + 塑膠袋金額：___元",3)}
+      </div>
+      <div class="box">
+        <h3>【告知欲更新菜單日期】</h3>
+        ${field("scheduleSyncDate","更新日期（必填）","date")}${field("scheduleSyncTime","更新時間（必填）","time")}
+      </div>
+    `;
+  }
+
+  if(currentType==="chain_adjust"){
+    area.innerHTML = `${subjectInput()}
+      ${textarea("chainAdjustVendorDetail","Vendor detail（更新內容說明）（必填）","請填寫更新內容說明",5)}
+    `;
+  }
+
+
+
+  if(currentType==="project_portal_change_email"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫商家目前綁定信箱與欲修改的新信箱。</p></div>
+      ${portalVendorGrid()}
+      <div class="grid">
+        ${field("portalOriginalEmail","原綁定 Email（必填）","email","請填寫原綁定 Email")}
+        ${select("portalRemoveOriginalEmail","是否移除原綁定 Email（必填）",["是","否"])}
+      </div>
+      ${field("portalNewEmail","需修改的新 Email（必填）","email","請填寫需修改的新 Email")}
+      ${portalNote()}
+    `;
+  }
+
+  if(currentType==="project_portal_create_account"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫欲建立的 Portal 帳號資訊。</p></div>
+      ${portalVendorGrid()}
+      <div class="grid">
+        ${field("portalAccountName","創建帳號名稱（必填）","text","請填寫創建帳號名稱")}
+        ${field("portalEmail","Email（必填）","email","請填寫 Email")}
+      </div>
+      ${field("portalPermission","權限（必填）","text","請填寫權限")}
+      ${portalNote()}
+    `;
+  }
+
+  if(currentType==="project_portal_bind_account"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫商家與需綁定的帳號 Email。</p></div>
+      ${portalVendorGrid()}
+      ${field("portalBindEmail","需綁定的 Email（必填）","email","請填寫需綁定的 Email")}
+      ${portalNote()}
+    `;
+  }
+
+  if(currentType==="project_portal_radmin_remove"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫需從 Radmin 移除的商家與原綁定 Email。</p></div>
+      ${portalVendorGrid()}
+      ${field("portalOriginalEmail","原綁定 Email（必填）","email","請填寫原綁定 Email")}
+      ${portalNote()}
+    `;
+  }
+
+  if(currentType==="project_portal_adjust_permission"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫欲調整權限的 Email 與目標權限。</p></div>
+      ${portalVendorGrid()}
+      <div class="grid">
+        ${field("portalEmail","Email（必填）","email","請填寫 Email")}
+        ${field("portalPermission","權限需調整為（必填）","text","請填寫需調整為的權限")}
+      </div>
+      ${portalNote()}
+    `;
+  }
+
+  if(currentType==="project_portal_copy_branch_button"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box">
+        <h3>複製到分店按鈕</h3>
+        <p class="muted">※ 複製菜單需求，請務必等菜單建置完成（MP Case 關閉）後做申請。</p>
+      </div>
+      ${select("copyBranchNeed","1. 商家反映需求（必填）",["申請【複製到分店】按鈕","已有【複製到分店】按鈕，需再新增其他可複製分店"])}
+      ${select("copyBranchStoreType","2. 商家類型（必填）",["一般商家","KA品牌之分店門市"])}
+      ${textarea("copyBranchChildVendors","3. 欲開啟複製功能的分店（子菜單）：code + 店家名稱（必填）","申請多店家請換行填寫",5)}
+      ${field("copyBranchMasterVendor","4. 複製這間分店菜單（母菜單）：code + 店家名稱（必填）","text","請填寫母菜單 code + 店家名稱")}
+      ${field("copyBranchEmail","5. 欲綁定帳號的 Email（必填）","email","請填寫 Email")}
+    `;
+  }
+
+  if(currentType==="project_login_forgot_password"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>後台登入問題</h3><p class="muted">請填寫商家登入帳號信箱，協助處理忘記密碼問題。</p></div>
+      <div class="grid">
+        ${field("loginVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("loginVendorEmail","店家 Email（必填）","email","請填寫店家 Email")}
+      </div>
+      ${textarea("loginRemark","備註","請填寫補充說明，可留空",3)}
+    `;
+  }
+
+  if(currentType==="project_login_add_phone"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>後台登入問題</h3><p class="muted">請填寫商家登入帳號信箱與欲新增的第二登入手機號碼。</p></div>
+      <div class="grid">
+        ${field("loginVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("loginVendorEmail","店家 Email（必填）","email","請填寫店家 Email")}
+      </div>
+      ${field("loginPhone","手機號碼（必填）","tel","例如：0912345678")}
+    `;
+  }
+
+  if(currentType==="project_special_hours"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box">
+        <h3>營業時間／特殊休息時間設置</h3>
+        <p class="muted">請先用日曆選擇需設定的開始與結束日期，再填寫實際特殊營業時間內容。</p>
+      </div>
+      <div class="grid">
+        ${field("specialHoursVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("specialHoursVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      <div class="grid">
+        ${field("specialHoursStartDate","開始日期（必填）","date")}
+        ${field("specialHoursEndDate","結束日期（必填）","date")}
+      </div>
+      <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">
+        💡 範例：特殊營業時間設定可填「11/15 10:00 可營業」、「11/16 12:00 可營業」、「11/17 全天休息」。
+      </div>
+      ${textarea("specialHoursDetail","特殊調整日期／特殊營業時間設定（必填）","例如：\n11/15 10:00 可營業\n11/16 12:00 可營業\n11/17 全天休息",5)}
+      ${textarea("specialHoursRemark","備註","請填寫補充說明，可留空",3)}
+    `;
+  }
+
+
+  if(currentType==="project_takeout_setting"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>外帶自取設置</h3><p class="muted">請選擇商家外帶自取功能要開啟或關閉。</p></div>
+      <div class="grid">
+        ${field("takeoutVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("takeoutVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      ${select("takeoutMode","外帶自取設定（必填）",["Open","Close"])}
+      ${textarea("takeoutRemark","備註","請填寫補充說明，可留空",3)}
+    `;
+  }
+
+  if(currentType==="project_takeout_time"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>外帶自取設置</h3><p class="muted">請填寫商家外帶自取可提供的開始與結束時間。</p></div>
+      <div class="grid">
+        ${field("takeoutVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("takeoutVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      <div class="grid">
+        ${field("takeoutStartTime","開始時間（必填）","time")}
+        ${field("takeoutEndTime","結束時間（必填）","time")}
+      </div>
+      ${textarea("takeoutRemark","備註","請填寫補充說明，可留空",3)}
+    `;
+  }
+
+  if(currentType==="project_display_device_issue"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>前後台顯示、設備串接異常回報</h3><p class="muted">請填寫異常狀況與查詢結果，若有截圖或影片請一併上傳。</p></div>
+      <div class="grid">
+        ${field("displayIssueVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("displayIssueVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      ${field("displayIssueOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
+      ${select("displayIssueType","問題類型（必填）",["前台顯示異常","後台顯示異常","POS 串接異常","設備異常","其他"])}
+      ${textarea("displayIssueDesc","問題描述（必填）","請描述問題發生情境、影響範圍與已確認事項",5)}
+      <div class="upload" style="background:white"><h3>截圖 / 影片</h3><p>請上傳可協助判斷問題的截圖或影片。</p><div class="field" style="margin-top:14px"><input id="displayIssueFiles" type="file" multiple></div></div>
+      ${select("displayIssueUrgency","回覆時效（必填）",["一般","緊急"])}
+      ${select("displayIssueFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
+      <div id="displayIssueFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
+    `;
+  }
+
+  if(currentType==="project_preorder_adjust"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>預訂單功能調整</h3><p class="muted">請提供關閉原因、預計關閉時間與重新開啟時間。</p></div>
+      <div class="notice" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 無法設置永久關閉，須提供重新開啟的時間，且關閉及開啟的時間需統一。</div>
+      <div class="grid">
+        ${field("preorderVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("preorderVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      ${textarea("preorderCloseReason","關閉原因說明（必填）","請填寫關閉原因",4)}
+      <div class="grid">
+        ${field("preorderCloseTime","預計關閉時間（必填）","datetime-local")}
+        ${field("preorderOpenTime","預計開啟時間（必填）","datetime-local")}
+      </div>
+    `;
+  }
+
+
+  if(currentType==="project_auto_accept_adjust"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>自動接單調整</h3><p class="muted">目前僅提供設置 30、90、300 秒，請選擇秒數並詳述調整原因。</p></div>
+      <div class="grid">
+        ${field("autoAcceptVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("autoAcceptVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      ${select("autoAcceptSeconds","詳述秒數（必填）",["30秒","90秒","300秒"])}
+      ${textarea("autoAcceptReason","請詳述調整原因（必填）","請填寫調整原因",5)}
+    `;
+  }
+
+  if(currentType==="project_prep_time_adjust"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>製餐時間調整</h3><p class="muted">請填寫欲調整的分鐘數與商家調整理由。</p></div>
+      <div class="grid">
+        ${field("prepAdjustVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("prepAdjustVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      ${field("prepAdjustMinutes","調整的分鐘數（必填）","number","請填寫分鐘數")}
+      ${textarea("prepAdjustReason","須提供商家調整的理由（必填）","請填寫商家調整的理由",5)}
+      ${textarea("prepAdjustRemark","備註","請填寫補充說明，可留空",3)}
+    `;
+  }
+
+  if(currentType==="project_prep_time_query"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>製餐時間查詢</h3><p class="muted">可單店查詢或 Chain 查詢；若無特別指定，將提供近一個月的平均製餐時間。</p></div>
+      <div class="grid">
+        ${field("prepQueryVendorCode","店家代碼","text","單店查詢請填寫店家代碼")}
+        ${field("prepQueryChainCode","Chain Code","text","Chain 查詢請填寫 Chain Code")}
+      </div>
+      ${textarea("prepQueryNeed","請詳述品牌需求（必填）","請詳述品牌需求，例如查詢範圍、指定期間或特定門市",5)}
+      <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 可單店查詢或 Chain 查詢；若無特別指定，將提供近一個月的平均製餐時間。</div>
+    `;
+  }
+
+  if(currentType==="project_bug_issue"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>BUG異常</h3><p class="muted">請提供訂單資訊、問題描述與截圖 / 影片，方便快速判斷異常。</p></div>
+      <div class="grid">
+        ${field("bugIssueVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("bugIssueVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      ${field("bugIssueOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
+      ${select("bugIssueType","問題類型（必填）",["接單系統異常","前台顯示異常","後台顯示異常","設備異常","其他"])}
+      ${textarea("bugIssueDesc","問題描述（必填）","請描述問題發生情境、影響範圍與已確認事項",5)}
+      <div class="upload" style="background:white"><h3>截圖 / 影片</h3><p>請上傳可協助判斷問題的截圖或影片。</p><div class="field" style="margin-top:14px"><input id="bugIssueFiles" type="file" multiple></div></div>
+      ${select("bugIssueUrgency","回覆時效（必填）",["一般","緊急"])}
+      ${select("bugIssueFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
+      <div id="bugIssueFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
+    `;
+  }
+
+  if(currentType==="project_order_system_issue"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>接單系統異常</h3><p class="muted">請提供訂單資訊、問題描述與截圖 / 影片，方便快速判斷異常。</p></div>
+      <div class="grid">
+        ${field("orderSystemVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("orderSystemVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      ${field("orderSystemOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
+      ${select("orderSystemIssueType","問題類型（必填）",["接單系統異常","無法接單","訂單未進單","訂單狀態異常","其他"])}
+      ${textarea("orderSystemIssueDesc","問題描述（必填）","請描述接單系統異常狀況",5)}
+      <div class="upload" style="background:white"><h3>截圖 / 影片</h3><p>請上傳可協助判斷問題的截圖或影片。</p><div class="field" style="margin-top:14px"><input id="orderSystemFiles" type="file" multiple></div></div>
+      ${select("orderSystemUrgency","回覆時效（必填）",["一般","緊急"])}
+      ${select("orderSystemFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
+      <div id="orderSystemFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
+    `;
+  }
+
+  if(currentType==="project_transmission_device"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>設備問題</h3><p class="muted">請填寫設備資訊、Issue、截圖 / 影片雲端連結與收件資訊。</p></div>
+      <div class="grid">
+        ${field("transmissionVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+        ${field("transmissionVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+      </div>
+      ${field("transmissionSerial","設備序號（必填）","text","請填寫設備序號")}
+      ${select("transmissionDeviceIssue","Issue（必填）",["Battery can't charge｜無法充電、充電異常、無法蓄電、充電孔鬆動","Bad system loading｜經常當機、設備老舊","Auto shut down / Device can't be launch｜時常自動關機 / 無法開機、螢幕黑屏","Printer issue｜出單紙模糊、滾輪掉落、無法列印","button issue / Volume button issue｜電源鍵異常 / 音量鍵異常","Battery swelling｜電池膨脹","Touchscreen issue｜螢幕顯示異常、觸碰異常","Godroid issue（No Apps Installed）｜Godroid app異常（顯示 No Apps Installed）","Zhuyin input disappear｜無中文輸入法，僅限 V2（V2s 請參考 SOP）","Godroid issue｜Godroid app異常（無法登入、顯示需聯繫系統管理員）","Soti issue｜Soti 系統異常（無法遠端、DMS 找不到設備、無法更新）","Connectivity issue｜網路連線異常（無使用 SIM 卡）","Other｜其他原因"])}
+      <div class="box"><b>Resolution（固定）</b><p class="muted">is there any action require: yes, escalate to saleforce sales</p></div>
+      ${field("transmissionMediaLink","截圖或影片雲端連結（必填）","text","請貼上截圖或影片雲端連結")}
+      <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 可建議商家開機聯網，以利遠端確認。</div>
+      <div class="grid">
+        ${field("recipientName","Recipient Name（必填）","text","請填寫收件人姓名")}
+        ${field("recipientContactNumber","Recipient Contact Number（必填）","tel","請填寫收件人電話")}
+      </div>
+      ${field("shippingAddress","Shipping Address（必填）","text","請填寫寄送地址")}
+      ${field("recipientEmail","Recipient Email Address（必填）","email","請填寫收件人 Email")}
+    `;
+  }
+
+  if(currentType==="project_aaakalh_deal_create"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>AAA、KA、LH｜建立 Deal 活動</h3><p class="muted">請先選擇活動類型，系統會依類型自動切換 Case Subject 與對應欄位。</p></div>
+      ${select("aaakalhDealType","活動類型（必填）",["General Deal","PRO Deal","Targeting Deal（新客活動）","BOGO","POS自行設定菜單+專區活動"])}
+      <div id="aaakalhDealNotice" class="notice">⚠️ 請先選擇活動類型，系統才會產生對應的 Case Subject。</div>
+      <div class="grid">
+        ${fixedCard("aaakalhParticipationType","參與類型（自動帶入）")}
+        ${select("aaakalhProgram","Program（必填）",["Always On - Deals","Pro Always On - Deals","Others - Deals"])}
+      </div>
+      <div id="aaakalhTargetingBlock" class="box pink hidden">
+        <h3>Targeting 活動固定資訊</h3>
+        <div class="grid">
+          ${fixedCard("aaakalhTargetingType","Targeting Type（固定）","New Customers")}
+          ${fixedCard("aaakalhDealFixedType","Deal Type（固定）","專屬折扣 20% (MOV$0, 20% off)")}
+        </div>
+      </div>
+      <div id="aaakalhPinkTagBlock">${field("aaakalhPinkTag","Pink Tag（必填）","text","請參考公版文字填寫（須包含空格）")}</div>
+      <div id="aaakalhFixedPinkTagBlock" class="hidden">${fixedCard("aaakalhFixedPinkTag","Pink Tag（固定）")}</div>
+      <div id="aaakalhDescriptionBlock">${textarea("aaakalhDescription","Description（必填）","請參考公版文字填寫（須包含空格）",3)}</div>
+      <div id="aaakalhFixedDescriptionBlock" class="hidden">${fixedCard("aaakalhFixedDescription","Description（固定）")}</div>
+      <div class="grid">
+        ${field("aaakalhPeriodStart","活動開始日期（必填）","date")}
+        ${field("aaakalhPeriodEnd","活動結束日期（必填）","date")}
+      </div>
+      <div id="aaakalhMenuUpdateBlock">${select("aaakalhMenuUpdate","Menu Update（必填）",["YES","NO"])}</div>
+      <div id="aaakalhFixedMenuUpdateBlock" class="hidden">${fixedCard("aaakalhFixedMenuUpdate","Menu Update（固定）")}</div>
+      <div id="aaakalhMenuCategoryBlock" class="hidden">${fixedCard("aaakalhMenuCategory","Menu Category（固定）","指定餐點專區")}</div>
+      <div id="aaakalhPosNotice" class="notice hidden" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 Menu update：Yes，this vendor has updated the menu category by themself.</div>
+      ${field("aaakalhDelivery","Delivery（必填）","text","請填寫 Delivery")}
+      ${field("aaakalhVendorListLink","Vendor List Link（必填）","text","請貼上 Vendor list link")}
+    `;
+  }
+
+  if(currentType==="project_aaakalh_deal_cancel"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>AAA、KA、LH｜Deal 活動取消</h3><p class="muted">適用單店、多店（&gt;10）活動取消。</p></div>
+      <div class="grid">
+        ${field("aaakalhCancelVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("aaakalhCancelVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      ${field("aaakalhCancelSfCase","當初設定活動 SF Case（必填）","text","請填寫當初設定活動 SF Case")}
+      ${field("aaakalhCancelDealName","活動名稱（必填）","text","請填寫活動名稱")}
+      <div class="grid">
+        ${field("aaakalhCancelStartDate","活動開始日期（必填）","date")}
+        ${field("aaakalhCancelEndDate","活動結束日期（必填）","date")}
+      </div>
+      ${textarea("aaakalhCancelReason","取消原因（必填）","請填寫取消原因",5)}
+    `;
+  }
+
+  if(currentType==="project_kalh_deal_menu_update"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>KA、LH｜活動設定 + 修改菜單</h3><p class="muted">請先選擇需求模式，系統會依模式自動切換 Case Subject。</p></div>
+      ${select("kalhDealMode","需求模式（必填）",["單店 / 多店","校稿用"])}
+      <div id="kalhDealMenuNotice" class="notice">⚠️ 請先選擇需求模式，系統才會產生對應的 Case Subject。</div>
+      ${field("kalhDealOppCase","OPP QC Case Number（必填）","text","請填寫 OPP QC case number")}
+      ${select("kalhDealUpdateMode","更新時間（必填）",["立即","指定日期"])}
+      <div id="kalhDealUpdateDateBlock" class="hidden">${field("kalhDealUpdateDate","指定更新日期","date")}</div>
+      ${textarea("kalhDealVendors","更新門市（必填）","請填寫 code + 店家名稱，可換行填寫多筆",4)}
+      ${field("kalhDealType","活動類型（必填）","text","請填寫活動類型")}
+      ${textarea("kalhDealPeriod","活動走期（必填）","請填寫活動走期；走期會放在類別敘述 - CT",3)}
+      ${textarea("kalhDealContent","活動內容（必填）","請填寫活動品項 + 活動原價 + 折扣後金額",4)}
+      ${textarea("kalhDealUpdateDesc","更新內容描述（必填）","如品項有客製化需求請詳述；topping 不可設定加價選擇",5)}
+      <div class="notice" style="color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 如品項有客製化需求請詳述，topping 不可設定加價選擇。若活動為 fp fund，請註記於內容。</div>
+      <div class="grid">
+        ${select("kalhDealExportMenu","是否需匯出菜單（必填）",["Yes","No"])}
+        ${select("kalhDealFpFund","是否為 fp fund（必填）",["Yes","No"])}
+      </div>
+      ${select("kalhDealPhotoNeed","是否有照片相關需求（必填）",["Yes","No"])}
+      <div id="kalhDealPhotoBlock" class="box pink hidden"><h3>【如有照片相關需求，請同附以下資訊】</h3>${textarea("kalhDealPhotoStores","照片更新門市","請填寫 code + 店家名稱，可換行填寫多筆",4)}${field("kalhDealPhotoLink","照片檔案【link】","text","請貼上照片檔案 link")}</div>
+    `;
+  }
+
+  if(currentType==="project_kalh_deal_menu_sync"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>KA、LH｜活動複製菜單</h3><p class="muted">請選擇活動複製類型，系統會依類型自動切換 Case Subject。</p></div>
+      ${select("kalhSyncType","活動複製類型（必填）",["排程","STAT","純上架活動品項"])}
+      <div id="kalhSyncNotice" class="notice">⚠️ 請先選擇活動複製類型，系統才會產生對應的 Case Subject。</div>
+      ${field("kalhSyncOppCase","OPP QC Case Number","text","Voucher 無 OPP 請註記")}
+      ${field("kalhSyncMuCase","承 Deal w/ MU Case","text","請填寫 Case 編號；無對應 MU case 請備註")}
+      <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 校稿完成，再請協助指定日複製菜單後設定活動。</div>
+      <div class="grid">
+        ${select("kalhSyncVoucher","是否為 Voucher 活動（必填）",["Yes","No"])}
+        ${select("kalhSyncExportMenu","是否需匯出菜單（必填）",["Yes","No"])}
+      </div>
+      <div id="kalhSyncVoucherNotice" class="notice hidden" style="color:#dc2626;font-style:italic;font-weight:700;">⚠️ Voucher 活動請註記：【複製後不可踢 chain】</div>
+      <div class="grid">
+        ${field("kalhSyncUpdateDate","更新日期【非假日】（必填）","date")}
+        ${field("kalhSyncUpdateTime","更新時間","time")}
+      </div>
+      <div class="notice" style="color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 若需於特殊時段更新，請備註告知原因。</div>
+      ${textarea("kalhSyncUpdateNote","更新資訊備註","如需暫下何品項請註記；若無預設為開啟",3)}
+      ${field("kalhSyncChainCode","品牌代碼（Chain Code）（必填）","text","請填寫 Chain code")}
+      ${field("kalhSyncMasterMenu","校稿版菜單：code + 店家名稱（必填）","text","請填寫校稿版菜單：code + 店家名稱")}
+      ${select("kalhSyncSupplyStatus","既有品項供應狀態【擇一】（必填）",["Same as Master Vendor (品項同校稿版狀態)","Keep as Outlet Vendor (品項維持原分店狀態)"])}
+      <div id="kalhSyncScheduledBlock" class="box pink hidden"><h3>排程活動資訊</h3>${field("kalhSyncDealType","活動類型","text","請填寫活動類型")}${textarea("kalhSyncDealPeriod","活動走期","請填寫活動走期",3)}${textarea("kalhSyncDealContent","活動內容","請填寫活動品項 + 活動原價 + 折扣後金額",4)}${textarea("kalhSyncDealUpdateDesc","更新內容描述","如品項有客製化需求請詳述；topping 不可設定加價選擇",4)}</div>
+      ${field("kalhSyncVendorList","商家名單【link】（必填）","text","請貼上商家名單 link（code + 店家名稱 + 菜單版本 + chain 狀態）")}
+      ${select("kalhSyncPhotoNeed","是否有照片相關需求（必填）",["Yes","No"])}
+      <div id="kalhSyncPhotoBlock" class="box pink hidden"><h3>【如有照片相關需求，請同附以下資訊】</h3>${textarea("kalhSyncPhotoStores","照片更新門市 / 校稿用","請填寫 code + 店家名稱，可換行填寫多筆",4)}${field("kalhSyncPhotoLink","照片檔案【link】","text","請貼上照片檔案 link")}</div>
+    `;
+  }
+
+  if(currentType==="project_aaa_device_replacement"){
+    area.innerHTML = `
+      ${subjectInput()}
+      ${field("deviceVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+      ${field("deviceVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      ${field("deviceShippingAddress","設備寄送地址（必填）","text","請填寫設備寄送地址")}
+      ${field("deviceSerial","設備序號（必填）","text","請填寫設備序號")}
+      <div class="field">
+        <label>設備問題（必填）</label>
+        <select id="deviceIssue" onchange="validateRequiredVisible(false)">
+          <option value="">請選擇</option>
+          <option value="Battery can't charge（無法充電、充電異常、無法蓄電、充電孔鬆動）">Battery can't charge（無法充電、充電異常、無法蓄電、充電孔鬆動）</option>
+          <option value="Bad system loading（經常當機、設備老舊）">Bad system loading（經常當機、設備老舊）</option>
+          <option value="Auto shut down / Device can't be launch（時常自動關機 / 無法開機、螢幕黑屏）">Auto shut down / Device can't be launch（時常自動關機 / 無法開機、螢幕黑屏）</option>
+          <option value="Printer issue（出單紙模糊、滾輪掉落、無法列印）">Printer issue（出單紙模糊、滾輪掉落、無法列印）</option>
+          <option value="button issue / Volume button issue（電源鍵異常 / 音量鍵異常）">button issue / Volume button issue（電源鍵異常 / 音量鍵異常）</option>
+          <option value="Battery swelling（電池膨脹）">Battery swelling（電池膨脹）</option>
+          <option value="Touchscreen issue（螢幕顯示異常、觸碰異常）">Touchscreen issue（螢幕顯示異常、觸碰異常）</option>
+          <option value="Godroid issue（No Apps Installed）（Godroid app異常，顯示 No Apps Installed）">Godroid issue（No Apps Installed）（Godroid app異常，顯示 No Apps Installed）</option>
+          <option value="Zhuyin input disappear（無中文輸入法，僅限 V2；V2s 請參考 SOP）">Zhuyin input disappear（無中文輸入法，僅限 V2；V2s 請參考 SOP）</option>
+          <option value="Godroid issue（Godroid app異常，無法登入、顯示需聯繫系統管理員）">Godroid issue（Godroid app異常，無法登入、顯示需聯繫系統管理員）</option>
+          <option value="Soti issue（Soti 系統異常，無法遠端、DMS 找不到設備、無法更新）">Soti issue（Soti 系統異常，無法遠端、DMS 找不到設備、無法更新）</option>
+          <option value="Connectivity issue（網路連線異常，無使用 SIM 卡）">Connectivity issue（網路連線異常，無使用 SIM 卡）</option>
+          <option value="Other（其他原因）">Other（其他原因）</option>
+        </select>
+      </div>
+      ${textarea("deviceIssueDesc","問題描述（必填）","請描述設備問題",5)}
+      <div class="notice" style="color:#dc2626;font-style:italic;font-weight:500;">
+        💡 請提供截圖或影片雲端連結確認，並可建議商家開機聯網以利遠端確認。
+      </div>
+    `;
+  }
+
+  
+  if(currentType==="project_store_cancel_deal"){
+    area.innerHTML=`${subjectInput()}
+    <div class="upload"><h3>活動已取消 MMT 截圖</h3><input type="file"></div>
+    ${select("cancelMarkup","【抬價漲幅】",["0%"])}
+    ${select("cancelFull","是否依照菜單更新整份菜單(含價格、新增品項、下架品項)",["是","否"])}
+    ${select("cancelPriceOnly","僅需調整後台品項金額，不需另外上架餐點",["是","否"])}`;
+  }
+
+  if(currentType==="project_store_join_deal"){
+    area.innerHTML=`${subjectInput()}
+    ${select("dealType","活動類型（必填）",["一般","Pro"])}
+    <div class="grid">
+      ${field("dealAmount","滿額門檻","number","100")}
+      ${field("dealDiscount","折扣","text","9")}
+    </div>
+    ${select("dealMarkup","【抬價漲幅】",["12%","20%","0%"])}${markupNote("dealMarkupNote")}
+    ${select("dealFull","是否依照菜單更新整份菜單",["是","否"])}
+    ${select("dealPriceOnly","僅需調整抬價金額，不需另外上架餐點",["是","否"])}
+    ${select("dealPriceItem","僅需調整抬價金額，有提供抬價金額的餐點都需一併上架",["是","否"])}`;
+  }
+
+  if(currentType==="project_store_preview_menu"){
+    area.innerHTML=`${subjectInput()}
+    ${select("previewDealType","活動類型（必填）",["一般","Pro"])}
+    <div class="grid">
+      ${field("previewAmount","滿額門檻","number","100")}
+      ${field("previewDiscount","折扣","text","9")}
+    </div>
+    ${select("previewMarkup","【抬價漲幅】",["12%","20%","0%"])}${markupNote("previewMarkupNote")}
+    ${field("previewStoreMenu","校稿版菜單：店家代碼 + 店家名稱","text","請填寫")}
+    ${select("previewFull2","是否依照菜單更新整份菜單",["是","否"])}
+    ${select("previewPriceOnly2","僅需調整抬價金額，不需另外上架餐點",["是","否"])}
+    ${select("previewPriceItem2","僅需調整抬價金額，有提供抬價金額的餐點都需一併上架",["是","否"])}
+    ${select("previewBag","統一塑膠袋金額",["$1","$2","$3","$4","$5"])}
+    ${textarea("previewBagException","未統一塑膠袋金額之分店","店家代碼+店家名稱+塑膠袋金額",3)}
+    <div class="notice" style="color:#dc2626;font-style:italic">💡 5元(含)以上請附相關公告佐證</div>`;
+  }
+
+  if(currentType==="project_store_menu_sync"){
+    area.innerHTML=`${subjectInput()}
+    ${select("syncDealType","活動類型（必填）",["一般","Pro"])}
+    <div class="grid">
+      ${field("syncAmount","滿額門檻","number","100")}
+      ${field("syncDiscount","折扣","text","9")}
+    </div>
+    ${select("syncMarkup","【抬價漲幅】",["12%","20%","0%"])}${markupNote("syncMarkupNote")}
+    ${field("syncMaster","校稿版菜單：店家代碼 + 店家名稱","text","請填寫")}
+    ${field("syncVendorList","商家名單","text","請貼上 link")}
+    ${select("syncBag","統一塑膠袋金額",["$1","$2","$3","$4","$5"])}
+    ${textarea("syncBagException","未統一塑膠袋金額之分店","店家代碼+店家名稱+塑膠袋金額",3)}
+    <div class="notice" style="color:#dc2626;font-style:italic">💡 5元(含)以上請附相關公告佐證</div>`;
+  }
+
+if(currentType==="project_aaa_deal_menu"){
+    area.innerHTML = `
+      ${select("aaaDealMenuType","活動需求類型（必填）",["修改校稿用菜單（有搭配活動）","活動複製菜單 / 菜單版本同步"])}
+      <div id="aaaDealMenuNotice" class="notice">⚠️ 請先選擇活動需求類型，系統才會產生對應的 Case Subject 與模板欄位。</div>
+      ${subjectInput()}
+      <div id="aaaDealMenuExtra"></div>
+    `;
+  }
+
+  if(currentWorkstream==="project" && ["project_general","project_other"].includes(currentType)){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink">
+        <h3>Project 模板預留區</h3>
+        <p class="muted">此區會依後續 Project 需求新增對應模板欄位。</p>
+      </div>
+      ${textarea("projectDescription","Project 需求說明","可先簡述 Project 需求，正式欄位之後再新增",5)}
+    `;
+  }
+
+  if(["shooting_service","pos_menu_fix","chain_adjust"].includes(currentType)){
+    upload.classList.add("hidden");
+  }
+  if(["use_branch_photos","upload_photo_to_preview","preview_menu_fix","schedule_menu_sync"].includes(currentType)){
+    upload.classList.remove("hidden");
+  }
+  renderConditionalBlocks();
+  refreshSubject();
+  validateRequiredVisible(false);
+}
+
+function renderConditionalBlocks(){
+  const orderSystemFaq = document.getElementById("orderSystemFaqChecked");
+  const orderSystemFaqNotice = document.getElementById("orderSystemFaqNotice");
+  if(orderSystemFaq && orderSystemFaqNotice){
+    orderSystemFaqNotice.classList.toggle("hidden", orderSystemFaq.value !== "No");
+  }
+  const bugIssueFaq = document.getElementById("bugIssueFaqChecked");
+  const bugIssueFaqNotice = document.getElementById("bugIssueFaqNotice");
+  if(bugIssueFaq && bugIssueFaqNotice){
+    bugIssueFaqNotice.classList.toggle("hidden", bugIssueFaq.value !== "No");
+  }
+  const kalhDealUpdateDateBlock = document.getElementById("kalhDealUpdateDateBlock");
+  if(kalhDealUpdateDateBlock){
+    kalhDealUpdateDateBlock.classList.toggle("hidden", val("kalhDealUpdateMode") !== "指定日期");
+  }
+  const kalhDealPhotoBlock = document.getElementById("kalhDealPhotoBlock");
+  if(kalhDealPhotoBlock){
+    kalhDealPhotoBlock.classList.toggle("hidden", val("kalhDealPhotoNeed") !== "Yes");
+  }
+  const kalhSyncScheduledBlock = document.getElementById("kalhSyncScheduledBlock");
+  if(kalhSyncScheduledBlock){
+    kalhSyncScheduledBlock.classList.toggle("hidden", val("kalhSyncType") !== "排程");
+  }
+  const kalhSyncPhotoBlock = document.getElementById("kalhSyncPhotoBlock");
+  if(kalhSyncPhotoBlock){
+    kalhSyncPhotoBlock.classList.toggle("hidden", val("kalhSyncPhotoNeed") !== "Yes");
+  }
+  const kalhSyncVoucherNotice = document.getElementById("kalhSyncVoucherNotice");
+  if(kalhSyncVoucherNotice){
+    kalhSyncVoucherNotice.classList.toggle("hidden", val("kalhSyncVoucher") !== "Yes");
+  }
+
+  const aaakalhDealType = val("aaakalhDealType");
+  setFixedCard("aaakalhParticipationType", aaakalhDealType === "PRO Deal" ? "pandapro" : (aaakalhDealType ? "一般(general)" : ""));
+  setFixedCard("aaakalhTargetingType", "New Customers", "New Customers");
+  setFixedCard("aaakalhDealFixedType", "專屬折扣 20% (MOV$0, 20% off)", "專屬折扣 20% (MOV$0, 20% off)");
+
+  const aaakalhTargetingBlock = document.getElementById("aaakalhTargetingBlock");
+  if(aaakalhTargetingBlock){
+    aaakalhTargetingBlock.classList.toggle("hidden", aaakalhDealType !== "Targeting Deal（新客活動）");
+  }
+
+  const fixedPinkTagByType = {
+    "BOGO": "精選商品 5 折(50% off selects)"
+  };
+  const fixedDescriptionByType = {
+    "Targeting Deal（新客活動）": "【專屬折扣】全館消費 8 折無低消",
+    "BOGO": "指定餐點專區5折優惠(數量有限，售完為止，口味不得挑選。)"
+  };
+  const fixedMenuUpdateByType = {
+    "BOGO": "Yes",
+    "POS自行設定菜單+專區活動": "Yes，this vendor has updated the menu category by themself."
+  };
+
+  const hasFixedPinkTag = !!fixedPinkTagByType[aaakalhDealType];
+  const hasFixedDescription = !!fixedDescriptionByType[aaakalhDealType];
+  const hasFixedMenuUpdate = !!fixedMenuUpdateByType[aaakalhDealType];
+
+  const aaakalhPinkTagBlock = document.getElementById("aaakalhPinkTagBlock");
+  if(aaakalhPinkTagBlock){
+    aaakalhPinkTagBlock.classList.toggle("hidden", aaakalhDealType === "Targeting Deal（新客活動）" || hasFixedPinkTag);
+  }
+  const aaakalhFixedPinkTagBlock = document.getElementById("aaakalhFixedPinkTagBlock");
+  if(aaakalhFixedPinkTagBlock){
+    aaakalhFixedPinkTagBlock.classList.toggle("hidden", !hasFixedPinkTag);
+  }
+  setFixedCard("aaakalhFixedPinkTag", fixedPinkTagByType[aaakalhDealType] || "");
+
+  const aaakalhDescriptionBlock = document.getElementById("aaakalhDescriptionBlock");
+  if(aaakalhDescriptionBlock){
+    aaakalhDescriptionBlock.classList.toggle("hidden", hasFixedDescription);
+  }
+  const aaakalhFixedDescriptionBlock = document.getElementById("aaakalhFixedDescriptionBlock");
+  if(aaakalhFixedDescriptionBlock){
+    aaakalhFixedDescriptionBlock.classList.toggle("hidden", !hasFixedDescription);
+  }
+  setFixedCard("aaakalhFixedDescription", fixedDescriptionByType[aaakalhDealType] || "");
+
+  const aaakalhMenuUpdateBlock = document.getElementById("aaakalhMenuUpdateBlock");
+  if(aaakalhMenuUpdateBlock){
+    aaakalhMenuUpdateBlock.classList.toggle("hidden", aaakalhDealType === "Targeting Deal（新客活動）" || hasFixedMenuUpdate);
+  }
+  const aaakalhFixedMenuUpdateBlock = document.getElementById("aaakalhFixedMenuUpdateBlock");
+  if(aaakalhFixedMenuUpdateBlock){
+    aaakalhFixedMenuUpdateBlock.classList.toggle("hidden", !hasFixedMenuUpdate);
+  }
+  setFixedCard("aaakalhFixedMenuUpdate", fixedMenuUpdateByType[aaakalhDealType] || "");
+
+  const aaakalhMenuCategoryBlock = document.getElementById("aaakalhMenuCategoryBlock");
+  if(aaakalhMenuCategoryBlock){
+    aaakalhMenuCategoryBlock.classList.toggle("hidden", aaakalhDealType !== "BOGO");
+  }
+  setFixedCard("aaakalhMenuCategory", aaakalhDealType === "BOGO" ? "指定餐點專區" : "", "指定餐點專區");
+
+  const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
+  if(aaakalhPosNotice){
+    aaakalhPosNotice.classList.toggle("hidden", aaakalhDealType !== "POS自行設定菜單+專區活動");
+  }
+
+  const aaakalhPinkTag = document.getElementById("aaakalhPinkTag");
+  if(aaakalhPinkTag && !aaakalhPinkTag.value){
+    if(aaakalhDealType === "POS自行設定菜單+專區活動") aaakalhPinkTag.placeholder = "精選商品 XX 折(XX% off selects)";
+    else aaakalhPinkTag.placeholder = "請參考公版文字填寫（須包含空格）";
+  }
+  const aaakalhDescription = document.getElementById("aaakalhDescription");
+  if(aaakalhDescription && !aaakalhDescription.value){
+    if(aaakalhDealType === "PRO Deal") aaakalhDescription.placeholder = "【pro】請參考公版文字填寫（須包含空格）";
+    else if(aaakalhDealType === "POS自行設定菜單+專區活動") aaakalhDescription.placeholder = "指定餐點專區X折優惠(數量有限，售完為止，口味不得挑選。)";
+    else aaakalhDescription.placeholder = "請參考公版文字填寫（須包含空格）";
+  }
+
+  updateMarkupNote("dealMarkup","dealMarkupNote");
+  updateMarkupNote("previewMarkup","previewMarkupNote");
+  updateMarkupNote("syncMarkup","syncMarkupNote");
+  const faqNotice = document.getElementById("displayIssueFaqNotice");
+  if(faqNotice) faqNotice.classList.toggle("hidden", val("displayIssueFaqChecked") !== "No");
+
+  if(currentType==="menu_modify"){
+    const t=val("menuRequestType");
+    const extra=document.getElementById("menuModifyExtra");
+    if(!extra) return;
+    const isPhoto = photoOnly.includes(t);
+
+    const contactBlock = document.getElementById("menuModifyContactBlock");
+    if(contactBlock) contactBlock.classList.toggle("hidden", !needsMenuModifyContact(t));
+
+    const bannerNotice = document.getElementById("bannerPhotoNotice");
+    if(bannerNotice){
+      bannerNotice.classList.toggle("hidden", !(t === "純封面照片修改 (品牌共用)" || t === "純封面照片修改 (指定門市)"));
+    }
+
+    if(!t){
+      extra.innerHTML="";
+      menuModifyExtraRenderedFor="";
+      return;
+    }
+
+    if(menuModifyExtraRenderedFor !== t){
+      menuModifyExtraRenderedFor = t;
+
+      if(isPhoto){
+        const fixedDetail = getPhotoFixedDetail(t);
+        const photoSourceField = t === "純餐點照片修改 (校稿用)"
+          ? field("photoMasterMenu","校稿版菜單：code + 店家名稱","text","請填寫 校稿版菜單：code + 店家名稱")
+          : (t === "純封面照片修改 (品牌共用)" || t === "Logo 照片修改")
+            ? field("photoChain","Chain：Chain code + Chain name","text","例如：TW12345 / Pizza Hut")
+            : "";
+        extra.innerHTML = `<div class="box pink"><h3>照片需求資訊</h3><div class="grid">${select("photoUpdateMode","Update date/time",["NOW","MM/DD before xx:xx as TW time"])}</div><div id="photoCustomTime"></div>${photoSourceField}<div class="box"><b>Detail（固定無法修改）</b><p class="muted">${fixedDetail}</p></div>${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive / Dropbox / 圖片連結")}</div>`;
+      } else if(t === "單店修改"){
+        extra.innerHTML = `${textarea("vendorList","商家名單（必填）","請填寫 商家名單，可換行填寫多筆\n例如：\n123456 Starbucks 台北站前店\n234567 Starbucks 信義店",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive / Dropbox / 圖片連結")}</div></div>`;
+      } else {
+        extra.innerHTML = `${textarea("masterMenuList","校稿版菜單（必填）","請填寫 校稿版菜單，可換行填寫多筆\n例如：\n123456 Starbucks 台北站前店\n234567 Starbucks 信義店",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="grid">${select("exportMenu","是否需匯出菜單",["是","否"])}${select("remoteCodeUpdate","是否更新 POS 串接碼",["是","否"])}</div><div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive / Dropbox / 圖片連結")}</div></div>`;
+      }
+    }
+
+    const customTime = document.getElementById("photoCustomTime");
+    if(customTime){
+      const shouldShowCustomTime = val("photoUpdateMode")==="MM/DD before xx:xx as TW time";
+
+      if(shouldShowCustomTime && !document.getElementById("photoUpdateDate")){
+        customTime.innerHTML = `<div class="grid">${field("photoUpdateDate","Date","date")}${field("photoUpdateTime","Before time（TW time）","time")}</div>`;
+      }
+
+      if(document.getElementById("photoUpdateDate")){
+        customTime.classList.toggle("hidden", !shouldShowCustomTime);
+      }
+    }
+  }
+
+  if(currentType==="menu_copy"){
+    const vendor=val("menuCopyVendorType");
+    const ka=document.getElementById("kaCaseTypeBlock");
+    if(ka) ka.classList.toggle("hidden", vendor !== "KA");
+    if(vendor !== "KA"){ const k=document.getElementById("menuCopyCaseSubjectType"); if(k) k.value=""; }
+  }
+
+  if(currentType==="store_price_label"){
+    const v=val("storePriceVendorType"), extra=document.getElementById("storePriceExtra");
+    if(!extra) return;
+
+    if(!v){
+      extra.innerHTML="";
+      storePriceExtraRenderedFor="";
+      return;
+    }
+
+    if(storePriceExtraRenderedFor !== v){
+      storePriceExtraRenderedFor = v;
+
+      if(v==="AAA" || v==="KA、LH"){
+        extra.innerHTML = `${select("storePriceAction","新增 或 移除 <店內價>標籤（擇一選擇）（必填）",["新增 <店內價> 標籤","移除 <店內價> 標籤"])}
+        ${textarea("storePriceVendorList","更新門市：code + 店家名稱","請填寫要更新的門市 code + 店家名稱，或於下方上傳名單檔案")}
+        <div class="upload">
+          <h3>店內菜單翻拍照</h3>
+          <p>僅接受實體菜單翻拍，不接受電子檔或手寫菜單</p>
+          <div class="field" style="margin-top:14px"><input type="file" multiple></div>
+        </div>`;
+      } else if(v==="一般店"){
+        extra.innerHTML = `${select("storePriceAction","欲加回 或 拔除店內價標籤（擇一選擇）",["欲加回店內價標籤","欲拔除店內價標籤"])}`;
+      }
+    }
+  }
+
+  if(currentType==="export_menu"){
+    const v=val("exportMenuVendorType"), extra=document.getElementById("exportMenuExtra");
+    if(extra) extra.innerHTML = v ? `${textarea("exportMenuVendorInfo","店家資訊：code + 店家名稱","請填寫店家 code + 店家名稱")}<div class="box pink">店家欲串接POS機，需提供全品項總表給POS廠商，再請完成後告知。</div>` : "";
+  }
+
+  if(currentType==="project_aaa_deal_menu"){
+    const t=val("aaaDealMenuType");
+    const extra=document.getElementById("aaaDealMenuExtra");
+    if(!extra) return;
+
+    if(!t){
+      extra.innerHTML="";
+      return;
+    }
+
+    if(t==="修改校稿用菜單（有搭配活動）"){
+      extra.innerHTML = `
+        ${field("aaaDealPreviewMasterMenu","校稿版菜單：店家代碼 + 店家名稱（必填）","text","請填寫校稿版菜單：店家代碼 + 店家名稱")}
+        <div class="notice" style="margin-top:-10px;color:#64748b;font-size:12px;">此為提供校稿版菜單</div>
+        ${field("aaaDealCategoryName","活動類別名稱（必填）","text","請填寫活動類別名稱")}
+        ${textarea("aaaDealCategoryDesc","活動類別敘述","請填寫活動類別敘述",3)}
+        ${textarea("aaaDealItemInfo","活動品項名稱 + 活動原價 +（折扣後金額）（必填）","請填寫活動品項名稱、活動原價與折扣後金額",4)}
+        ${textarea("aaaDealItemDesc","活動品項敘述","請填寫活動品項敘述",3)}
+        ${textarea("aaaDealUpdateDesc","更新內容描述","【類別及品項需同步提供中英文，暫下更新需求請於 Activity Post 中註記】",5)}
+        <div class="notice" style="color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">
+          ※內容務必提供清楚，類別、品項、敘述、code【如品項有客製化需求請詳述】<br>
+          ※如活動為 fp fund 請註記於內容
+        </div>
+        <div class="box pink">
+          <h3>【如有照片相關需求，請同附以下資訊】</h3>
+          ${textarea("aaaDealPhotoStore","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}
+          ${field("aaaDealPhotoLink","照片檔案【link】/ 檔案附件 case 內","text","請貼上照片檔案連結，或於附件上傳")}
+        </div>
+      `;
+    }
+
+    if(t==="活動複製菜單 / 菜單版本同步"){
+      extra.innerHTML = `
+        ${field("aaaDealMuCase","承 Deal w/ MU case（必填）","text","請填寫 Deal w/ MU case")}
+        <div class="grid">
+          ${field("aaaDealUpdateDate","校稿無誤後更新日期【非假日】（必填）","date")}
+          ${field("aaaDealUpdateTime","更新時間（必填）","time")}
+        </div>
+        <div class="notice" style="margin-top:-10px;color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 ※若需於特殊時段更新，請備註告知原因</div>
+        ${field("aaaDealChainCode","Chain code（必填）","text","請填寫 Chain code")}
+        ${field("aaaDealSyncMasterMenu","校稿版菜單：店家代碼 + 店家名稱（必填）","text","請填寫校稿版菜單：店家代碼 + 店家名稱")}
+        <div class="field">
+          <label>既有品項供應狀態【擇一】（必填）</label>
+          <select id="aaaDealSupplyStatus" onchange="validateRequiredVisible(false)">
+            <option value="">請選擇</option>
+            <option value="Same as Master Vendor (品項同校稿版狀態)">Same as Master Vendor (品項同校稿版狀態)</option>
+            <option value="Keep as Outlet Vendor (品項維持原分店狀態)">Keep as Outlet Vendor (品項維持原分店狀態)</option>
+          </select>
+        </div>
+        <div class="box">
+          <b>複製前檢查：</b>
+          <p class="muted">GM可在此備註需開啟 or 隱藏之類別 or 品項，若活動結束請寫明移除某品項 or 整個類別</p>
+        </div>
+        ${field("aaaDealVendorList","商家名單【link】（必填）","text","請貼上商家名單 link（店家代碼 + 店家名稱 + 菜單版本）")}
+        <div class="notice" style="color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 【如有封面照相關需求，請 GM 另建 photo case（可於 case 內指定上傳日期）】</div>
+      `;
+    }
+  }
+}
+
+function computeSubject(){
+  if(currentType==="menu_modify"){
+    const vendor=val("menuVendorType"), req=val("menuRequestType");
+    if(!vendor || !req) return "";
+    const prefix = vendor==="AAA" ? "[AAA]" : "[GMB]";
+    const photoName = vendor==="KA" ? "brand" : vendor;
+    if(req==="校稿用修改") return `${prefix} Menu update (preview needed) (${b()})`;
+    if(req==="單店修改") return `${prefix} Menu update (${b()})`;
+    if(req==="純封面照片修改 (品牌共用)") return `[Photo_SSC] Banner update / ${photoName} / chain level`;
+    if(req==="純封面照片修改 (指定門市)") return `[Photo_SSC] Banner update / ${photoName} / vendor level`;
+    if(req==="純餐點照片修改 (校稿用)") return `[Photo_SSC] Photo update (preview needed) / ${photoName}`;
+    if(req==="純餐點照片修改 (無校稿)") return `[Photo_SSC] Photo upload / ${photoName}`;
+    if(req==="Logo 照片修改") return "RMP Logo Brand Update";
+  }
+  if(currentType==="menu_copy"){
+    const vendor=val("menuCopyVendorType"), kt=val("menuCopyCaseSubjectType");
+    if(vendor==="AAA") return `[AAA] Menu sync (${b()}) (複製日期)`;
+    if(vendor==="KA" && kt==="STAT") return `[GMB] Menu sync (${b()}) (STAT)`;
+    if(vendor==="KA" && kt==="複製日期") return `[GMB] Menu sync (${b()}) (複製日期)`;
+    return "";
+  }
+  if(currentType==="plastic_bag") return `[GMB] Menu update (plastic bag) (${b()})`;
+  if(currentType==="consumer_note"){
+    const v=val("consumerNoteStoreType");
+    if(v==="AAA") return `[AAA] Consumer note setting (${b()})`;
+    if(v==="KA、LH") return `[GMB] Menu update (special instruction) (${b()})`;
+    return "";
+  }
+  if(currentType==="store_price_label"){
+    const v=val("storePriceVendorType");
+    if(v==="AAA") return "[AAA] Dine-in price tag update";
+    if(v==="KA、LH") return "[GMB] Dine-in price tag update";
+    if(v==="一般店") return "[AM] Dine-in price tag update";
+  }
+  if(currentType==="export_menu"){
+    const v=val("exportMenuVendorType");
+    if(v==="KA、LH") return "[GMB] Export product list for POS";
+    if(v==="一般店") return "[AM] Export product list for POS";
+  }
+  if(currentType==="restaurant_info"){
+    const v=val("restaurantInfoStoreType");
+    if(v==="AAA") return `[AAA] Restaurant Description update (${b()})`;
+    if(v==="KA、LH") return `[GMB] Restaurant Description update (${b()})`;
+  }
+  if(currentType==="pos_issue") return `[Special] POS 串接異常 (${b()})`;
+  if(currentType==="use_branch_photos") return "[AM] Photo update / chain vendor";
+  if(currentType==="upload_photo_to_preview") return "[AM] Photo update (preview needed)";
+  if(currentType==="shooting_service") return "[AM] Photo shooting";
+  if(currentType==="pos_menu_fix") return "[AM] Menu update";
+  if(currentType==="preview_menu_fix") return "[AM] Menu update (preview needed)";
+  if(currentType==="schedule_menu_sync") return "[AM] Menu update (menu sync)";
+  if(currentType==="chain_adjust") return "[AM] Chain Adjustment";
+  if(currentType==="project_aaa_deal_menu"){
+    const t=val("aaaDealMenuType");
+    if(t==="修改校稿用菜單（有搭配活動）") return `[AAA] Deal with menu update (preview needed) (${b()}) (複製日期)`;
+    if(t==="活動複製菜單 / 菜單版本同步") return `[AAA] Deal with menu sync (${b()}) (複製日期)`;
+    return "";
+  }
+  if(currentType==="project_kalh_deal_menu_update"){
+    const mode=val("kalhDealMode");
+    if(mode==="單店 / 多店") return "[GMB] Deal with menu update (brand)";
+    if(mode==="校稿用") return "[GMB] Deal with menu update (preview needed) (brand)";
+    return "";
+  }
+  if(currentType==="project_kalh_deal_menu_sync"){
+    const t=val("kalhSyncType");
+    if(t==="排程") return "[GMB] Deal with menu sync (brand) (複製日期)";
+    if(t==="STAT") return "[GMB] Deal with menu sync (brand) (STAT)";
+    if(t==="純上架活動品項") return "[GMB] Deal with menu sync (brand) (special availability) (STAT)";
+    return "";
+  }
+  if(currentType==="project_aaakalh_deal_create"){
+    const t=val("aaakalhDealType");
+    if(t==="General Deal") return "Upgrade/Upsell KAdeal_GM";
+    if(t==="PRO Deal") return "Upgrade/Upsell KAPandaPro_GM";
+    if(t==="Targeting Deal（新客活動）") return "Upgrade/Upsell KA Targeting Customer Deal";
+    if(t==="BOGO") return "Upgrade/Upsell KAdeal / KAPandaPro_GM(BOGO)";
+    if(t==="POS自行設定菜單+專區活動") return "Upgrade/Upsell KAdeal / KAPandaPro_GM(POS)";
+    return "";
+  }
+  if(currentType==="project_aaakalh_deal_cancel") return "Deal Cancel";
+  if(currentType==="project_aaa_device_replacement") return "換機評估";
+  if(currentType==="project_store_cancel_deal") return "[AM] Deal cancelation with menu update";
+  if(currentType==="project_store_join_deal") return "[AM] Deal with menu update";
+  if(currentType==="project_store_preview_menu") return "[AM] Deal with menu update (preview needed)";
+  if(currentType==="project_store_menu_sync") return "[AM] Deal with menu update (menu sync)";
+  if(currentType==="project_portal_change_email") return "商家修改信箱";
+  if(currentType==="project_portal_create_account") return "創建Protal帳號";
+  if(currentType==="project_portal_bind_account") return "商家綁定帳號";
+  if(currentType==="project_portal_radmin_remove") return "Radmin移除商家";
+  if(currentType==="project_portal_adjust_permission") return "商家調整權限";
+  if(currentType==="project_portal_copy_branch_button") return "複製到分店按鈕";
+  if(currentType==="project_login_forgot_password") return "商家忘記密碼";
+  if(currentType==="project_login_add_phone") return "新增手機號碼作為第二登入方式";
+  if(currentType==="project_special_hours") return "Backoffice 設置特殊營業時間";
+  if(currentType==="project_takeout_setting") return "商家外帶自取設定";
+  if(currentType==="project_takeout_time") return "更改外帶自取時間";
+  if(currentType==="project_display_device_issue") return "前後台顯示、設備串接異常回報";
+  if(currentType==="project_preorder_adjust") return "預訂單功能調整";
+  if(currentType==="project_auto_accept_adjust") return "自動接單調整";
+  if(currentType==="project_prep_time_adjust") return "製餐時間調整";
+  if(currentType==="project_prep_time_query") return "製餐時間查詢";
+  if(currentType==="project_bug_issue") return "BUG異常-接單系統異常";
+  if(currentType==="project_order_system_issue") return "BUG異常-接單系統異常";
+  if(currentType==="project_transmission_device"){
+    const issue = val("transmissionDeviceIssue");
+    return issue ? `Transmission Device :: ${issue}` : "";
+  }
+  if(currentType==="project_general") return `[Project] ${b()}`;
+  if(currentType==="project_other") return `[Project] Other (${b()})`;
+  return "";
+}
+function refreshSubject(){
+  const s=document.getElementById("caseSubject");
+  const wrap=document.getElementById("subjectWrap");
+  const subject=computeSubject();
+  if(s){
+    s.textContent = subject || "尚未產生";
+    s.classList.toggle("empty", !subject);
+  }
+  if(wrap) wrap.classList.toggle("hidden", !subject);
+  ["menuModifyNotice","menuCopyNotice","storePriceNotice","exportMenuNotice","restaurantNotice","consumerNoteNotice","aaaDealMenuNotice","kalhDealMenuNotice","kalhSyncNotice","aaakalhDealNotice"].forEach(id=>{
+    const n=document.getElementById(id);
+    if(n) n.classList.toggle("hidden", !!subject);
+  });
+}
+function submitPreview(){
+  if(!validateRequiredVisible(true)) return;
+  go(5);
+}
+function confirmSubmit(){
+  document.getElementById("statusText").textContent="已送出";
+  go(6);
+}
+function row(label,value){ return `<div class="summary-row"><b>${label}</b><span>${value || "未填寫"}</span></div>`; }
+function renderSummary(){
+  document.getElementById("summaryBasic").innerHTML = [
+    row("品牌 / 門市完整名稱",showVal("brand")),
+    row("負責窗口",showVal("am")),
+    row("需求類別",currentWorkstream ? (currentWorkstream === "menu" ? "Menu" : "Project") : "未填寫"),
+    row("需求",currentType ? typeInfo[currentType][0] : "未填寫"),
+    row("Case Subject",computeSubject() || "未產生")
+  ].join("");
+
+  let rows=[];
+
+  if(currentType==="menu_modify"){
+    rows.push(
+      row("店家類型",showVal("menuVendorType")),
+      row("菜單需求類型",showVal("menuRequestType"))
+    );
+
+    const req = val("menuRequestType");
+    if(needsMenuModifyContact(req)){
+      rows.push(
+        row("主要校稿信箱",showVal("contact")),
+        row("CC Email",showVal("cc"))
+      );
+    }
+
+    if(photoOnly.includes(req)){
+      rows.push(row("Update date/time",getPhotoUpdateDateTimeSummary()));
+      if(req === "純餐點照片修改 (校稿用)"){
+        rows.push(row("校稿版菜單：code + 店家名稱",showVal("photoMasterMenu")));
+      }
+      if(req === "純封面照片修改 (品牌共用)" || req === "Logo 照片修改"){
+        rows.push(row("Chain：Chain code + Chain name",showVal("photoChain")));
+      }
+      rows.push(
+        row("Detail",getPhotoFixedDetail(req)),
+        row("照片更新門市 / 校稿用",showMultilineVal("photoStoreList")),
+        row("Photo link",showVal("photoLink"))
+      );
+    }else if(req === "單店修改"){
+      rows.push(
+        row("商家名單",showMultilineVal("vendorList")),
+        row("更新內容描述",showMultilineVal("updateDescription")),
+        row("照片更新門市 / 校稿用",showMultilineVal("photoStoreList")),
+        row("Photo link",showVal("photoLink"))
+      );
+    }else{
+      rows.push(
+        row("校稿版菜單",showMultilineVal("masterMenuList")),
+        row("更新內容描述",showMultilineVal("updateDescription")),
+        row("是否需匯出菜單",showVal("exportMenu")),
+        row("是否更新 POS 串接碼",showVal("remoteCodeUpdate")),
+        row("照片更新門市 / 校稿用",showMultilineVal("photoStoreList")),
+        row("Photo link",showVal("photoLink"))
+      );
+    }
+  }
+
+  if(currentType==="menu_copy"){
+    rows.push(
+      row("店家類型",showVal("menuCopyVendorType")),
+      row("菜單需求類型",showVal("menuCopyRequestType"))
+    );
+    if(val("menuCopyVendorType")==="KA"){
+      rows.push(row("KA Case Subject 類型",showVal("menuCopyCaseSubjectType")));
+    }
+    rows.push(
+      row("承 MU case",showVal("muCase")),
+      row("更新日期【非假日】",showVal("updateDate")),
+      row("更新時間",showVal("updateTime")),
+      row("特殊時段更新備註 / 原因簡述",showVal("updateDateNote")),
+      row("Chain code",showVal("chainCode")),
+      row("校稿版菜單",showVal("copyMasterMenu")),
+      row("既有品項供應狀態",showVal("itemSupplyStatus")),
+      row("商家名單（連結）",showVal("vendorListLink")),
+      row("全門市塑膠袋更新備註",showMultilineVal("plasticBagNote"))
+    );
+  }
+
+  if(currentType==="plastic_bag"){
+    rows.push(
+      row("塑膠袋金額",showVal("plasticBagAmount")),
+      row("適用門市 / 商家名單",showVal("plasticBagVendorList"))
+    );
+  }
+
+  if(currentType==="consumer_note"){
+    rows.push(
+      row("店家類型",showVal("consumerNoteStoreType")),
+      row("操作類型",showVal("consumerNoteMode")),
+      row("品牌 / Chain code",showVal("specialVendorList"))
+    );
+  }
+
+  if(currentType==="store_price_label"){
+    rows.push(
+      row("店家類型",showVal("storePriceVendorType")),
+      row("更新門市：code + 店家名稱",showMultilineVal("storePriceVendorList")),
+      row("店內價標籤操作",showVal("storePriceAction"))
+    );
+  }
+
+  if(currentType==="export_menu"){
+    rows.push(
+      row("店家類型",showVal("exportMenuVendorType")),
+      row("店家資訊：code + 店家名稱",showVal("exportMenuVendorInfo")),
+      row("固定說明","店家欲串接POS機，需提供全品項總表給POS廠商，再請完成後告知。")
+    );
+  }
+
+  if(currentType==="restaurant_info"){
+    rows.push(
+      row("店家類型",showVal("restaurantInfoStoreType")),
+      row("新增 / 修改 / 刪除 餐廳資訊欄內容",showVal("restaurantInfoAction")),
+      row("調整內容",showMultilineVal("restaurantVendorList"))
+    );
+  }
+
+  if(currentType==="pos_issue"){
+    rows.push(
+      row("店家代碼",showVal("posVendorCode")),
+      row("店家名稱",showVal("posVendorName")),
+      row("狀況描述",showMultilineVal("posIssueDescription"))
+    );
+  }
+
+  if(currentType==="use_branch_photos"){
+    rows.push(
+      row("Please help sync photos from",showVal("branchPhotoSource")),
+      row("商家名單",showMultilineVal("branchPhotoVendorList"))
+    );
+  }
+
+  if(currentType==="upload_photo_to_preview"){
+    rows.push(
+      row("校稿版菜單：code + name",showVal("previewPhotoMasterMenu"))
+    );
+  }
+
+  if(currentType==="shooting_service"){
+    rows.push(
+      row("可聯繫時段",showVal("shootingAvailableTime")),
+      row("聯絡人",showVal("shootingContactPerson")),
+      row("電話",showVal("shootingPhone"))
+    );
+  }
+
+  if(currentType==="pos_menu_fix"){
+    rows.push(
+      row("固定內容","【AMops需先向國際提此商家斷串，斷串後再建case】此商家菜單遭到POS廠商誤串接．導致菜單被覆蓋，再請協助移除目前所有品項，並依照以下內容建置，謝謝。"),
+      row("店家代碼 + 店家名稱",showVal("posMenuFixVendor")),
+      row("POS廠商",showVal("posMenuFixProvider")),
+      row("菜單回復後是否需重新串接",showVal("posMenuFixReconnect")),
+      row("菜單連結：(link)",showVal("posMenuFixMenuLink")),
+      row("菜單、客製化建置說明",showMultilineVal("posMenuFixBuildNote"))
+    );
+  }
+
+  if(currentType==="preview_menu_fix"){
+    rows.push(
+      row("修改校稿版本：code + 店家名稱",showVal("previewMenuFixVendor")),
+      row("是否依照店內菜單更新整份平台菜單",showVal("previewMenuFullUpdate")),
+      row("僅需調整金額，不需另外上架餐點",showVal("previewMenuPriceOnly")),
+      row("調整金額，同時新增或更改餐點",showVal("previewMenuPriceAndItem")),
+      row("統一塑膠袋金額",showVal("previewMenuPlasticBagAmount")),
+      row("未統一塑膠袋金額之分店",showMultilineVal("previewMenuPlasticBagException"))
+    );
+  }
+
+  if(currentType==="schedule_menu_sync"){
+    rows.push(
+      row("承MU CASE",showVal("scheduleMuCase")),
+      row("校稿版菜單：code + 店家名稱",showVal("scheduleMasterMenu")),
+      row("統一塑膠袋金額",showVal("schedulePlasticBagAmount")),
+      row("未統一塑膠袋金額之分店",showMultilineVal("schedulePlasticBagException")),
+      row("更新日期",showVal("scheduleSyncDate")),
+      row("更新時間",showVal("scheduleSyncTime"))
+    );
+  }
+
+  if(currentType==="chain_adjust"){
+    rows.push(
+      row("Vendor detail（更新內容說明）",showMultilineVal("chainAdjustVendorDetail"))
+    );
+  }
+
+
+
+  if(currentType==="project_portal_change_email"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫商家目前綁定信箱與欲修改的新信箱。</p></div>
+      ${portalVendorGrid()}
+      <div class="grid">
+        ${field("portalOriginalEmail","原綁定 Email（必填）","email","請填寫原綁定 Email")}
+        ${select("portalRemoveOriginalEmail","是否移除原綁定 Email（必填）",["是","否"])}
+      </div>
+      ${field("portalNewEmail","需修改的新 Email（必填）","email","請填寫需修改的新 Email")}
+      ${portalNote()}
+    `;
+  }
+
+  if(currentType==="project_portal_create_account"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫欲建立的 Portal 帳號資訊。</p></div>
+      ${portalVendorGrid()}
+      <div class="grid">
+        ${field("portalAccountName","創建帳號名稱（必填）","text","請填寫創建帳號名稱")}
+        ${field("portalEmail","Email（必填）","email","請填寫 Email")}
+      </div>
+      ${field("portalPermission","權限（必填）","text","請填寫權限")}
+      ${portalNote()}
+    `;
+  }
+
+  if(currentType==="project_portal_bind_account"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫商家與需綁定的帳號 Email。</p></div>
+      ${portalVendorGrid()}
+      ${field("portalBindEmail","需綁定的 Email（必填）","email","請填寫需綁定的 Email")}
+      ${portalNote()}
+    `;
+  }
+
+  if(currentType==="project_portal_radmin_remove"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫需從 Radmin 移除的商家與原綁定 Email。</p></div>
+      ${portalVendorGrid()}
+      ${field("portalOriginalEmail","原綁定 Email（必填）","email","請填寫原綁定 Email")}
+      ${portalNote()}
+    `;
+  }
+
+  if(currentType==="project_portal_adjust_permission"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫欲調整權限的 Email 與目標權限。</p></div>
+      ${portalVendorGrid()}
+      <div class="grid">
+        ${field("portalEmail","Email（必填）","email","請填寫 Email")}
+        ${field("portalPermission","權限需調整為（必填）","text","請填寫需調整為的權限")}
+      </div>
+      ${portalNote()}
+    `;
+  }
+
+  if(currentType==="project_portal_copy_branch_button"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box">
+        <h3>複製到分店按鈕</h3>
+        <p class="muted">※ 複製菜單需求，請務必等菜單建置完成（MP Case 關閉）後做申請。</p>
+      </div>
+      ${select("copyBranchNeed","1. 商家反映需求（必填）",["申請【複製到分店】按鈕","已有【複製到分店】按鈕，需再新增其他可複製分店"])}
+      ${select("copyBranchStoreType","2. 商家類型（必填）",["一般商家","KA品牌之分店門市"])}
+      ${textarea("copyBranchChildVendors","3. 欲開啟複製功能的分店（子菜單）：code + 店家名稱（必填）","申請多店家請換行填寫",5)}
+      ${field("copyBranchMasterVendor","4. 複製這間分店菜單（母菜單）：code + 店家名稱（必填）","text","請填寫母菜單 code + 店家名稱")}
+      ${field("copyBranchEmail","5. 欲綁定帳號的 Email（必填）","email","請填寫 Email")}
+    `;
+  }
+
+
+  if(currentType==="project_auto_accept_adjust"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>自動接單調整</h3><p class="muted">目前僅提供設置 30、90、300 秒，請選擇秒數並詳述調整原因。</p></div>
+      <div class="grid">
+        ${field("autoAcceptVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("autoAcceptVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      ${select("autoAcceptSeconds","詳述秒數（必填）",["30秒","90秒","300秒"])}
+      ${textarea("autoAcceptReason","請詳述調整原因（必填）","請填寫調整原因",5)}
+    `;
+  }
+
+  if(currentType==="project_prep_time_adjust"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>製餐時間調整</h3><p class="muted">請填寫欲調整的分鐘數與商家調整理由。</p></div>
+      <div class="grid">
+        ${field("prepAdjustVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("prepAdjustVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      ${field("prepAdjustMinutes","調整的分鐘數（必填）","number","請填寫分鐘數")}
+      ${textarea("prepAdjustReason","須提供商家調整的理由（必填）","請填寫商家調整的理由",5)}
+      ${textarea("prepAdjustRemark","備註","請填寫補充說明，可留空",3)}
+    `;
+  }
+
+  if(currentType==="project_prep_time_query"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>製餐時間查詢</h3><p class="muted">可單店查詢或 Chain 查詢；若無特別指定，將提供近一個月的平均製餐時間。</p></div>
+      <div class="grid">
+        ${field("prepQueryVendorCode","店家代碼","text","單店查詢請填寫店家代碼")}
+        ${field("prepQueryChainCode","Chain Code","text","Chain 查詢請填寫 Chain Code")}
+      </div>
+      ${textarea("prepQueryNeed","請詳述品牌需求（必填）","請詳述品牌需求，例如查詢範圍、指定期間或特定門市",5)}
+      <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 可單店查詢或 Chain 查詢；若無特別指定，將提供近一個月的平均製餐時間。</div>
+    `;
+  }
+
+  if(currentType==="project_bug_issue"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>BUG異常</h3><p class="muted">請提供訂單資訊、問題描述與截圖 / 影片，方便快速判斷異常。</p></div>
+      <div class="grid">
+        ${field("bugIssueVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("bugIssueVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      ${field("bugIssueOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
+      ${select("bugIssueType","問題類型（必填）",["接單系統異常","前台顯示異常","後台顯示異常","設備異常","其他"])}
+      ${textarea("bugIssueDesc","問題描述（必填）","請描述問題發生情境、影響範圍與已確認事項",5)}
+      <div class="upload" style="background:white"><h3>截圖 / 影片</h3><p>請上傳可協助判斷問題的截圖或影片。</p><div class="field" style="margin-top:14px"><input id="bugIssueFiles" type="file" multiple></div></div>
+      ${select("bugIssueUrgency","回覆時效（必填）",["一般","緊急"])}
+      ${select("bugIssueFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
+      <div id="bugIssueFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
+    `;
+  }
+
+  if(currentType==="project_order_system_issue"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>接單系統異常</h3><p class="muted">請提供訂單資訊、問題描述與截圖 / 影片，方便快速判斷異常。</p></div>
+      <div class="grid">
+        ${field("orderSystemVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+        ${field("orderSystemVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+      </div>
+      ${field("orderSystemOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
+      ${select("orderSystemIssueType","問題類型（必填）",["接單系統異常","無法接單","訂單未進單","訂單狀態異常","其他"])}
+      ${textarea("orderSystemIssueDesc","問題描述（必填）","請描述接單系統異常狀況",5)}
+      <div class="upload" style="background:white"><h3>截圖 / 影片</h3><p>請上傳可協助判斷問題的截圖或影片。</p><div class="field" style="margin-top:14px"><input id="orderSystemFiles" type="file" multiple></div></div>
+      ${select("orderSystemUrgency","回覆時效（必填）",["一般","緊急"])}
+      ${select("orderSystemFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
+      <div id="orderSystemFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
+    `;
+  }
+
+  if(currentType==="project_transmission_device"){
+    area.innerHTML = `${subjectInput()}
+      <div class="box pink portal-template-box"><h3>設備問題</h3><p class="muted">請填寫設備資訊、Issue、截圖 / 影片雲端連結與收件資訊。</p></div>
+      <div class="grid">
+        ${field("transmissionVendorName","店家名稱（必填）","text","請填寫店家名稱")}
+        ${field("transmissionVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
+      </div>
+      ${field("transmissionSerial","設備序號（必填）","text","請填寫設備序號")}
+      ${select("transmissionDeviceIssue","Issue（必填）",["Battery can't charge｜無法充電、充電異常、無法蓄電、充電孔鬆動","Bad system loading｜經常當機、設備老舊","Auto shut down / Device can't be launch｜時常自動關機 / 無法開機、螢幕黑屏","Printer issue｜出單紙模糊、滾輪掉落、無法列印","button issue / Volume button issue｜電源鍵異常 / 音量鍵異常","Battery swelling｜電池膨脹","Touchscreen issue｜螢幕顯示異常、觸碰異常","Godroid issue（No Apps Installed）｜Godroid app異常（顯示 No Apps Installed）","Zhuyin input disappear｜無中文輸入法，僅限 V2（V2s 請參考 SOP）","Godroid issue｜Godroid app異常（無法登入、顯示需聯繫系統管理員）","Soti issue｜Soti 系統異常（無法遠端、DMS 找不到設備、無法更新）","Connectivity issue｜網路連線異常（無使用 SIM 卡）","Other｜其他原因"])}
+      <div class="box"><b>Resolution（固定）</b><p class="muted">is there any action require: yes, escalate to saleforce sales</p></div>
+      ${field("transmissionMediaLink","截圖或影片雲端連結（必填）","text","請貼上截圖或影片雲端連結")}
+      <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 可建議商家開機聯網，以利遠端確認。</div>
+      <div class="grid">
+        ${field("recipientName","Recipient Name（必填）","text","請填寫收件人姓名")}
+        ${field("recipientContactNumber","Recipient Contact Number（必填）","tel","請填寫收件人電話")}
+      </div>
+      ${field("shippingAddress","Shipping Address（必填）","text","請填寫寄送地址")}
+      ${field("recipientEmail","Recipient Email Address（必填）","email","請填寫收件人 Email")}
+    `;
+  }
+
+  if(currentType==="project_aaakalh_deal_create"){
+    const dealType = val("aaakalhDealType");
+    rows.push(
+      row("活動類型",showVal("aaakalhDealType")),
+      row("參與類型",showVal("aaakalhParticipationType"))
+    );
+    if(dealType==="Targeting Deal（新客活動）"){
+      rows.push(
+        row("Targeting Type","New Customers"),
+        row("Deal Type","專屬折扣 20% (MOV$0, 20% off)")
+      );
+    }
+    if(dealType==="BOGO"){
+      rows.push(row("Pink Tag",showVal("aaakalhFixedPinkTag")));
+    }else if(dealType!=="Targeting Deal（新客活動）"){
+      rows.push(row("Pink Tag",showVal("aaakalhPinkTag")));
+    }
+    rows.push(
+      row("Description", dealType==="Targeting Deal（新客活動）" || dealType==="BOGO" ? showVal("aaakalhFixedDescription") : showMultilineVal("aaakalhDescription")),
+      row("活動開始日期",showVal("aaakalhPeriodStart")),
+      row("活動結束日期",showVal("aaakalhPeriodEnd"))
+    );
+    if(dealType==="BOGO" || dealType==="POS自行設定菜單+專區活動"){
+      rows.push(row("Menu Update",showVal("aaakalhFixedMenuUpdate")));
+    }else if(dealType!=="Targeting Deal（新客活動）"){
+      rows.push(row("Menu Update",showVal("aaakalhMenuUpdate")));
+    }
+    if(dealType==="BOGO"){
+      rows.push(row("Menu Category",showVal("aaakalhMenuCategory")));
+    }
+    rows.push(
+      row("Program",showVal("aaakalhProgram")),
+      row("Delivery",showVal("aaakalhDelivery")),
+      row("Vendor List Link",showVal("aaakalhVendorListLink"))
+    );
+  }
+
+  if(currentType==="project_aaakalh_deal_cancel"){
+    rows.push(
+      row("店家代碼",showVal("aaakalhCancelVendorCode")),
+      row("店家名稱",showVal("aaakalhCancelVendorName")),
+      row("當初設定活動 SF Case",showVal("aaakalhCancelSfCase")),
+      row("活動名稱",showVal("aaakalhCancelDealName")),
+      row("活動開始日期",showVal("aaakalhCancelStartDate")),
+      row("活動結束日期",showVal("aaakalhCancelEndDate")),
+      row("取消原因",showMultilineVal("aaakalhCancelReason"))
+    );
+  }
+
+  if(currentType==="project_kalh_deal_menu_update"){
+    rows.push(
+      row("需求模式",showVal("kalhDealMode")),
+      row("OPP QC Case Number",showVal("kalhDealOppCase")),
+      row("更新時間",val("kalhDealUpdateMode")==="指定日期" ? showVal("kalhDealUpdateDate") : showVal("kalhDealUpdateMode")),
+      row("更新門市",showMultilineVal("kalhDealVendors")),
+      row("活動類型",showVal("kalhDealType")),
+      row("活動走期",showMultilineVal("kalhDealPeriod")),
+      row("活動內容",showMultilineVal("kalhDealContent")),
+      row("更新內容描述",showMultilineVal("kalhDealUpdateDesc")),
+      row("是否需匯出菜單",showVal("kalhDealExportMenu")),
+      row("是否為 fp fund",showVal("kalhDealFpFund")),
+      row("是否有照片需求",showVal("kalhDealPhotoNeed"))
+    );
+    if(val("kalhDealPhotoNeed")==="Yes"){
+      rows.push(
+        row("照片更新門市",showMultilineVal("kalhDealPhotoStores")),
+        row("照片檔案 Link",showVal("kalhDealPhotoLink"))
+      );
+    }
+  }
+
+  if(currentType==="project_kalh_deal_menu_sync"){
+    rows.push(
+      row("活動複製類型",showVal("kalhSyncType")),
+      row("OPP QC Case Number",showVal("kalhSyncOppCase")),
+      row("承 Deal w/ MU Case",showVal("kalhSyncMuCase")),
+      row("是否為 Voucher 活動",showVal("kalhSyncVoucher")),
+      row("更新日期【非假日】",showVal("kalhSyncUpdateDate")),
+      row("更新時間",showVal("kalhSyncUpdateTime")),
+      row("更新資訊備註",showMultilineVal("kalhSyncUpdateNote")),
+      row("品牌代碼（Chain Code）",showVal("kalhSyncChainCode")),
+      row("校稿版菜單",showVal("kalhSyncMasterMenu")),
+      row("既有品項供應狀態",showVal("kalhSyncSupplyStatus")),
+      row("商家名單【link】",showVal("kalhSyncVendorList")),
+      row("是否需匯出菜單",showVal("kalhSyncExportMenu")),
+      row("是否有照片需求",showVal("kalhSyncPhotoNeed"))
+    );
+    if(val("kalhSyncType")==="排程"){
+      rows.push(
+        row("活動類型",showVal("kalhSyncDealType")),
+        row("活動走期",showMultilineVal("kalhSyncDealPeriod")),
+        row("活動內容",showMultilineVal("kalhSyncDealContent")),
+        row("更新內容描述",showMultilineVal("kalhSyncDealUpdateDesc"))
+      );
+    }
+    if(val("kalhSyncPhotoNeed")==="Yes"){
+      rows.push(
+        row("照片更新門市 / 校稿用",showMultilineVal("kalhSyncPhotoStores")),
+        row("照片檔案 Link",showVal("kalhSyncPhotoLink"))
+      );
+    }
+  }
+
+  if(currentType==="project_aaa_device_replacement"){
+    rows.push(
+      row("店家代碼",showVal("deviceVendorCode")),
+      row("店家名稱",showVal("deviceVendorName")),
+      row("設備寄送地址",showVal("deviceShippingAddress")),
+      row("設備序號",showVal("deviceSerial")),
+      row("設備問題",showVal("deviceIssue")),
+      row("問題描述",showMultilineVal("deviceIssueDesc"))
+    );
+  }
+
+  if(currentType==="project_aaa_deal_menu"){
+    const t = val("aaaDealMenuType");
+    rows.push(row("活動需求類型",showVal("aaaDealMenuType")));
+
+    if(t==="修改校稿用菜單（有搭配活動）"){
+      rows.push(
+        row("校稿版菜單：店家代碼 + 店家名稱",showVal("aaaDealPreviewMasterMenu")),
+        row("活動類別名稱",showVal("aaaDealCategoryName")),
+        row("活動類別敘述",showMultilineVal("aaaDealCategoryDesc")),
+        row("活動品項名稱 + 活動原價 +（折扣後金額）",showMultilineVal("aaaDealItemInfo")),
+        row("活動品項敘述",showMultilineVal("aaaDealItemDesc")),
+        row("更新內容描述",showMultilineVal("aaaDealUpdateDesc")),
+        row("照片更新門市 / 校稿用",showMultilineVal("aaaDealPhotoStore")),
+        row("照片檔案",showVal("aaaDealPhotoLink"))
+      );
+    }
+
+    if(t==="活動複製菜單 / 菜單版本同步"){
+      rows.push(
+        row("承 Deal w/ MU case",showVal("aaaDealMuCase")),
+        row("校稿無誤後更新日期【非假日】",showVal("aaaDealUpdateDate")),
+        row("更新時間",showVal("aaaDealUpdateTime")),
+        row("Chain code",showVal("aaaDealChainCode")),
+        row("校稿版菜單：店家代碼 + 店家名稱",showVal("aaaDealSyncMasterMenu")),
+        row("既有品項供應狀態",showVal("aaaDealSupplyStatus")),
+        row("複製前檢查","GM可在此備註需開啟 or 隱藏之類別 or 品項，若活動結束請寫明移除某品項 or 整個類別"),
+        row("商家名單【link】",showVal("aaaDealVendorList"))
+      );
+    }
+  }
+
+  if(["project_portal_change_email","project_portal_create_account","project_portal_bind_account","project_portal_radmin_remove","project_portal_adjust_permission"].includes(currentType)){
+    rows.push(
+      row("店家代碼",showVal("portalVendorCode")),
+      row("店家名稱",showVal("portalVendorName"))
+    );
+    if(currentType==="project_portal_change_email"){
+      rows.push(
+        row("原綁定 Email",showVal("portalOriginalEmail")),
+        row("是否移除原綁定 Email",showVal("portalRemoveOriginalEmail")),
+        row("需修改的新 Email",showVal("portalNewEmail"))
+      );
+    }
+    if(currentType==="project_portal_create_account"){
+      rows.push(
+        row("創建帳號名稱",showVal("portalAccountName")),
+        row("Email",showVal("portalEmail")),
+        row("權限",showVal("portalPermission"))
+      );
+    }
+    if(currentType==="project_portal_bind_account"){
+      rows.push(row("需綁定的 Email",showVal("portalBindEmail")));
+    }
+    if(currentType==="project_portal_radmin_remove"){
+      rows.push(row("原綁定 Email",showVal("portalOriginalEmail")));
+    }
+    if(currentType==="project_portal_adjust_permission"){
+      rows.push(
+        row("Email",showVal("portalEmail")),
+        row("權限需調整為",showVal("portalPermission"))
+      );
+    }
+    rows.push(row("備註",showMultilineVal("portalRemark")));
+  }
+
+  if(currentType==="project_portal_copy_branch_button"){
+    rows.push(
+      row("商家反映需求",showVal("copyBranchNeed")),
+      row("商家類型",showVal("copyBranchStoreType")),
+      row("欲開啟複製功能的分店（子菜單）",showMultilineVal("copyBranchChildVendors")),
+      row("複製這間分店菜單（母菜單）",showVal("copyBranchMasterVendor")),
+      row("欲綁定帳號的 Email",showVal("copyBranchEmail"))
+    );
+  }
+  if(currentType==="project_login_forgot_password"){
+    rows.push(
+      row("店家代碼",showVal("loginVendorCode")),
+      row("店家 Email",showVal("loginVendorEmail")),
+      row("備註",showMultilineVal("loginRemark"))
+    );
+  }
+
+  if(currentType==="project_login_add_phone"){
+    rows.push(
+      row("店家代碼",showVal("loginVendorCode")),
+      row("店家 Email",showVal("loginVendorEmail")),
+      row("手機號碼",showVal("loginPhone"))
+    );
+  }
+
+  if(currentType==="project_special_hours"){
+    rows.push(
+      row("店家代碼",showVal("specialHoursVendorCode")),
+      row("店家名稱",showVal("specialHoursVendorName")),
+      row("需設定特殊營業時間日期",`${showVal("specialHoursStartDate")} - ${showVal("specialHoursEndDate")}`),
+      row("特殊調整日期／特殊營業時間設定",showMultilineVal("specialHoursDetail")),
+      row("備註",showMultilineVal("specialHoursRemark"))
+    );
+  }
+
+
+  if(currentType==="project_takeout_setting"){
+    rows.push(
+      row("店家代碼",showVal("takeoutVendorCode")),
+      row("店家名稱",showVal("takeoutVendorName")),
+      row("外帶自取設定",showVal("takeoutMode")),
+      row("備註",showMultilineVal("takeoutRemark"))
+    );
+  }
+
+  if(currentType==="project_takeout_time"){
+    rows.push(
+      row("店家代碼",showVal("takeoutVendorCode")),
+      row("店家名稱",showVal("takeoutVendorName")),
+      row("設定時間",`${showVal("takeoutStartTime")} - ${showVal("takeoutEndTime")}`),
+      row("備註",showMultilineVal("takeoutRemark"))
+    );
+  }
+
+  if(currentType==="project_display_device_issue"){
+    rows.push(
+      row("店家代碼",showVal("displayIssueVendorCode")),
+      row("店家名稱",showVal("displayIssueVendorName")),
+      row("訂單編號",showVal("displayIssueOrderNumber")),
+      row("問題類型",showVal("displayIssueType")),
+      row("問題描述",showMultilineVal("displayIssueDesc")),
+      row("截圖 / 影片","請確認是否已於附件上傳"),
+      row("回覆時效",showVal("displayIssueUrgency")),
+      row("是否已查詢 AM 常見問題彙整表單",showVal("displayIssueFaqChecked"))
+    );
+  }
+
+  if(currentType==="project_preorder_adjust"){
+    rows.push(
+      row("店家代碼",showVal("preorderVendorCode")),
+      row("店家名稱",showVal("preorderVendorName")),
+      row("關閉原因說明",showMultilineVal("preorderCloseReason")),
+      row("預計關閉時間",showVal("preorderCloseTime")),
+      row("預計開啟時間",showVal("preorderOpenTime")),
+      row("小提醒","無法設置永久關閉，須提供重新開啟的時間，且關閉及開啟的時間需統一")
+    );
+  }
+
+  if(currentType==="project_auto_accept_adjust"){
+    rows.push(
+      row("店家代碼",showVal("autoAcceptVendorCode")),
+      row("店家名稱",showVal("autoAcceptVendorName")),
+      row("詳述秒數",showVal("autoAcceptSeconds")),
+      row("調整原因",showMultilineVal("autoAcceptReason"))
+    );
+  }
+
+  if(currentType==="project_prep_time_adjust"){
+    rows.push(
+      row("店家代碼",showVal("prepAdjustVendorCode")),
+      row("店家名稱",showVal("prepAdjustVendorName")),
+      row("調整的分鐘數",showVal("prepAdjustMinutes")),
+      row("商家調整的理由",showMultilineVal("prepAdjustReason")),
+      row("備註",showMultilineVal("prepAdjustRemark"))
+    );
+  }
+
+  if(currentType==="project_prep_time_query"){
+    rows.push(
+      row("店家代碼",showVal("prepQueryVendorCode")),
+      row("Chain Code",showVal("prepQueryChainCode")),
+      row("品牌需求",showMultilineVal("prepQueryNeed")),
+      row("查詢提醒","可單店查詢或 Chain 查詢；若無特別指定，將提供近一個月的平均製餐時間")
+    );
+  }
+
+
+  if(currentType==="project_bug_issue"){
+    rows.push(
+      row("店家代碼",showVal("bugIssueVendorCode")),
+      row("店家名稱",showVal("bugIssueVendorName")),
+      row("訂單編號",showVal("bugIssueOrderNumber")),
+      row("問題類型",showVal("bugIssueType")),
+      row("問題描述",showMultilineVal("bugIssueDesc")),
+      row("截圖 / 影片","請確認是否已於附件上傳"),
+      row("回覆時效",showVal("bugIssueUrgency")),
+      row("是否已查詢 AM 常見問題彙整表單",showVal("bugIssueFaqChecked"))
+    );
+  }
+
+  if(currentType==="project_order_system_issue"){
+    rows.push(
+      row("店家代碼",showVal("orderSystemVendorCode")),
+      row("店家名稱",showVal("orderSystemVendorName")),
+      row("訂單編號",showVal("orderSystemOrderNumber")),
+      row("問題類型",showVal("orderSystemIssueType")),
+      row("問題描述",showMultilineVal("orderSystemIssueDesc")),
+      row("截圖 / 影片雲端連結",showVal("orderSystemMediaLink")),
+      row("回覆時效",showVal("orderSystemUrgency")),
+      row("是否已查詢 AM 常見問題彙整表單",showVal("orderSystemFaqChecked"))
+    );
+  }
+
+  if(currentType==="project_transmission_device"){
+    rows.push(
+      row("店家名稱",showVal("transmissionVendorName")),
+      row("店家代碼",showVal("transmissionVendorCode")),
+      row("設備序號",showVal("transmissionSerial")),
+      row("Issue",showVal("transmissionDeviceIssue")),
+      row("Resolution","is there any action require: yes, escalate to saleforce sales"),
+      row("截圖或影片雲端連結",showVal("transmissionMediaLink")),
+      row("Recipient Name",showVal("recipientName")),
+      row("Shipping Address",showVal("shippingAddress")),
+      row("Recipient Contact Number",showVal("recipientContactNumber")),
+      row("Recipient Email Address",showVal("recipientEmail"))
+    );
+  }
+
+  if(currentWorkstream==="project" && ["project_general","project_other"].includes(currentType)){
+    rows.push(
+      row("Project 需求說明",showMultilineVal("projectDescription"))
+    );
+  }
+
+  if(!rows.length){
+    rows.push(row("填寫內容","未選擇需求或尚未填寫內容。"));
+  }
+
+  document.getElementById("summaryDetails").innerHTML=rows.join("");
+}
+function resetPreview(){
+  currentWorkstream="";
+  currentType="";
+  templateRenderedFor="";
+  menuModifyExtraRenderedFor="";
+  storePriceExtraRenderedFor="";
+  document.querySelectorAll("input,textarea").forEach(el=>{ if(el.type!=="file") el.value=""; });
+  document.querySelectorAll("select").forEach(el=>el.value="");
+  document.querySelectorAll(".request").forEach(btn=>btn.classList.remove("selected"));
+  updateWorkstreamUI();
+  document.getElementById("statusText").textContent="填寫中";
+  go(1);
+  validateBasic();
+}
+validateBasic();
+updateWorkstreamUI();
+window.addEventListener("DOMContentLoaded", function(){
+  validateBasic();
+  ["brand","am"].forEach(function(id){
+    const el=document.getElementById(id);
+    if(el){
+      el.addEventListener("input", validateBasic);
+      el.addEventListener("change", validateBasic);
+    }
+  });
+});
+
+</script>
+
+<!-- v47 check: project_aaa_device_replacement template + subject + summary added -->
+</body>
+</html>
