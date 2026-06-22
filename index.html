@@ -1797,24 +1797,24 @@ async function confirmSubmit(){
     details: collectFormDetails ? collectFormDetails() : {}
   };
 
-  try{
-        alert("準備送到：" + GAS_URL);
-    const res = await fetch(GAS_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-      body: JSON.stringify(payload)
-    });
+ try{
+  alert("準備送到：" + GAS_URL);
 
-    document.getElementById("statusText").textContent = "已送出";
-    go(6);
+  const formData = new FormData();
+  formData.append("payload", JSON.stringify(payload));
 
-  }catch(err){
-    alert("送出失敗：" + err.message);
-    console.error(err);
-  }
+  const res = await fetch(GAS_URL, {
+    method: "POST",
+    body: formData
+  });
+
+  document.getElementById("statusText").textContent = "已送出";
+  go(6);
+
+}catch(err){
+  alert("送出失敗：" + err.message);
+  console.error(err);
+}
 }
 function row(label,value){ return `<div class="summary-row"><b>${label}</b><span>${value || "未填寫"}</span></div>`; }
 function renderSummary(){
