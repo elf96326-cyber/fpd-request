@@ -285,7 +285,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     </button>
     <button class="request workstream-project" data-workstream="project" onclick="selectWorkstream('project')">
       <b style="font-size:22px;">⚙️活動 / 營運</b>
-      <p>活動申請、活動菜單修改/複製、營業設定等</p>
+      <p>活動申請、活動菜單修改/複製、營業設定等(</p>
     </button>
   </div>
   <div class="btn-row">
@@ -448,7 +448,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
 </div>
 
 <script>
-const GAS_URL = "https://script.google.com/a/macros/foodpanda.tw/s/AKfycbzcYjnDRfG8yzUQMZ3CV1QYRyuKA9nF9mPzSbXqD_e6IiYS3cVWgY86Cc5Q1_mz5LdS/exec";
 let currentWorkstream = "";
 let currentType = "";
 let templateRenderedFor = "";
@@ -1773,49 +1772,9 @@ function submitPreview(){
   if(!validateRequiredVisible(true)) return;
   go(5);
 }
-
-function collectFormDetails(){
-  const details = {};
-
-  document.querySelectorAll("#templateArea input, #templateArea select, #templateArea textarea")
-    .forEach(el => {
-      if(!el.id) return;
-      if(el.type === "file") return;
-      details[el.id] = el.value || "";
-    });
-
-  return details;
-}
-
-async function confirmSubmit(){
-  const payload = {
-    brand: document.getElementById("brand")?.value || "",
-    owner: document.getElementById("am")?.value || "",
-    workstream: currentWorkstream || "",
-    requestName: currentType ? typeInfo[currentType][0] : "",
-    caseSubject: document.getElementById("caseSubject")?.textContent || "",
-    details: collectFormDetails ? collectFormDetails() : {}
-  };
-
-try{
-  alert("準備送到：" + GAS_URL);
-
-  await fetch(GAS_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify(payload)
-  });
-
-  document.getElementById("statusText").textContent = "已送出";
+function confirmSubmit(){
+  document.getElementById("statusText").textContent="已送出";
   go(6);
-
-}catch(err){
-  alert("送出失敗：" + err.message);
-  console.error(err);
-}
 }
 function row(label,value){ return `<div class="summary-row"><b>${label}</b><span>${value || "未填寫"}</span></div>`; }
 function renderSummary(){
