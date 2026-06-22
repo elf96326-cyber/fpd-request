@@ -1784,25 +1784,23 @@ async function confirmSubmit(){
   };
 
   try {
-
     alert("準備送到：" + GAS_URL);
 
-    await fetch(GAS_URL, {
+    const res = await fetch(GAS_URL, {
       method: "POST",
-      mode: "no-cors",
       headers: {
-        "Content-Type": "text/plain;charset=utf-8"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(payload)
     });
 
-    alert("前端已送出，請去試算表確認");
+    alert("HTTP Status：" + res.status);
 
     document.getElementById("statusText").textContent = "已送出";
     go(6);
 
   } catch(err) {
-    alert("送出失敗：" + err.message);
+    alert("錯誤：" + err.message);
     console.error(err);
   }
 }
