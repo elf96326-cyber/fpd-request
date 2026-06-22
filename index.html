@@ -1798,20 +1798,14 @@ async function confirmSubmit(){
   };
 
   try{
-    const response = await fetch(GAS_URL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
+   await fetch(GAS_URL, {
+  method: "POST",
+  mode: "no-cors",
+  body: JSON.stringify(payload)
+});
 
-    const result = await response.json();
-
-    if(!result.success){
-      alert("送出失敗：" + result.error);
-      return;
-    }
-
-    document.getElementById("statusText").textContent = "已送出：" + result.caseId;
-    go(6);
+document.getElementById("statusText").textContent = "已送出";
+go(6);
 
   }catch(err){
     alert("送出失敗：" + err.message);
