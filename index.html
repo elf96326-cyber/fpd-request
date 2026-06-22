@@ -1784,6 +1784,9 @@ async function confirmSubmit(){
   };
 
   try {
+
+    alert("準備送到：" + GAS_URL);
+
     await fetch(GAS_URL, {
       method: "POST",
       mode: "no-cors",
@@ -1792,6 +1795,8 @@ async function confirmSubmit(){
       },
       body: JSON.stringify(payload)
     });
+
+    alert("前端已送出，請去試算表確認");
 
     document.getElementById("statusText").textContent = "已送出";
     go(6);
