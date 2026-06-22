@@ -1793,12 +1793,13 @@ async function confirmSubmit(){
     owner: document.getElementById("am")?.value || "",
     workstream: currentWorkstream || "",
     requestName: currentType ? typeInfo[currentType][0] : "",
-    caseSubject: computeSubject ? computeSubject() : "",
-    details: collectFormDetails()
+    caseSubject: document.getElementById("caseSubject")?.textContent || "",
+    details: collectFormDetails ? collectFormDetails() : {}
   };
 
   try{
-    fetch(GAS_URL, {
+        alert("準備送到：" + GAS_URL);
+    const res = await fetch(GAS_URL, {
       method: "POST",
       mode: "no-cors",
       headers: {
