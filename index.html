@@ -1784,23 +1784,20 @@ async function confirmSubmit(){
   };
 
   try {
-    alert("準備送到：" + GAS_URL);
-
-    const res = await fetch(GAS_URL, {
+    await fetch(GAS_URL, {
       method: "POST",
+      mode: "no-cors",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "text/plain;charset=utf-8"
       },
       body: JSON.stringify(payload)
     });
-
-    alert("HTTP Status：" + res.status);
 
     document.getElementById("statusText").textContent = "已送出";
     go(6);
 
   } catch(err) {
-    alert("錯誤：" + err.message);
+    alert("送出失敗：" + err.message);
     console.error(err);
   }
 }
