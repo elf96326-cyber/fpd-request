@@ -1777,6 +1777,8 @@ async function confirmSubmit(){
   const payload = {
     brand: val("brand"),
     am: val("am"),
+    mainEmail: val("contact"),
+    ccEmail: val("cc"),
     workstream: currentWorkstream === "menu" ? "Menu" : "Project",
     requestType: currentType ? typeInfo[currentType][0] : "",
     caseSubject: computeSubject() || "",
