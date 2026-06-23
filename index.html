@@ -245,7 +245,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div>
       <div class="badge">📋 Menu Request Portal</div>
       <h1>【foodpanda】品牌需求表單</h1>
-      <p class="desc">請填寫品牌基本資料，選擇需求類型後，系統會產生對應 Case Subject，並可上傳相關附件。</p>
+      <p class="desc">請填寫品牌基本資料，選擇需求類型後，系統會產生對應 Case Subject，並可貼上相關檔案連結。</p>
     </div>
     <div class="status"><small>目前狀態</small><b id="statusText">填寫中</b></div>
   </div>
@@ -313,7 +313,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
   <div class="group category-store"><div class="category-label">一般店限定</div><div class="group-title">【僅限一般店】</div><div class="request-grid">
     <button class="request" data-type="use_branch_photos" onclick="selectType('use_branch_photos')"><b>📁 使用既有分店照片</b><p>10 間以上門市</p></button>
-    <button class="request" data-type="upload_photo_to_preview" onclick="selectType('upload_photo_to_preview')"><b>📤 上傳餐點照至校稿用</b><p>不開放單店</p></button>
+    <button class="request" data-type="upload_photo_to_preview" onclick="selectType('upload_photo_to_preview')"><b>📤 提供餐點照連結至校稿用</b><p>不開放單店</p></button>
     <button class="request" data-type="shooting_service" onclick="selectType('shooting_service')"><b>📸 拍攝服務申請</b><p>符合行銷 / 補拍資格</p></button>
     <button class="request" data-type="pos_menu_fix" onclick="selectType('pos_menu_fix')"><b>✏️ 修改菜單</b><p>僅限 POS 串接錯誤</p></button>
     <button class="request" data-type="preview_menu_fix" onclick="selectType('preview_menu_fix')"><b>💼 修改校稿用菜單</b><p>不開放單店</p></button>
@@ -425,7 +425,12 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <span class="pill" id="selectedDesc">請先選擇需求</span>
   </div>
   <div id="templateArea"></div>
-  <div id="globalUpload" class="upload"><h3>附件上傳</h3><p>可上傳菜單檔、照片、修改清單或其他補充資料。</p><div class="field" style="margin-top:14px"><input type="file" multiple>
+<div id="globalUpload" class="upload">
+  <h3>相關檔案連結</h3>
+  <p>請貼上 Google Drive、Google Sheet 或其他雲端連結。</p>
+  <div class="field" style="margin-top:14px">
+    <label>檔案連結</label>
+    <input id="attachmentLink" type="text" placeholder="請貼上雲端連結">
   </div>
 </div>
   <div id="requiredWarning" class="notice hidden" style="border:1px solid #fecdd3;background:#fff1f2;color:#dc2626;font-weight:700">⚠️ 還有必填欄位未完成，請先填寫紅框欄位後再送出。</div>
@@ -466,7 +471,7 @@ const typeInfo = {
   restaurant_info:["餐廳資訊","協助更新或確認餐廳基本資訊"],
   pos_issue:["POS 串接異常","協助回報或追蹤 POS 串接異常問題"],
   use_branch_photos:["使用既有分店照片","10 間以上門市"],
-  upload_photo_to_preview:["上傳餐點照至校稿用","不開放單店"],
+  upload_photo_to_preview:["提供餐點照連結至校稿用","不開放單店"],
   shooting_service:["拍攝服務申請","符合行銷 / 補拍資格"],
   pos_menu_fix:["修改菜單","僅限 POS 串接錯誤"],
   preview_menu_fix:["修改校稿用菜單","不開放單店"],
@@ -805,9 +810,23 @@ function renderTemplate(){
 
   if(currentType==="restaurant_info"){
     upload.classList.add("hidden");
-    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["AAA","KA、LH"])}<div id="restaurantNotice" class="notice">⚠️ 請先選擇 AAA 或 KA、LH，系統才會產生對應的 Case Subject 與欄位。</div>${subjectInput()}${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}<div class="box pink"><h3>調整內容</h3>${textarea("restaurantVendorList","調整內容","請填寫調整內容，或使用下方新增檔案上傳名單")}<div class="upload" style="background:white"><h3>新增檔案</h3><p>可上傳包含調整內容的 Excel、CSV 或補充檔案。</p><div class="field" style="margin-top:14px"><input type="file" multiple></div></div></div>`;
+    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["AAA","KA、LH"])}
+      <div id="restaurantNotice" class="notice">⚠️ 請先選擇 AAA 或 KA、LH，系統才會產生對應的 Case Subject 與欄位。</div>
+      ${subjectInput()}
+      ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
+      <div class="box pink">
+        <h3>調整內容</h3>
+        ${textarea("restaurantVendorList","調整內容","請填寫調整內容，或使用下方連結補充名單",4)}
+        <div class="upload" style="background:white">
+          <h3>調整內容連結</h3>
+          <p>請貼上 Google Sheet 或文件連結。</p>
+          <div class="field" style="margin-top:14px">
+            <label>連結</label>
+            <input id="restaurantInfoLink" type="text" placeholder="請貼上連結">
+          </div>
+        </div>
+      </div>`;
   }
-
   if(currentType==="pos_issue"){
     area.innerHTML = `${subjectInput()}${field("posVendorCode","店家代碼")}${field("posVendorName","店家名稱")}${textarea("posIssueDescription","狀況描述","請描述 POS 串接異常狀況",5)}`;
   }
@@ -1042,7 +1061,7 @@ function renderTemplate(){
       ${field("displayIssueOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
       ${select("displayIssueType","問題類型（必填）",["前台顯示異常","後台顯示異常","POS 串接異常","設備異常","其他"])}
       ${textarea("displayIssueDesc","問題描述（必填）","請描述問題發生情境、影響範圍與已確認事項",5)}
-      <div class="upload" style="background:white"><h3>截圖 / 影片</h3><p>請上傳可協助判斷問題的截圖或影片。</p><div class="field" style="margin-top:14px"><input id="displayIssueFiles" type="file" multiple></div></div>
+      <div class="upload" style="background:white"><h3>截圖 / 影片連結</h3><p>請貼上可協助判斷問題的截圖或影片雲端連結。</p><div class="field" style="margin-top:14px"><label>截圖 / 影片雲端連結</label><input id="displayIssueFiles" type="text" placeholder="請貼上雲端連結"></div></div>
       ${select("displayIssueUrgency","回覆時效（必填）",["一般","緊急"])}
       ${select("displayIssueFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
       <div id="displayIssueFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
@@ -1113,7 +1132,7 @@ function renderTemplate(){
       ${field("bugIssueOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
       ${select("bugIssueType","問題類型（必填）",["接單系統異常","前台顯示異常","後台顯示異常","設備異常","其他"])}
       ${textarea("bugIssueDesc","問題描述（必填）","請描述問題發生情境、影響範圍與已確認事項",5)}
-      <div class="upload" style="background:white"><h3>截圖 / 影片</h3><p>請上傳可協助判斷問題的截圖或影片。</p><div class="field" style="margin-top:14px"><input id="bugIssueFiles" type="file" multiple></div></div>
+      <div class="upload" style="background:white"><h3>截圖 / 影片連結</h3><p>請貼上可協助判斷問題的截圖或影片雲端連結。</p><div class="field" style="margin-top:14px"><label>截圖 / 影片雲端連結</label><input id="bugIssueFiles" type="text" placeholder="請貼上雲端連結"></div></div>
       ${select("bugIssueUrgency","回覆時效（必填）",["一般","緊急"])}
       ${select("bugIssueFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
       <div id="bugIssueFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
@@ -1130,7 +1149,7 @@ function renderTemplate(){
       ${field("orderSystemOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
       ${select("orderSystemIssueType","問題類型（必填）",["接單系統異常","無法接單","訂單未進單","訂單狀態異常","其他"])}
       ${textarea("orderSystemIssueDesc","問題描述（必填）","請描述接單系統異常狀況",5)}
-      <div class="upload" style="background:white"><h3>截圖 / 影片</h3><p>請上傳可協助判斷問題的截圖或影片。</p><div class="field" style="margin-top:14px"><input id="orderSystemFiles" type="file" multiple></div></div>
+      <div class="upload" style="background:white"><h3>截圖 / 影片連結</h3><p>請貼上可協助判斷問題的截圖或影片雲端連結。</p><div class="field" style="margin-top:14px"><label>截圖 / 影片雲端連結</label><input id="orderSystemFiles" type="text" placeholder="請貼上雲端連結"></div></div>
       ${select("orderSystemUrgency","回覆時效（必填）",["一般","緊急"])}
       ${select("orderSystemFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
       <div id="orderSystemFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
@@ -1296,7 +1315,7 @@ function renderTemplate(){
   
   if(currentType==="project_store_cancel_deal"){
     area.innerHTML=`${subjectInput()}
-    <div class="upload"><h3>活動已取消 MMT 截圖</h3><input type="file"></div>
+    <div class="upload"><h3>活動已取消 MMT 截圖</h3><inputtype="text" placeholder="請貼上雲端連結"/></div>
     ${select("cancelMarkup","【抬價漲幅】",["0%"])}
     ${select("cancelFull","是否依照菜單更新整份菜單(含價格、新增品項、下架品項)",["是","否"])}
     ${select("cancelPriceOnly","僅需調整後台品項金額，不需另外上架餐點",["是","否"])}`;
@@ -1572,7 +1591,7 @@ function renderConditionalBlocks(){
         <div class="upload">
           <h3>店內菜單翻拍照</h3>
           <p>僅接受實體菜單翻拍，不接受電子檔或手寫菜單</p>
-          <div class="field" style="margin-top:14px"><input type="file" multiple></div>
+          <div class="field" style="margin-top:14px"><inputtype="text" placeholder="請貼上雲端連結"/></div>
         </div>`;
       } else if(v==="一般店"){
         extra.innerHTML = `${select("storePriceAction","欲加回 或 拔除店內價標籤（擇一選擇）",["欲加回店內價標籤","欲拔除店內價標籤"])}`;
@@ -1611,7 +1630,7 @@ function renderConditionalBlocks(){
         <div class="box pink">
           <h3>【如有照片相關需求，請同附以下資訊】</h3>
           ${textarea("aaaDealPhotoStore","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}
-          ${field("aaaDealPhotoLink","照片檔案【link】/ 檔案附件 case 內","text","請貼上照片檔案連結，或於附件上傳")}
+          ${field("aaaDealPhotoLink","照片檔案連結【link】","text","請貼上照片檔案連結")}
         </div>
       `;
     }
@@ -1685,9 +1704,23 @@ function computeSubject(){
     if(v==="一般店") return "[AM] Export product list for POS";
   }
   if(currentType==="restaurant_info"){
-    const v=val("restaurantInfoStoreType");
-    if(v==="AAA") return `[AAA] Restaurant Description update (${b()})`;
-    if(v==="KA、LH") return `[GMB] Restaurant Description update (${b()})`;
+    upload.classList.add("hidden");
+    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["AAA","KA、LH"])}
+      <div id="restaurantNotice" class="notice">⚠️ 請先選擇 AAA 或 KA、LH，系統才會產生對應的 Case Subject 與欄位。</div>
+      ${subjectInput()}
+      ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
+      <div class="box pink">
+        <h3>調整內容</h3>
+        ${textarea("restaurantVendorList","調整內容","請填寫調整內容，或使用下方連結補充名單",4)}
+        <div class="upload" style="background:white">
+          <h3>調整內容連結</h3>
+          <p>請貼上 Google Sheet 或文件連結。</p>
+          <div class="field" style="margin-top:14px">
+            <label>連結</label>
+            <input id="restaurantInfoLink" type="text" placeholder="請貼上連結">
+          </div>
+        </div>
+      </div>`;
   }
   if(currentType==="pos_issue") return `[Special] POS 串接異常 (${b()})`;
   if(currentType==="use_branch_photos") return "[AM] Photo update / chain vendor";
@@ -1813,7 +1846,8 @@ function renderSummary(){
     row("負責窗口",showVal("am")),
     row("需求類別",currentWorkstream ? (currentWorkstream === "menu" ? "🍽️ 菜單" : "⚙️ 活動 / 營運") : "未填寫"),
     row("需求",currentType ? typeInfo[currentType][0] : "未填寫"),
-    row("Case Subject",computeSubject() || "未產生")
+    row("Case Subject",computeSubject() || "未產生"),
+    row("相關檔案連結",showVal("attachmentLink"))
   ].join("");
 
   let rows=[];
@@ -1917,13 +1951,24 @@ function renderSummary(){
   }
 
   if(currentType==="restaurant_info"){
-    rows.push(
-      row("店家類型",showVal("restaurantInfoStoreType")),
-      row("新增 / 修改 / 刪除 餐廳資訊欄內容",showVal("restaurantInfoAction")),
-      row("調整內容",showMultilineVal("restaurantVendorList"))
-    );
+    upload.classList.add("hidden");
+    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["AAA","KA、LH"])}
+      <div id="restaurantNotice" class="notice">⚠️ 請先選擇 AAA 或 KA、LH，系統才會產生對應的 Case Subject 與欄位。</div>
+      ${subjectInput()}
+      ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
+      <div class="box pink">
+        <h3>調整內容</h3>
+        ${textarea("restaurantVendorList","調整內容","請填寫調整內容，或使用下方連結補充名單",4)}
+        <div class="upload" style="background:white">
+          <h3>調整內容連結</h3>
+          <p>請貼上 Google Sheet 或文件連結。</p>
+          <div class="field" style="margin-top:14px">
+            <label>連結</label>
+            <input id="restaurantInfoLink" type="text" placeholder="請貼上連結">
+          </div>
+        </div>
+      </div>`;
   }
-
   if(currentType==="pos_issue"){
     rows.push(
       row("店家代碼",showVal("posVendorCode")),
@@ -2112,7 +2157,7 @@ function renderSummary(){
       ${field("bugIssueOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
       ${select("bugIssueType","問題類型（必填）",["接單系統異常","前台顯示異常","後台顯示異常","設備異常","其他"])}
       ${textarea("bugIssueDesc","問題描述（必填）","請描述問題發生情境、影響範圍與已確認事項",5)}
-      <div class="upload" style="background:white"><h3>截圖 / 影片</h3><p>請上傳可協助判斷問題的截圖或影片。</p><div class="field" style="margin-top:14px"><input id="bugIssueFiles" type="file" multiple></div></div>
+      <div class="upload" style="background:white"><h3>截圖 / 影片連結</h3><p>請貼上可協助判斷問題的截圖或影片雲端連結。</p><div class="field" style="margin-top:14px"><label>截圖 / 影片雲端連結</label><input id="bugIssueFiles" type="text" placeholder="請貼上雲端連結"></div></div>
       ${select("bugIssueUrgency","回覆時效（必填）",["一般","緊急"])}
       ${select("bugIssueFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
       <div id="bugIssueFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
@@ -2129,7 +2174,7 @@ function renderSummary(){
       ${field("orderSystemOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
       ${select("orderSystemIssueType","問題類型（必填）",["接單系統異常","無法接單","訂單未進單","訂單狀態異常","其他"])}
       ${textarea("orderSystemIssueDesc","問題描述（必填）","請描述接單系統異常狀況",5)}
-      <div class="upload" style="background:white"><h3>截圖 / 影片</h3><p>請上傳可協助判斷問題的截圖或影片。</p><div class="field" style="margin-top:14px"><input id="orderSystemFiles" type="file" multiple></div></div>
+      <div class="upload" style="background:white"><h3>截圖 / 影片連結</h3><p>請貼上可協助判斷問題的截圖或影片雲端連結。</p><div class="field" style="margin-top:14px"><label>截圖 / 影片雲端連結</label><input id="orderSystemFiles" type="text" placeholder="請貼上雲端連結"></div></div>
       ${select("orderSystemUrgency","回覆時效（必填）",["一般","緊急"])}
       ${select("orderSystemFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
       <div id="orderSystemFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
@@ -2397,7 +2442,7 @@ function renderSummary(){
       row("訂單編號",showVal("displayIssueOrderNumber")),
       row("問題類型",showVal("displayIssueType")),
       row("問題描述",showMultilineVal("displayIssueDesc")),
-      row("截圖 / 影片","請確認是否已於附件上傳"),
+      row("截圖 / 影片雲端連結",showVal("displayIssueFiles")),
       row("回覆時效",showVal("displayIssueUrgency")),
       row("是否已查詢 AM 常見問題彙整表單",showVal("displayIssueFaqChecked"))
     );
@@ -2450,7 +2495,7 @@ function renderSummary(){
       row("訂單編號",showVal("bugIssueOrderNumber")),
       row("問題類型",showVal("bugIssueType")),
       row("問題描述",showMultilineVal("bugIssueDesc")),
-      row("截圖 / 影片","請確認是否已於附件上傳"),
+      row("截圖 / 影片雲端連結",showVal("bugIssueFiles")),
       row("回覆時效",showVal("bugIssueUrgency")),
       row("是否已查詢 AM 常見問題彙整表單",showVal("bugIssueFaqChecked"))
     );
@@ -2463,7 +2508,7 @@ function renderSummary(){
       row("訂單編號",showVal("orderSystemOrderNumber")),
       row("問題類型",showVal("orderSystemIssueType")),
       row("問題描述",showMultilineVal("orderSystemIssueDesc")),
-      row("截圖 / 影片雲端連結",showVal("orderSystemMediaLink")),
+      row("截圖 / 影片雲端連結",showVal("orderSystemFiles")),
       row("回覆時效",showVal("orderSystemUrgency")),
       row("是否已查詢 AM 常見問題彙整表單",showVal("orderSystemFaqChecked"))
     );
