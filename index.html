@@ -1808,7 +1808,7 @@ function renderSummary(){
   document.getElementById("summaryBasic").innerHTML = [
     row("品牌 / 門市完整名稱",showVal("brand")),
     row("負責窗口",showVal("am")),
-    row("需求類別",currentWorkstream ? (currentWorkstream === "menu" ? "Menu" : "Project") : "未填寫"),
+    row("需求類別",currentWorkstream ? (currentWorkstream === "menu" ? "🍽️ 菜單" : "⚙️ 活動 / 營運") : "未填寫"),
     row("需求",currentType ? typeInfo[currentType][0] : "未填寫"),
     row("Case Subject",computeSubject() || "未產生")
   ].join("");
