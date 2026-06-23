@@ -425,7 +425,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <span class="pill" id="selectedDesc">請先選擇需求</span>
   </div>
   <div id="templateArea"></div>
-  <div id="globalUpload" class="upload"><h3>附件上傳</h3><p>可上傳菜單檔、照片、修改清單或其他補充資料。</p><div class="field" style="margin-top:14px"><input type="file" multiple></div></div>
+  <div id="globalUpload" class="upload"><h3>附件上傳</h3><p>可上傳菜單檔、照片、修改清單或其他補充資料。</p><div class="field" style="margin-top:14px"><input type="file" multiple>
+  </div>
+</div>
   <div id="requiredWarning" class="notice hidden" style="border:1px solid #fecdd3;background:#fff1f2;color:#dc2626;font-weight:700">⚠️ 還有必填欄位未完成，請先填寫紅框欄位後再送出。</div>
   <div class="btn-row"><button class="btn-outline" onclick="go(3)">‹ 上一步</button><button class="btn-primary" onclick="submitPreview()">送出表單</button></div>
 </section>
@@ -1776,7 +1778,8 @@ function submitPreview(){
 async function confirmSubmit(){
   const payload = {
     brand: val("brand"),
-    am: val("am"),
+    am: val("am"), 
+    attachmentLink: val("attachmentLink"),
     mainEmail: val("contact"),
     ccEmail: val("cc"),
     workstream: currentWorkstream === "menu" ? "🍽️ 菜單" : "⚙️ 活動 / 營運",
