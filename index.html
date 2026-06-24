@@ -236,6 +236,85 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 @media(max-width:760px){.all-merchant-subgroup .request-grid{grid-template-columns:1fr}}
 
+/* AM 搜尋式下拉選單 */
+.am-search-wrapper{
+  position:relative;
+  width:100%;
+}
+
+.am-search-wrapper input{
+  padding-right:48px;
+}
+
+.am-toggle{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  width:34px;
+  height:34px;
+  padding:0;
+  border:0;
+  border-radius:10px;
+  background:#fff;
+  color:#0f172a;
+  font-size:17px;
+  line-height:1;
+  cursor:pointer;
+}
+
+.am-toggle:hover{
+  background:#fff0f6;
+  color:#ff2b85;
+}
+
+.am-dropdown{
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  right:0;
+  max-height:320px;
+  overflow-y:auto;
+  background:#fff;
+  border:1px solid #fbcfe8;
+  border-radius:16px;
+  box-shadow:0 14px 32px rgba(15,23,42,.16);
+  z-index:9999;
+  display:none;
+  padding:8px;
+}
+
+.am-item{
+  padding:13px 16px;
+  border-radius:12px;
+  font-size:15px;
+  line-height:1.35;
+  color:#0f172a;
+  cursor:pointer;
+  transition:.12s;
+}
+
+.am-item:hover{
+  background:#fff0f6;
+  color:#ff2b85;
+}
+
+.am-item + .am-item{
+  margin-top:2px;
+}
+
+.am-empty{
+  padding:14px 16px;
+  color:#94a3b8;
+  font-size:14px;
+}
+
+@media(max-width:760px){
+  .am-dropdown{
+    max-height:260px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -265,9 +344,24 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <div class="title-row"><div><h2>第一頁｜基本資料</h2><div class="sub">請填寫品牌與負責窗口資訊。</div></div></div>
   <div class="grid">
     <div class="field"><label>品牌 / 門市完整名稱（必填）</label><input id="brand" placeholder="範例：星巴克、青鳥旅行 (誠品站前店)" oninput="validateBasic()"></div>
-    <div class="field"><label>負責窗口（必填）</label><input id="am" placeholder="範例：Aries Liu、Iris Wei" oninput="validateBasic()"></div>
+    <div class="field">
+      <label>負責窗口（必填）</label>
+      <div class="am-search-wrapper">
+        <input
+          id="am"
+          placeholder="輸入姓名關鍵字搜尋，例如 Aries"
+          autocomplete="off"
+          oninput="filterAMList(); handleAmSelect(); validateBasic()"
+          onfocus="filterAMList(true)"
+        >
+        <button type="button" class="am-toggle" onclick="toggleAMDropdown()">▾</button>
+        <div id="amDropdown" class="am-dropdown"></div>
+      </div>
+      <input id="amEmail" type="hidden">
+      <div id="amEmailHint" class="sub">請從名單中選擇負責窗口，系統會自動帶入 Email。</div>
+    </div>
   </div>
-  <div id="basicNotice" class="notice">⚠️ 請填寫品牌 / 門市完整名稱與負責窗口。</div>
+  <div id="basicNotice" class="notice">⚠️ 請填寫品牌 / 門市完整名稱，並從名單中選擇負責窗口。</div>
   <div class="btn-row" style="justify-content:flex-end"><button id="nextBasicBtn" class="btn-primary" onclick="go(2)" disabled style="opacity:.45;cursor:not-allowed">下一步 ›</button></div>
 </section>
 
@@ -461,6 +555,143 @@ let currentType = "";
 let templateRenderedFor = "";
 let menuModifyExtraRenderedFor = "";
 let storePriceExtraRenderedFor = "";
+let AM_EMAIL_MAP = {};
+let AM_LIST = [];
+let amListLoaded = false;
+
+async function loadAMList(){
+  try{
+    const res = await fetch(GAS_URL + "?action=getAMList");
+    const result = await res.json();
+    const data = Array.isArray(result) ? result : (result.data || []);
+
+    AM_EMAIL_MAP = {};
+    AM_LIST = data
+      .filter(am => am && am.name && am.email)
+      .map(am => ({
+        name: String(am.name).trim(),
+        email: String(am.email).trim()
+      }));
+
+    AM_LIST.forEach(am => {
+      AM_EMAIL_MAP[am.name] = am.email;
+    });
+
+    amListLoaded = true;
+    handleAmSelect();
+    validateBasic();
+  }catch(err){
+    console.error("AM_List 載入失敗：", err);
+  }
+}
+
+function getFilteredAMList(showAll=false){
+  const amInput = document.getElementById("am");
+  const keyword = amInput ? amInput.value.trim().toLowerCase() : "";
+
+  if(showAll && !keyword){
+    return AM_LIST.slice(0, 30);
+  }
+
+  if(!keyword){
+    return [];
+  }
+
+  return AM_LIST
+    .filter(am => am.name.toLowerCase().includes(keyword))
+    .slice(0, 30);
+}
+
+function filterAMList(showAll=false){
+  const dropdown = document.getElementById("amDropdown");
+  if(!dropdown) return;
+
+  if(!amListLoaded){
+    dropdown.innerHTML = `<div class="am-empty">AM_List 載入中，請稍候。</div>`;
+    dropdown.style.display = "block";
+    return;
+  }
+
+  const result = getFilteredAMList(showAll);
+
+  if(!result.length){
+    const keyword = document.getElementById("am").value.trim();
+    dropdown.innerHTML = keyword
+      ? `<div class="am-empty">找不到符合的負責窗口</div>`
+      : `<div class="am-empty">請輸入姓名關鍵字搜尋</div>`;
+    dropdown.style.display = keyword ? "block" : "none";
+    return;
+  }
+
+  dropdown.innerHTML = "";
+  result.forEach(am => {
+    const item = document.createElement("div");
+    item.className = "am-item";
+    item.textContent = am.name;
+    item.addEventListener("mousedown", function(e){
+      e.preventDefault();
+      selectAM(am.name, am.email);
+    });
+    dropdown.appendChild(item);
+  });
+
+  dropdown.style.display = "block";
+}
+
+function toggleAMDropdown(){
+  const dropdown = document.getElementById("amDropdown");
+  if(!dropdown) return;
+
+  if(dropdown.style.display === "block"){
+    dropdown.style.display = "none";
+  }else{
+    filterAMList(true);
+  }
+}
+
+function selectAM(name,email){
+  const amInput = document.getElementById("am");
+  const amEmailInput = document.getElementById("amEmail");
+  const dropdown = document.getElementById("amDropdown");
+
+  if(amInput) amInput.value = name;
+  if(amEmailInput) amEmailInput.value = email;
+  if(dropdown) dropdown.style.display = "none";
+
+  handleAmSelect();
+  validateBasic();
+}
+
+function handleAmSelect(){
+  const amInput = document.getElementById("am");
+  const amEmailInput = document.getElementById("amEmail");
+  const hint = document.getElementById("amEmailHint");
+
+  if(!amInput || !amEmailInput) return;
+
+  const amName = amInput.value.trim();
+  const exactEmail = AM_EMAIL_MAP[amName] || "";
+  const caseInsensitiveMatch = AM_LIST.find(am => am.name.toLowerCase() === amName.toLowerCase());
+  const amEmail = exactEmail || (caseInsensitiveMatch ? caseInsensitiveMatch.email : "");
+
+  amEmailInput.value = amEmail;
+
+  if(hint){
+    if(!amName){
+      hint.textContent = "請從名單中選擇負責窗口，系統會自動帶入 Email。";
+      hint.style.color = "#94a3b8";
+    }else if(amEmail){
+      hint.textContent = "已帶入：" + amEmail;
+      hint.style.color = "#059669";
+    }else if(amListLoaded){
+      hint.textContent = "找不到對應 Email，請確認是否從名單中選擇。";
+      hint.style.color = "#dc2626";
+    }else{
+      hint.textContent = "AM_List 載入中，請稍候。";
+      hint.style.color = "#94a3b8";
+    }
+  }
+}
 const typeInfo = {
   menu_modify:["菜單修改","既有菜單內容、價格、品項或照片調整"],
   menu_copy:["菜單複製","將既有菜單內容複製到指定店家或品牌"],
@@ -527,7 +758,14 @@ function needsMenuModifyContact(type){
 
 function b(){ return document.getElementById("brand").value.trim() || "brand"; }
 function isBasicValid(){
-  return !!(document.getElementById("brand").value.trim() && document.getElementById("am").value.trim());
+  const brand = document.getElementById("brand").value.trim();
+  const am = document.getElementById("am").value.trim();
+  const amEmail = document.getElementById("amEmail") ? document.getElementById("amEmail").value.trim() : "";
+
+  if(!brand || !am) return false;
+  if(amListLoaded && !amEmail) return false;
+
+  return true;
 }
 function validateBasic(){
   const valid = isBasicValid();
@@ -1811,7 +2049,8 @@ function submitPreview(){
 async function confirmSubmit(){
   const payload = {
     brand: val("brand"),
-    am: val("am"), 
+    am: val("am"),
+    amEmail: val("amEmail"),
     attachmentLink: val("attachmentLink"),
     mainEmail: val("contact"),
     ccEmail: val("cc"),
@@ -1844,6 +2083,7 @@ function renderSummary(){
   document.getElementById("summaryBasic").innerHTML = [
     row("品牌 / 門市完整名稱",showVal("brand")),
     row("負責窗口",showVal("am")),
+    row("負責窗口Email",showVal("amEmail")),
     row("需求類別",currentWorkstream ? (currentWorkstream === "menu" ? "🍽️ 菜單" : "⚙️ 活動 / 營運") : "未填寫"),
     row("需求",currentType ? typeInfo[currentType][0] : "未填寫"),
     row("Case Subject",computeSubject() || "未產生"),
@@ -2559,11 +2799,30 @@ validateBasic();
 updateWorkstreamUI();
 window.addEventListener("DOMContentLoaded", function(){
   validateBasic();
+  loadAMList();
+
   ["brand","am"].forEach(function(id){
     const el=document.getElementById(id);
     if(el){
-      el.addEventListener("input", validateBasic);
-      el.addEventListener("change", validateBasic);
+      el.addEventListener("input", function(){
+        if(id === "am"){
+          filterAMList();
+          handleAmSelect();
+        }
+        validateBasic();
+      });
+      el.addEventListener("change", function(){
+        if(id === "am") handleAmSelect();
+        validateBasic();
+      });
+    }
+  });
+
+  document.addEventListener("click", function(e){
+    const wrapper = document.querySelector(".am-search-wrapper");
+    const dropdown = document.getElementById("amDropdown");
+    if(wrapper && dropdown && !wrapper.contains(e.target)){
+      dropdown.style.display = "none";
     }
   });
 });
