@@ -1168,7 +1168,7 @@ function renderTemplate(){
         ${field("portalAccountName","創建帳號名稱（必填）","text","請填寫創建帳號名稱")}
         ${field("portalEmail","Email（必填）","email","請填寫 Email")}
       </div>
-      ${field("portalPermission","權限（必填）","text","請填寫權限")}
+      ${select("portalPermission","權限（必填）",["Admin","Manager","Reporting","Operations","Support","Finance"])}
       ${portalNote()}
     `;
   }
@@ -1298,7 +1298,7 @@ function renderTemplate(){
       </div>
       ${field("displayIssueOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
       ${select("displayIssueType","問題類型（必填）",["前台顯示異常","後台顯示異常","POS 串接異常","設備異常","其他"])}
-      ${textarea("displayIssueDesc","問題描述（必填）","請描述問題發生情境、影響範圍與已確認事項",5)}
+      ${textarea("displayIssueDesc","問題描述（選填）","請描述問題發生情境、影響範圍與已確認事項，可留空",5)}
       <div class="upload" style="background:white"><h3>截圖 / 影片連結</h3><p>請貼上可協助判斷問題的截圖或影片雲端連結。</p><div class="field" style="margin-top:14px"><label>截圖 / 影片雲端連結</label><input id="displayIssueFiles" type="text" placeholder="請貼上雲端連結"></div></div>
       ${select("displayIssueUrgency","回覆時效（必填）",["一般","緊急"])}
       ${select("displayIssueFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
@@ -1440,10 +1440,10 @@ function renderTemplate(){
         ${field("aaakalhPeriodEnd","活動結束日期（必填）","date")}
       </div>
       <div id="aaakalhMenuUpdateBlock">${select("aaakalhMenuUpdate","Menu Update（必填）",["YES","NO"])}</div>
-      <div id="aaakalhFixedMenuUpdateBlock" class="hidden">${fixedCard("aaakalhFixedMenuUpdate","Menu Update（固定）")}</div>
-      <div id="aaakalhMenuCategoryBlock" class="hidden">${fixedCard("aaakalhMenuCategory","Menu Category（固定）","指定餐點專區")}</div>
+      <div id="aaakalhMenuCategoryOptionalBlock">${field("aaakalhMenuCategoryOptional","Menu Category（選填）","text","請填寫 Menu Category，可留空")}</div>
+      <div id="aaakalhMenuCategoryBlock" class="hidden">${field("aaakalhMenuCategory","Menu Category（必填）","text","請填寫 Menu Category")}</div>
       <div id="aaakalhPosNotice" class="notice hidden" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 Menu update：Yes，this vendor has updated the menu category by themself.</div>
-      ${field("aaakalhDelivery","Delivery（必填）","text","請填寫 Delivery")}
+      ${fixedCard("aaakalhDelivery","Delivery（固定）","Delivery")}
       ${field("aaakalhVendorListLink","Vendor List Link（必填）","text","請貼上 Vendor list link")}
     `;
   }
@@ -1469,6 +1469,7 @@ function renderTemplate(){
     area.innerHTML = `${subjectInput()}
       <div class="box pink portal-template-box"><h3>KA、LH｜活動設定 + 修改菜單</h3><p class="muted">請先選擇需求模式，系統會依模式自動切換 Case Subject。</p></div>
       ${select("kalhDealMode","需求模式（必填）",["單店 / 多店","校稿用"])}
+      <div class="grid hidden" id="kalhDealContactBlock">${field("contact","主要校稿信箱（必填）","email","請填寫主要校稿信箱")}${field("cc","CC Email（選填）","email","請填寫 CC Email，可留空")}</div>
       <div id="kalhDealMenuNotice" class="notice">⚠️ 請先選擇需求模式，系統才會產生對應的 Case Subject。</div>
       ${field("kalhDealOppCase","OPP QC Case Number（必填）","text","請填寫 OPP QC case number")}
       ${select("kalhDealUpdateMode","更新時間（必填）",["立即","指定日期"])}
@@ -1856,6 +1857,10 @@ function renderConditionalBlocks(){
       extra.innerHTML = `
         ${field("aaaDealPreviewMasterMenu","校稿版菜單：代碼 + 名稱（必填）","text","請填寫校稿版菜單：代碼 + 名稱")}
         <div class="notice" style="margin-top:-10px;color:#64748b;font-size:12px;">此為提供校稿版菜單</div>
+        <div class="grid">
+  ${field("contact","主要校稿信箱（必填）","email","請填寫主要校稿信箱")}
+  ${field("cc","CC Email（選填）","email","請填寫 CC Email，可留空")}
+</div>
         ${field("aaaDealCategoryName","活動類別名稱（必填）","text","請填寫活動類別名稱")}
         ${textarea("aaaDealCategoryDesc","活動類別敘述","請填寫活動類別敘述",3)}
         ${textarea("aaaDealItemInfo","活動品項名稱 + 活動原價 +（折扣後金額）（必填）","請填寫活動品項名稱、活動原價與折扣後金額",4)}
@@ -2300,7 +2305,7 @@ function renderSummary(){
         ${field("portalAccountName","創建帳號名稱（必填）","text","請填寫創建帳號名稱")}
         ${field("portalEmail","Email（必填）","email","請填寫 Email")}
       </div>
-      ${field("portalPermission","權限（必填）","text","請填寫權限")}
+      ${select("portalPermission","權限（必填）",["Admin","Manager","Reporting","Operations","Support","Finance"])}
       ${portalNote()}
     `;
   }
@@ -2563,6 +2568,8 @@ function renderSummary(){
     if(t==="修改校稿用菜單（有搭配活動）"){
       rows.push(
         row("校稿版菜單：店家代碼 + 店家名稱",showVal("aaaDealPreviewMasterMenu")),
+        row("主要校稿信箱",showVal("contact")),
+        row("CC Email",showVal("cc")),
         row("活動類別名稱",showVal("aaaDealCategoryName")),
         row("活動類別敘述",showMultilineVal("aaaDealCategoryDesc")),
         row("活動品項名稱 + 活動原價 +（折扣後金額）",showMultilineVal("aaaDealItemInfo")),
