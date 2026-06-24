@@ -369,7 +369,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <div class="title-row">
     <div>
       <h2>第二頁｜需求類別</h2>
-      <div class="sub">請先選擇這次要建立 Menu 需求或 Project 需求。</div>
+      <div class="sub">請先選擇這次要建立菜單 需求或 活動 / 營運 需求。</div>
     </div>
   </div>
   <div class="request-grid">
@@ -1325,7 +1325,7 @@ function renderTemplate(){
 
   if(currentType==="project_auto_accept_adjust"){
     area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>自動接單調整</h3><p class="muted">目前僅提供設置 30、90、300 秒，請選擇秒數並詳述調整原因。</p></div>
+      <div class="box pink portal-template-box"><h3>自動接單調整</h3><p class="muted">目前僅提供設置 90、300 秒，請選擇秒數並詳述調整原因。</p></div>
       <div class="grid">
         ${field("autoAcceptVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
         ${field("autoAcceptVendorName","店家名稱（必填）","text","請填寫店家名稱")}
@@ -1402,7 +1402,7 @@ function renderTemplate(){
         ${field("transmissionVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
       </div>
       ${field("transmissionSerial","設備序號（必填）","text","請填寫設備序號")}
-      ${select("transmissionDeviceIssue","Issue（必填）",["Battery can't charge｜無法充電、充電異常、無法蓄電、充電孔鬆動","Bad system loading｜經常當機、設備老舊","Auto shut down / Device can't be launch｜時常自動關機 / 無法開機、螢幕黑屏","Printer issue｜出單紙模糊、滾輪掉落、無法列印","button issue / Volume button issue｜電源鍵異常 / 音量鍵異常","Battery swelling｜電池膨脹","Touchscreen issue｜螢幕顯示異常、觸碰異常","Godroid issue（No Apps Installed）｜Godroid app異常（顯示 No Apps Installed）","Zhuyin input disappear｜無中文輸入法，僅限 V2（V2s 請參考 SOP）","Godroid issue｜Godroid app異常（無法登入、顯示需聯繫系統管理員）","Soti issue｜Soti 系統異常（無法遠端、DMS 找不到設備、無法更新）","Connectivity issue｜網路連線異常（無使用 SIM 卡）","Other｜其他原因"])}
+      ${select("transmissionDeviceIssue","Issue（必填）",["Battery can't charge｜無法充電、充電異常、無法蓄電、充電孔鬆動","Bad system loading｜經常當機、設備老舊","Auto shut down / Device can't be launch｜時常自動關機 / 無法開機、螢幕黑屏","Printer issue｜出單紙模糊、滾輪掉落、無法列印","button issue / Volume button issue｜電源鍵異常 / 音量鍵異常","Battery swelling｜電池膨脹","Touchscreen issue｜螢幕顯示異常、觸碰異常","Godroid issue（No Apps Installed）｜Godroid app異常（顯示 No Apps Installed）","Zhuyin input disappear｜無中文輸入法）","Godroid issue｜Godroid app異常（無法登入、顯示需聯繫系統管理員）","Soti issue｜Soti 系統異常（無法遠端、DMS 找不到設備、無法更新）","Connectivity issue｜網路連線異常（無使用 SIM 卡）","Other｜其他原因"])}
       <div class="box"><b>Resolution（固定）</b><p class="muted">is there any action require: yes, escalate to saleforce sales</p></div>
       ${field("transmissionMediaLink","截圖或影片雲端連結（必填）","text","請貼上截圖或影片雲端連結")}
       <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 可建議商家開機聯網，以利遠端確認。</div>
@@ -1536,7 +1536,7 @@ function renderTemplate(){
           <option value="Battery swelling（電池膨脹）">Battery swelling（電池膨脹）</option>
           <option value="Touchscreen issue（螢幕顯示異常、觸碰異常）">Touchscreen issue（螢幕顯示異常、觸碰異常）</option>
           <option value="Godroid issue（No Apps Installed）（Godroid app異常，顯示 No Apps Installed）">Godroid issue（No Apps Installed）（Godroid app異常，顯示 No Apps Installed）</option>
-          <option value="Zhuyin input disappear（無中文輸入法，僅限 V2；V2s 請參考 SOP）">Zhuyin input disappear（無中文輸入法，僅限 V2；V2s 請參考 SOP）</option>
+          <option value="Zhuyin input disappear（無中文輸入法）">Zhuyin input disappear（無中文輸入法）</option>
           <option value="Godroid issue（Godroid app異常，無法登入、顯示需聯繫系統管理員）">Godroid issue（Godroid app異常，無法登入、顯示需聯繫系統管理員）</option>
           <option value="Soti issue（Soti 系統異常，無法遠端、DMS 找不到設備、無法更新）">Soti issue（Soti 系統異常，無法遠端、DMS 找不到設備、無法更新）</option>
           <option value="Connectivity issue（網路連線異常，無使用 SIM 卡）">Connectivity issue（網路連線異常，無使用 SIM 卡）</option>
@@ -1854,7 +1854,7 @@ function renderConditionalBlocks(){
 
     if(t==="修改校稿用菜單（有搭配活動）"){
       extra.innerHTML = `
-        ${field("aaaDealPreviewMasterMenu","校稿版菜單：店家代碼 + 店家名稱（必填）","text","請填寫校稿版菜單：店家代碼 + 店家名稱")}
+        ${field("aaaDealPreviewMasterMenu","校稿版菜單：代碼 + 名稱（必填）","text","請填寫校稿版菜單：代碼 + 名稱")}
         <div class="notice" style="margin-top:-10px;color:#64748b;font-size:12px;">此為提供校稿版菜單</div>
         ${field("aaaDealCategoryName","活動類別名稱（必填）","text","請填寫活動類別名稱")}
         ${textarea("aaaDealCategoryDesc","活動類別敘述","請填寫活動類別敘述",3)}
@@ -1882,7 +1882,7 @@ function renderConditionalBlocks(){
         </div>
         <div class="notice" style="margin-top:-10px;color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 ※若需於特殊時段更新，請備註告知原因</div>
         ${field("aaaDealChainCode","Chain code（必填）","text","請填寫 Chain code")}
-        ${field("aaaDealSyncMasterMenu","校稿版菜單：店家代碼 + 店家名稱（必填）","text","請填寫校稿版菜單：店家代碼 + 店家名稱")}
+        ${field("aaaDealSyncMasterMenu","校稿版菜單：代碼 + 名稱（必填）","text","請填寫校稿版菜單：代碼 + 名稱")}
         <div class="field">
           <label>既有品項供應狀態【擇一】（必填）</label>
           <select id="aaaDealSupplyStatus" onchange="validateRequiredVisible(false)">
@@ -2352,7 +2352,7 @@ function renderSummary(){
 
   if(currentType==="project_auto_accept_adjust"){
     area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>自動接單調整</h3><p class="muted">目前僅提供設置 30、90、300 秒，請選擇秒數並詳述調整原因。</p></div>
+      <div class="box pink portal-template-box"><h3>自動接單調整</h3><p class="muted">目前僅提供設置 90、300 秒，請選擇秒數並詳述調整原因。</p></div>
       <div class="grid">
         ${field("autoAcceptVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
         ${field("autoAcceptVendorName","店家名稱（必填）","text","請填寫店家名稱")}
@@ -2429,7 +2429,7 @@ function renderSummary(){
         ${field("transmissionVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
       </div>
       ${field("transmissionSerial","設備序號（必填）","text","請填寫設備序號")}
-      ${select("transmissionDeviceIssue","Issue（必填）",["Battery can't charge｜無法充電、充電異常、無法蓄電、充電孔鬆動","Bad system loading｜經常當機、設備老舊","Auto shut down / Device can't be launch｜時常自動關機 / 無法開機、螢幕黑屏","Printer issue｜出單紙模糊、滾輪掉落、無法列印","button issue / Volume button issue｜電源鍵異常 / 音量鍵異常","Battery swelling｜電池膨脹","Touchscreen issue｜螢幕顯示異常、觸碰異常","Godroid issue（No Apps Installed）｜Godroid app異常（顯示 No Apps Installed）","Zhuyin input disappear｜無中文輸入法，僅限 V2（V2s 請參考 SOP）","Godroid issue｜Godroid app異常（無法登入、顯示需聯繫系統管理員）","Soti issue｜Soti 系統異常（無法遠端、DMS 找不到設備、無法更新）","Connectivity issue｜網路連線異常（無使用 SIM 卡）","Other｜其他原因"])}
+      ${select("transmissionDeviceIssue","Issue（必填）",["Battery can't charge｜無法充電、充電異常、無法蓄電、充電孔鬆動","Bad system loading｜經常當機、設備老舊","Auto shut down / Device can't be launch｜時常自動關機 / 無法開機、螢幕黑屏","Printer issue｜出單紙模糊、滾輪掉落、無法列印","button issue / Volume button issue｜電源鍵異常 / 音量鍵異常","Battery swelling｜電池膨脹","Touchscreen issue｜螢幕顯示異常、觸碰異常","Godroid issue（No Apps Installed）｜Godroid app異常（顯示 No Apps Installed）","Zhuyin input disappear｜無中文輸入法）","Godroid issue｜Godroid app異常（無法登入、顯示需聯繫系統管理員）","Soti issue｜Soti 系統異常（無法遠端、DMS 找不到設備、無法更新）","Connectivity issue｜網路連線異常（無使用 SIM 卡）","Other｜其他原因"])}
       <div class="box"><b>Resolution（固定）</b><p class="muted">is there any action require: yes, escalate to saleforce sales</p></div>
       ${field("transmissionMediaLink","截圖或影片雲端連結（必填）","text","請貼上截圖或影片雲端連結")}
       <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 可建議商家開機聯網，以利遠端確認。</div>
