@@ -497,8 +497,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <button class="request" data-type="project_auto_accept_adjust" onclick="selectType('project_auto_accept_adjust')"><b><span class="portal-icon">🤖</span>自動接單調整</b></button>
     <button class="request" data-type="project_prep_time_adjust" onclick="selectType('project_prep_time_adjust')"><b><span class="portal-icon">🍳</span>製餐時間調整</b></button>
     <button class="request" data-type="project_prep_time_query" onclick="selectType('project_prep_time_query')"><b><span class="portal-icon">🔎</span>製餐時間查詢</b></button>
-    <button class="request" data-type="project_bug_issue" onclick="selectType('project_bug_issue')"><b><span class="portal-icon">🐞</span>BUG異常</b></button>
-    <button class="request" data-type="project_order_system_issue" onclick="selectType('project_order_system_issue')"><b><span class="portal-icon">🚨</span>接單系統異常</b></button>
   </div>
 </div>
 
@@ -736,8 +734,6 @@ const typeInfo = {
   project_auto_accept_adjust:["自動接單調整","自動接單／特殊狀況"],
   project_prep_time_adjust:["製餐時間調整","自動接單／特殊狀況"],
   project_prep_time_query:["製餐時間查詢","自動接單／特殊狀況"],
-  project_bug_issue:["BUG異常","自動接單／特殊狀況"],
-  project_order_system_issue:["接單系統異常","自動接單／特殊狀況"],
   project_transmission_device:["設備問題","設備問題"]
 };
 const photoOnly = ["純封面照片修改 (品牌共用)","純封面照片修改 (指定門市)","純餐點照片修改 (校稿用)","純餐點照片修改 (無校稿)","Logo 照片修改"];
@@ -1357,40 +1353,6 @@ function renderTemplate(){
       </div>
       ${textarea("prepQueryNeed","請詳述品牌需求（必填）","請詳述品牌需求，例如查詢範圍、指定期間或特定門市",5)}
       <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 可單店查詢或 Chain 查詢；若無特別指定，將提供近一個月的平均製餐時間。</div>
-    `;
-  }
-
-  if(currentType==="project_bug_issue"){
-    area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>BUG異常</h3><p class="muted">請提供訂單資訊、問題描述與截圖 / 影片，方便快速判斷異常。</p></div>
-      <div class="grid">
-        ${field("bugIssueVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
-        ${field("bugIssueVendorName","店家名稱（必填）","text","請填寫店家名稱")}
-      </div>
-      ${field("bugIssueOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
-      ${select("bugIssueType","問題類型（必填）",["接單系統異常","前台顯示異常","後台顯示異常","設備異常","其他"])}
-      ${textarea("bugIssueDesc","問題描述（必填）","請描述問題發生情境、影響範圍與已確認事項",5)}
-      <div class="upload" style="background:white"><h3>截圖 / 影片連結</h3><p>請貼上可協助判斷問題的截圖或影片雲端連結。</p><div class="field" style="margin-top:14px"><label>截圖 / 影片雲端連結</label><input id="bugIssueFiles" type="text" placeholder="請貼上雲端連結"></div></div>
-      ${select("bugIssueUrgency","回覆時效（必填）",["一般","緊急"])}
-      ${select("bugIssueFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
-      <div id="bugIssueFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
-    `;
-  }
-
-  if(currentType==="project_order_system_issue"){
-    area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>接單系統異常</h3><p class="muted">請提供訂單資訊、問題描述與截圖 / 影片，方便快速判斷異常。</p></div>
-      <div class="grid">
-        ${field("orderSystemVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
-        ${field("orderSystemVendorName","店家名稱（必填）","text","請填寫店家名稱")}
-      </div>
-      ${field("orderSystemOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
-      ${select("orderSystemIssueType","問題類型（必填）",["接單系統異常","無法接單","訂單未進單","訂單狀態異常","其他"])}
-      ${textarea("orderSystemIssueDesc","問題描述（必填）","請描述接單系統異常狀況",5)}
-      <div class="upload" style="background:white"><h3>截圖 / 影片連結</h3><p>請貼上可協助判斷問題的截圖或影片雲端連結。</p><div class="field" style="margin-top:14px"><label>截圖 / 影片雲端連結</label><input id="orderSystemFiles" type="text" placeholder="請貼上雲端連結"></div></div>
-      ${select("orderSystemUrgency","回覆時效（必填）",["一般","緊急"])}
-      ${select("orderSystemFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
-      <div id="orderSystemFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
     `;
   }
 
@@ -2023,8 +1985,6 @@ function computeSubject(){
   if(currentType==="project_auto_accept_adjust") return "自動接單調整";
   if(currentType==="project_prep_time_adjust") return "製餐時間調整";
   if(currentType==="project_prep_time_query") return "製餐時間查詢";
-  if(currentType==="project_bug_issue") return "BUG異常-接單系統異常";
-  if(currentType==="project_order_system_issue") return "BUG異常-接單系統異常";
   if(currentType==="project_transmission_device"){
     const issue = val("transmissionDeviceIssue");
     return issue ? `Transmission Device :: ${issue}` : "";
@@ -2305,7 +2265,7 @@ function renderSummary(){
         ${field("portalAccountName","創建帳號名稱（必填）","text","請填寫創建帳號名稱")}
         ${field("portalEmail","Email（必填）","email","請填寫 Email")}
       </div>
-      ${select("portalPermission","權限（必填）",["Admin","Manager","Reporting","Operations","Support","Finance"])}
+      ${select("portalPermission","權限（必填）",[","Finance"])}
       ${portalNote()}
     `;
   }
@@ -2334,7 +2294,8 @@ function renderSummary(){
       ${portalVendorGrid()}
       <div class="grid">
         ${field("portalEmail","Email（必填）","email","請填寫 Email")}
-        ${field("portalPermission","權限需調整為（必填）","text","請填寫需調整為的權限")}
+        ${select( "portalPermission","權限需調整為（必填）",["]
+                )}
       </div>
       ${portalNote()}
     `;
@@ -2389,40 +2350,6 @@ function renderSummary(){
       </div>
       ${textarea("prepQueryNeed","請詳述品牌需求（必填）","請詳述品牌需求，例如查詢範圍、指定期間或特定門市",5)}
       <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 可單店查詢或 Chain 查詢；若無特別指定，將提供近一個月的平均製餐時間。</div>
-    `;
-  }
-
-  if(currentType==="project_bug_issue"){
-    area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>BUG異常</h3><p class="muted">請提供訂單資訊、問題描述與截圖 / 影片，方便快速判斷異常。</p></div>
-      <div class="grid">
-        ${field("bugIssueVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
-        ${field("bugIssueVendorName","店家名稱（必填）","text","請填寫店家名稱")}
-      </div>
-      ${field("bugIssueOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
-      ${select("bugIssueType","問題類型（必填）",["接單系統異常","前台顯示異常","後台顯示異常","設備異常","其他"])}
-      ${textarea("bugIssueDesc","問題描述（必填）","請描述問題發生情境、影響範圍與已確認事項",5)}
-      <div class="upload" style="background:white"><h3>截圖 / 影片連結</h3><p>請貼上可協助判斷問題的截圖或影片雲端連結。</p><div class="field" style="margin-top:14px"><label>截圖 / 影片雲端連結</label><input id="bugIssueFiles" type="text" placeholder="請貼上雲端連結"></div></div>
-      ${select("bugIssueUrgency","回覆時效（必填）",["一般","緊急"])}
-      ${select("bugIssueFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
-      <div id="bugIssueFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
-    `;
-  }
-
-  if(currentType==="project_order_system_issue"){
-    area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>接單系統異常</h3><p class="muted">請提供訂單資訊、問題描述與截圖 / 影片，方便快速判斷異常。</p></div>
-      <div class="grid">
-        ${field("orderSystemVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
-        ${field("orderSystemVendorName","店家名稱（必填）","text","請填寫店家名稱")}
-      </div>
-      ${field("orderSystemOrderNumber","訂單編號","text","請填寫訂單編號，可留空")}
-      ${select("orderSystemIssueType","問題類型（必填）",["接單系統異常","無法接單","訂單未進單","訂單狀態異常","其他"])}
-      ${textarea("orderSystemIssueDesc","問題描述（必填）","請描述接單系統異常狀況",5)}
-      <div class="upload" style="background:white"><h3>截圖 / 影片連結</h3><p>請貼上可協助判斷問題的截圖或影片雲端連結。</p><div class="field" style="margin-top:14px"><label>截圖 / 影片雲端連結</label><input id="orderSystemFiles" type="text" placeholder="請貼上雲端連結"></div></div>
-      ${select("orderSystemUrgency","回覆時效（必填）",["一般","緊急"])}
-      ${select("orderSystemFaqChecked","是否已查詢 AM 常見問題彙整表單（必填）",["Yes","No"])}
-      <div id="orderSystemFaqNotice" class="notice hidden" style="color:#dc2626;background:#fff1f2;border:1px solid #fecdd3;font-weight:700;">⚠️ 建議先確認 AM 常見問題彙整表單後再送出需求。</div>
     `;
   }
 
@@ -2731,33 +2658,6 @@ function renderSummary(){
       row("Chain Code",showVal("prepQueryChainCode")),
       row("品牌需求",showMultilineVal("prepQueryNeed")),
       row("查詢提醒","可單店查詢或 Chain 查詢；若無特別指定，將提供近一個月的平均製餐時間")
-    );
-  }
-
-
-  if(currentType==="project_bug_issue"){
-    rows.push(
-      row("店家代碼",showVal("bugIssueVendorCode")),
-      row("店家名稱",showVal("bugIssueVendorName")),
-      row("訂單編號",showVal("bugIssueOrderNumber")),
-      row("問題類型",showVal("bugIssueType")),
-      row("問題描述",showMultilineVal("bugIssueDesc")),
-      row("截圖 / 影片雲端連結",showVal("bugIssueFiles")),
-      row("回覆時效",showVal("bugIssueUrgency")),
-      row("是否已查詢 AM 常見問題彙整表單",showVal("bugIssueFaqChecked"))
-    );
-  }
-
-  if(currentType==="project_order_system_issue"){
-    rows.push(
-      row("店家代碼",showVal("orderSystemVendorCode")),
-      row("店家名稱",showVal("orderSystemVendorName")),
-      row("訂單編號",showVal("orderSystemOrderNumber")),
-      row("問題類型",showVal("orderSystemIssueType")),
-      row("問題描述",showMultilineVal("orderSystemIssueDesc")),
-      row("截圖 / 影片雲端連結",showVal("orderSystemFiles")),
-      row("回覆時效",showVal("orderSystemUrgency")),
-      row("是否已查詢 AM 常見問題彙整表單",showVal("orderSystemFaqChecked"))
     );
   }
 
