@@ -2265,7 +2265,7 @@ function renderSummary(){
         ${field("portalAccountName","創建帳號名稱（必填）","text","請填寫創建帳號名稱")}
         ${field("portalEmail","Email（必填）","email","請填寫 Email")}
       </div>
-      ${select("portalPermission","權限（必填）",[","Finance"])}
+      ${select("portalPermission","權限（必填）",["Admin","Manager","Reporting","Operations","Support","Finance"])}
       ${portalNote()}
     `;
   }
@@ -2294,7 +2294,7 @@ function renderSummary(){
       ${portalVendorGrid()}
       <div class="grid">
         ${field("portalEmail","Email（必填）","email","請填寫 Email")}
-        ${select( "portalPermission","權限需調整為（必填）",["]
+        ${select("portalPermission","權限需調整為（必填）",["Admin","Manager","Reporting","Operations","Support"])}
                 )}
       </div>
       ${portalNote()}
