@@ -605,7 +605,7 @@ function filterAMList(showAll=false){
   if(!dropdown) return;
 
   if(!amListLoaded){
-    dropdown.innerHTML = `<div class="am-empty">AM_List 載入中，請稍候。</div>`;
+    dropdown.innerHTML = `<div class="am-empty">名單載入中，約需 3–5 秒，請稍候。</div>`;
     dropdown.style.display = "block";
     return;
   }
@@ -685,7 +685,7 @@ function handleAmSelect(){
       hint.textContent = "找不到對應 Email，請確認是否從名單中選擇。";
       hint.style.color = "#dc2626";
     }else{
-      hint.textContent = "AM_List 載入中，請稍候。";
+      hint.textContent = "名單載入中，約需 3–5 秒，請稍候。";
       hint.style.color = "#94a3b8";
     }
   }
