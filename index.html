@@ -1790,10 +1790,19 @@ function renderConditionalBlocks(){
         extra.innerHTML = `${select("storePriceAction","新增 或 移除 <店內價>標籤（擇一選擇）（必填）",["新增 <店內價> 標籤","移除 <店內價> 標籤"])}
         ${textarea("storePriceVendorList","更新門市：code + 店家名稱","請填寫要更新的門市 code + 店家名稱，或於下方上傳名單檔案")}
         <div class="upload">
-          <h3>店內菜單翻拍照</h3>
-          <p>僅接受實體菜單翻拍，不接受電子檔或手寫菜單</p>
-          <div class="field" style="margin-top:14px"><inputtype="text" placeholder="請貼上雲端連結"/></div>
-        </div>`;
+  <h3>店內菜單翻拍照連結</h3>
+  <p>請貼上 Google Drive、Google Photos 或其他雲端連結</p>
+
+  <div class="field" style="margin-top:14px">
+    <label>店內菜單翻拍照連結（必填）</label>
+    <input
+      id="storePriceMenuPhoto"
+      type="url"
+      placeholder="請貼上雲端連結"
+      oninput="validateRequiredVisible(false)"
+    >
+  </div>
+</div>`;
       } else if(v==="一般店"){
         extra.innerHTML = `${select("storePriceAction","欲加回 或 拔除店內價標籤（擇一選擇）",["欲加回店內價標籤","欲拔除店內價標籤"])}`;
       }
