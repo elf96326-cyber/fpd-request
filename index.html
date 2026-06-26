@@ -379,7 +379,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     </button>
     <button class="request workstream-project" data-workstream="project" onclick="selectWorkstream('project')">
       <b style="font-size:22px;">⚙️活動 / 營運</b>
-      <p>活動申請、活動菜單修改/複製、營業設定等(</p>
+      <p>活動申請、活動菜單修改/複製、營業設定等</p>
     </button>
   </div>
   <div class="btn-row">
@@ -1402,7 +1402,14 @@ function renderTemplate(){
         ${field("aaakalhPeriodEnd","活動結束日期（必填）","date")}
       </div>
       <div id="aaakalhMenuUpdateBlock">${select("aaakalhMenuUpdate","Menu Update（必填）",["YES","NO"])}</div>
-      <div id="aaakalhMenuCategoryOptionalBlock">${field("aaakalhMenuCategoryOptional","Menu Category（選填）","text","請填寫 Menu Category，可留空")}</div>
+      const aaakalhMenuCategoryOptionalBlock = document.getElementById("aaakalhMenuCategoryOptionalBlock");
+if(aaakalhMenuCategoryOptionalBlock){
+  aaakalhMenuCategoryOptionalBlock.classList.toggle(
+    "hidden",
+    aaakalhDealType === "BOGO" ||
+    aaakalhDealType === "POS自行設定菜單+專區活動"
+  );
+}
       <div id="aaakalhMenuCategoryBlock" class="hidden">${field("aaakalhMenuCategory","Menu Category（必填）","text","請填寫 Menu Category")}</div>
       <div id="aaakalhPosNotice" class="notice hidden" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 Menu update：Yes，this vendor has updated the menu category by themself.</div>
       ${fixedCard("aaakalhDelivery","Delivery（固定）","Delivery")}
@@ -1686,10 +1693,15 @@ function renderConditionalBlocks(){
   setFixedCard("aaakalhFixedMenuUpdate", fixedMenuUpdateByType[aaakalhDealType] || "");
 
   const aaakalhMenuCategoryBlock = document.getElementById("aaakalhMenuCategoryBlock");
-  if(aaakalhMenuCategoryBlock){
-    aaakalhMenuCategoryBlock.classList.toggle("hidden", aaakalhDealType !== "BOGO");
-  }
-  setFixedCard("aaakalhMenuCategory", aaakalhDealType === "BOGO" ? "指定餐點專區" : "", "指定餐點專區");
+if(aaakalhMenuCategoryBlock){
+  aaakalhMenuCategoryBlock.classList.toggle(
+    "hidden",
+    !(
+      aaakalhDealType === "BOGO" ||
+      aaakalhDealType === "POS自行設定菜單+專區活動"
+    )
+  );
+}
 
   const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
   if(aaakalhPosNotice){
