@@ -1402,14 +1402,6 @@ function renderTemplate(){
         ${field("aaakalhPeriodEnd","活動結束日期（必填）","date")}
       </div>
       <div id="aaakalhMenuUpdateBlock">${select("aaakalhMenuUpdate","Menu Update（必填）",["YES","NO"])}</div>
-      const aaakalhMenuCategoryOptionalBlock = document.getElementById("aaakalhMenuCategoryOptionalBlock");
-if(aaakalhMenuCategoryOptionalBlock){
-  aaakalhMenuCategoryOptionalBlock.classList.toggle(
-    "hidden",
-    aaakalhDealType === "BOGO" ||
-    aaakalhDealType === "POS自行設定菜單+專區活動"
-  );
-}
       <div id="aaakalhMenuCategoryBlock" class="hidden">${field("aaakalhMenuCategory","Menu Category（必填）","text","請填寫 Menu Category")}</div>
       <div id="aaakalhPosNotice" class="notice hidden" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 Menu update：Yes，this vendor has updated the menu category by themself.</div>
       ${fixedCard("aaakalhDelivery","Delivery（固定）","Delivery")}
@@ -1683,9 +1675,13 @@ function renderConditionalBlocks(){
   setFixedCard("aaakalhFixedDescription", fixedDescriptionByType[aaakalhDealType] || "");
 
   const aaakalhMenuUpdateBlock = document.getElementById("aaakalhMenuUpdateBlock");
-  if(aaakalhMenuUpdateBlock){
-    aaakalhMenuUpdateBlock.classList.toggle("hidden", aaakalhDealType === "Targeting Deal（新客活動）" || hasFixedMenuUpdate);
-  }
+if(aaakalhMenuUpdateBlock){
+  aaakalhMenuUpdateBlock.classList.toggle(
+    "hidden",
+    aaakalhDealType !== "BOGO"
+  );
+}
+      
   const aaakalhFixedMenuUpdateBlock = document.getElementById("aaakalhFixedMenuUpdateBlock");
   if(aaakalhFixedMenuUpdateBlock){
     aaakalhFixedMenuUpdateBlock.classList.toggle("hidden", !hasFixedMenuUpdate);
@@ -1703,7 +1699,16 @@ if(aaakalhMenuCategoryBlock){
   );
 }
 
-  const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
+const aaakalhMenuCategoryOptionalBlock = document.getElementById("aaakalhMenuCategoryOptionalBlock");
+if(aaakalhMenuCategoryOptionalBlock){
+  aaakalhMenuCategoryOptionalBlock.classList.toggle(
+    "hidden",
+    aaakalhDealType === "BOGO" ||
+    aaakalhDealType === "POS自行設定菜單+專區活動"
+  );
+}
+      
+const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
   if(aaakalhPosNotice){
     aaakalhPosNotice.classList.toggle("hidden", aaakalhDealType !== "POS自行設定菜單+專區活動");
   }
