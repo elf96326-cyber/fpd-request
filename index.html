@@ -343,7 +343,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 <section class="page active" id="page1">
   <div class="title-row"><div><h2>第一頁｜基本資料</h2><div class="sub">請填寫品牌與負責窗口資訊。</div></div></div>
   <div class="grid">
-    <div class="field"><label>品牌 / 門市完整名稱（必填）</label><input id="brand" placeholder="範例：星巴克、青鳥旅行 (誠品站前店)" oninput="validateBasic()"></div>
+    <div class="field"><label>品牌名稱（必填）</label><input id="brand" placeholder="範例：星巴克、Mister Donut、迷克夏" oninput="validateBasic()"></div>
     <div class="field">
       <label>負責窗口（必填）</label>
       <div class="am-search-wrapper">
@@ -985,10 +985,10 @@ function renderTemplate(){
 
   if(currentType==="menu_modify"){
     area.innerHTML = `
-      ${select("menuVendorType","店家類型（必填）",["SAM","KAM"])}
+      ${select("menuVendorType","適用對象（必填）",["SAM","KAM"])}
       ${select("menuRequestType","菜單需求類型（必填）",["校稿用修改","單店修改","純封面照片修改 (品牌共用)","純封面照片修改 (指定門市)","純餐點照片修改 (校稿用)","純餐點照片修改 (無校稿)","Logo 照片修改"])}
       <div id="bannerPhotoNotice" class="notice hidden" style="margin-top:-6px;color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 品牌共用封面照片適用於所有門市；如門市另有設定指定門市封面照片，則以指定門市封面照片為準。</div>
-      <div id="menuModifyNotice" class="notice">⚠️ 請先選擇店家類型與菜單需求類型，系統才會產生對應的模板欄位。</div>
+      <div id="menuModifyNotice" class="notice">⚠️ 請先選擇適用對象與菜單需求類型，系統才會產生對應的模板欄位。</div>
       ${subjectInput()}
       <div class="grid hidden" id="menuModifyContactBlock">
         ${field("contact","主要校稿信箱（必填）","email","請填寫主要校稿信箱")}
@@ -1000,7 +1000,7 @@ function renderTemplate(){
 
   if(currentType==="menu_copy"){
     area.innerHTML = `
-      ${select("menuCopyVendorType","店家類型（必填）",["SAM","KAM"])}
+      ${select("menuCopyVendorType","適用對象（必填）",["SAM","KAM"])}
       ${select("menuCopyRequestType","菜單需求類型（必填）",["菜單複製"])}
       <div id="kaCaseTypeBlock" class="hidden">${select("menuCopyCaseSubjectType","KAM 標題類型（必填）",["STAT","複製日期"])}</div>
       ${subjectInput()}
@@ -1023,8 +1023,8 @@ function renderTemplate(){
   }
 
   if(currentType==="consumer_note"){
-    area.innerHTML = `${select("consumerNoteStoreType","店家類型（必填）",["SAM","KAM"])}
-    <div id="consumerNoteNotice" class="notice">⚠️ 請先選擇 SAM 或 KAM，系統才會產生對應的欄位。</div>
+    area.innerHTML = `${select("consumerNoteStoreType","適用對象（必填）",["SAM","KAM"])}
+    <div id="consumerNoteNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>
     ${subjectInput()}
     <div class="box pink"><h3>備註功能</h3><p class="muted">開 / 關消費者備註功能，以品牌為單位，不可單店開關。</p></div>
     ${select("consumerNoteMode","操作類型",["開啟消費者備註功能","關閉消費者備註功能"])}
@@ -1033,17 +1033,17 @@ function renderTemplate(){
 
   if(currentType==="store_price_label"){
     upload.classList.add("hidden");
-    area.innerHTML = `${select("storePriceVendorType","店家類型（必填）",["SAM","KAM","area"])}<div id="storePriceNotice" class="notice">⚠️ 請先選擇 SAM、KAM 或area，系統才會產生對應的欄位。</div>${subjectInput()}<div id="storePriceExtra"></div>`;
+    area.innerHTML = `${select("storePriceVendorType","適用對象（必填）",["SAM","KAM","area"])}<div id="storePriceNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>${subjectInput()}<div id="storePriceExtra"></div>`;
   }
 
   if(currentType==="export_menu"){
-    area.innerHTML = `${select("exportMenuVendorType","店家類型（必填）",["KAM","area"])}<div id="exportMenuNotice" class="notice">⚠️ 請先選擇 KAM 或area，系統才會產生對應的欄位。</div>${subjectInput()}<div id="exportMenuExtra"></div>`;
+    area.innerHTML = `${select("exportMenuVendorType","適用對象（必填）",["KAM","area"])}<div id="exportMenuNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>${subjectInput()}<div id="exportMenuExtra"></div>`;
   }
 
   if(currentType==="restaurant_info"){
     upload.classList.add("hidden");
-    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["SAM","KAM"])}
-      <div id="restaurantNotice" class="notice">⚠️ 請先選擇 SAM 或 KAM，系統才會產生對應的欄位。</div>
+    area.innerHTML = `${select("restaurantInfoStoreType","適用對象（必填）",["SAM","KAM"])}
+      <div id="restaurantNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>
       ${subjectInput()}
       ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
       <div class="box pink">
@@ -1934,8 +1934,8 @@ function computeSubject(){
   }
   if(currentType==="restaurant_info"){
     upload.classList.add("hidden");
-    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["SAM","KAM"])}
-      <div id="restaurantNotice" class="notice">⚠️ 請先選擇 SAM 或 KAM，系統才會產生對應的欄位。</div>
+    area.innerHTML = `${select("restaurantInfoStoreType","適用對象（必填）",["SAM","KAM"])}
+      <div id="restaurantNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>
       ${subjectInput()}
       ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
       <div class="box pink">
@@ -2083,7 +2083,7 @@ function renderSummary(){
 
   if(currentType==="menu_modify"){
     rows.push(
-      row("店家類型",showVal("menuVendorType")),
+      row("適用對象",showVal("menuVendorType")),
       row("菜單需求類型",showVal("menuRequestType"))
     );
 
@@ -2129,7 +2129,7 @@ function renderSummary(){
 
   if(currentType==="menu_copy"){
     rows.push(
-      row("店家類型",showVal("menuCopyVendorType")),
+      row("適用對象",showVal("menuCopyVendorType")),
       row("菜單需求類型",showVal("menuCopyRequestType"))
     );
     if(val("menuCopyVendorType")==="KAM"){
@@ -2157,7 +2157,7 @@ function renderSummary(){
 
   if(currentType==="consumer_note"){
     rows.push(
-      row("店家類型",showVal("consumerNoteStoreType")),
+      row("適用對象",showVal("consumerNoteStoreType")),
       row("操作類型",showVal("consumerNoteMode")),
       row("品牌 / Chain code",showVal("specialVendorList"))
     );
@@ -2165,7 +2165,7 @@ function renderSummary(){
 
   if(currentType==="store_price_label"){
     rows.push(
-      row("店家類型",showVal("storePriceVendorType")),
+      row("適用對象",showVal("storePriceVendorType")),
       row("更新門市：code + 店家名稱",showMultilineVal("storePriceVendorList")),
       row("店內價標籤操作",showVal("storePriceAction"))
     );
@@ -2173,7 +2173,7 @@ function renderSummary(){
 
   if(currentType==="export_menu"){
     rows.push(
-      row("店家類型",showVal("exportMenuVendorType")),
+      row("適用對象",showVal("exportMenuVendorType")),
       row("店家資訊：code + 店家名稱",showVal("exportMenuVendorInfo")),
       row("固定說明","店家欲串接POS機，需提供全品項總表給POS廠商，再請完成後告知。")
     );
@@ -2181,8 +2181,8 @@ function renderSummary(){
 
   if(currentType==="restaurant_info"){
     upload.classList.add("hidden");
-    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["SAM","KAM"])}
-      <div id="restaurantNotice" class="notice">⚠️ 請先選擇 SAM 或 KAM，系統才會產生對應的欄位。</div>
+    area.innerHTML = `${select("restaurantInfoStoreType","適用對象（必填）",["SAM","KAM"])}
+      <div id="restaurantNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>
       ${subjectInput()}
       ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
       <div class="box pink">
