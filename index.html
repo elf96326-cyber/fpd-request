@@ -324,7 +324,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div>
       <div class="badge">📋 Menu Request Portal</div>
       <h1>【foodpanda】品牌需求表單</h1>
-      <p class="desc">請填寫品牌基本資料，選擇需求類型後，系統會產生對應 Case Subject，並可貼上相關檔案連結。</p>
+      <p class="desc">請填寫品牌基本資料，選擇需求類型後系統會自動產生對應標題，並可貼上相關檔案連結。</p>
     </div>
     <div class="status"><small>目前狀態</small><b id="statusText">填寫中</b></div>
   </div>
@@ -391,7 +391,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 <section class="page" id="page3">
   <div class="title-row"><div><h2>第三頁｜選擇需求</h2><div class="sub">請依需求類型選擇欲申請項目。</div></div></div>
   <div id="menuRequestSection">
-  <div class="group category-brand"><div class="category-label">SAM / KAM</div><div class="group-title">【SAM / KAM】</div><div class="request-grid">
+  <div class="group category-brand"><div class="category-label">SAM / KAM</div><div class="request-grid">
     <button class="request" data-type="menu_modify" onclick="selectType('menu_modify')"><b>📒 菜單修改</b><p>既有菜單內容、價格、品項或照片調整</p></button>
     <button class="request" data-type="menu_copy" onclick="selectType('menu_copy')"><b>🔗 菜單複製</b><p>將既有菜單內容複製到指定店家或品牌</p></button>
     <button class="request" data-type="plastic_bag" onclick="selectType('plastic_bag')"><b>🛍️ 塑膠袋設定</b><p>僅限更新塑膠袋設定使用</p></button>
@@ -400,12 +400,12 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <button class="request" data-type="pos_issue" onclick="selectType('pos_issue')"><b>⁉️POS 串接異常</b><p>協助回報或追蹤 POS 串接異常問題</p></button>
   </div></div>
 
-  <div class="group category-all"><div class="category-label">SAM / KAM / area</div><div class="group-title">【SAM / KAM / area】</div><div class="request-grid">
+  <div class="group category-all"><div class="category-label">SAM / KAM / area</div><div class="request-grid">
     <button class="request" data-type="store_price_label" onclick="selectType('store_price_label')"><b>📌 店內價標籤</b><p>協助設定或調整店內價相關標籤</p></button>
     <button class="request" data-type="export_menu" onclick="selectType('export_menu')"><b>📋 匯出菜單</b><p>協助匯出指定品牌、門市或 校稿版菜單 菜單資料</p></button>
   </div></div>
 
-  <div class="group category-store"><div class="category-label">area</div><div class="group-title">【area】</div><div class="request-grid">
+  <div class="group category-store"><div class="category-label">area</div><div class="request-grid">
     <button class="request" data-type="use_branch_photos" onclick="selectType('use_branch_photos')"><b>📁 使用既有分店照片</b><p>10 間以上門市</p></button>
     <button class="request" data-type="upload_photo_to_preview" onclick="selectType('upload_photo_to_preview')"><b>📤 提供餐點照連結至校稿用</b><p>不開放單店</p></button>
     <button class="request" data-type="shooting_service" onclick="selectType('shooting_service')"><b>📸 拍攝服務申請</b><p>符合行銷 / 補拍資格</p></button>
@@ -416,22 +416,22 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div></div>
   </div>
   <div id="projectRequestSection" class="hidden">
-<div class="group category-brand"><div class="category-label">SAM</div><div class="group-title">【SAM】</div><div class="request-grid">
+<div class="group category-brand"><div class="category-label">SAM</div><div class="request-grid">
 <button class="request" data-type="project_aaa_deal_menu" onclick="selectType('project_aaa_deal_menu')"><b>活動設定 + 活動菜單修改</b></button>
 <button class="request" data-type="project_aaa_device_replacement" onclick="selectType('project_aaa_device_replacement')"><b>換機申請</b></button>
 </div></div>
 
-<div class="group project-purple"><div class="category-label">SAM / KAM</div><div class="group-title">【SAM / KAM】</div><div class="request-grid">
+<div class="group project-purple"><div class="category-label">SAM / KAM</div><div class="request-grid">
 <button class="request" data-type="project_aaakalh_deal_create" onclick="selectType('project_aaakalh_deal_create')"><b>🎯 建立 Deal 活動</b><p>General / PRO / Targeting / BOGO / POS 專區活動</p></button>
 <button class="request" data-type="project_aaakalh_deal_cancel" onclick="selectType('project_aaakalh_deal_cancel')"><b>❌ Deal 活動取消</b><p>單店、多店（&gt;10）活動取消</p></button>
 </div></div>
 
-<div class="group category-all"><div class="category-label">KAM</div><div class="group-title">【KAM】</div><div class="request-grid">
+<div class="group category-all"><div class="category-label">KAM</div><div class="request-grid">
 <button class="request" data-type="project_kalh_deal_menu_update" onclick="selectType('project_kalh_deal_menu_update')"><b>📢 活動設定 + 修改菜單</b><p>整合單店 / 多店與校稿用活動菜單修改</p></button>
 <button class="request" data-type="project_kalh_deal_menu_sync" onclick="selectType('project_kalh_deal_menu_sync')"><b>🔄 活動複製菜單</b><p>整合排程、STAT、純上架活動品項</p></button>
 </div></div>
 
-<div class="group category-store"><div class="category-label">area</div><div class="group-title">【are】</div><div class="request-grid">
+<div class="group category-store"><div class="category-label">area</div><div class="request-grid">
 <button class="request" data-type="project_store_cancel_deal" onclick="selectType('project_store_cancel_deal')"><b>取消活動並恢復店內價菜單</b></button>
 <button class="request" data-type="project_store_join_deal" onclick="selectType('project_store_join_deal')"><b>新參加 / 更換 活動+修改活動菜單</b></button>
 <button class="request" data-type="project_store_preview_menu" onclick="selectType('project_store_preview_menu')"><b>修改校稿用菜單</b></button>
@@ -440,7 +440,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 <div class="group" style="border:1px solid #bbf7d0;background:#f0fdf4;border-radius:24px;padding:18px">
 <div class="category-label" style="background:#dcfce7;color:#166534">SAM / KAM / area</div>
-<div class="group-title">【全商家皆適用】</div>
 
 <div class="all-merchant-subgroup">
   <div class="all-merchant-subtitle">🔑 Portal 帳號綁定（綁定權限申請）</div>
@@ -708,16 +707,16 @@ const typeInfo = {
   chain_adjust:["Chain 調整","商家退出加盟需調整 Chain"],
   project_general:["Project 需求","專案型需求入口，模板欄位後續新增"],
   project_other:["其他 Project 需求","預留 Project 子項目，之後可依流程擴充"],
-  project_aaa_deal_menu:["活動設定 + 活動菜單修改","AAA 活動設定、活動校稿菜單修改或活動菜單複製 / 版本同步"],
+  project_aaa_deal_menu:["活動設定 + 活動菜單修改","SAM 活動設定、活動校稿菜單修改或活動菜單複製 / 版本同步"],
   project_aaa_device_replacement:["換機申請","設備異常換機評估"],
-  project_aaakalh_deal_create:["建立 Deal 活動","AAA、KA、LH 一般店不可申請活動建立"],
-  project_aaakalh_deal_cancel:["Deal 活動取消","AAA、KA、LH 單店、多店活動取消"],
-  project_kalh_deal_menu_update:["活動設定 + 修改菜單","KA、LH 活動內容建立與菜單修改"],
-  project_kalh_deal_menu_sync:["活動複製菜單","KA、LH 活動菜單複製、排程或純上架活動品項"],
-  project_store_cancel_deal:["取消活動並恢復店內價菜單","一般店活動取消"],
-  project_store_join_deal:["新參加 / 更換 活動+修改活動菜單","一般店活動設定"],
-  project_store_preview_menu:["修改校稿用菜單","一般店校稿菜單修改"],
-  project_store_menu_sync:["複製","一般店菜單複製"],
+  project_aaakalh_deal_create:["建立 Deal 活動","SAM / KAM area不可申請活動建立"],
+  project_aaakalh_deal_cancel:["Deal 活動取消","SAM / KAM 單店、多店活動取消"],
+  project_kalh_deal_menu_update:["活動設定 + 修改菜單","KAM 活動內容建立與菜單修改"],
+  project_kalh_deal_menu_sync:["活動複製菜單","KAM 活動菜單複製、排程或純上架活動品項"],
+  project_store_cancel_deal:["取消活動並恢復店內價菜單","area活動取消"],
+  project_store_join_deal:["新參加 / 更換 活動+修改活動菜單","area活動設定"],
+  project_store_preview_menu:["修改校稿用菜單","area校稿菜單修改"],
+  project_store_menu_sync:["複製","area菜單複製"],
   project_portal_change_email:["商家修改信箱","Portal 帳號綁定（綁定權限申請）"],
   project_portal_create_account:["創建Protal帳號","Portal 帳號綁定（綁定權限申請）"],
   project_portal_bind_account:["商家綁定帳號","Portal 帳號綁定（綁定權限申請）"],
@@ -928,7 +927,7 @@ function textarea(id,label,placeholder="請填寫",rows=4){
   return `<div class="field"><label>${label}</label><textarea id="${id}" rows="${rows}" placeholder="${placeholder}" oninput="validateRequiredVisible(false)"></textarea></div>`;
 }
 function subjectInput(){
-  return `<div id="subjectWrap" class="field hidden"><label>Case Subject</label><div id="caseSubject" class="case-subject-card empty">尚未產生</div></div>`;
+  return `<div id="subjectWrap" class="field hidden"><label>📄 系統自動產生標題</label><div id="caseSubject" class="case-subject-card empty">尚未產生</div></div>`;
 }
 function fixedCard(id,label,emptyText="選擇活動類型後自動帶入"){
   return `<div class="field"><label>${label}</label><input id="${id}" type="hidden"><div id="${id}Display" class="case-subject-card empty">${emptyText}</div></div>`;
@@ -986,10 +985,10 @@ function renderTemplate(){
 
   if(currentType==="menu_modify"){
     area.innerHTML = `
-      ${select("menuVendorType","店家類型（必填）",["AAA","KA","LH"])}
+      ${select("menuVendorType","店家類型（必填）",["SAM","KAM"])}
       ${select("menuRequestType","菜單需求類型（必填）",["校稿用修改","單店修改","純封面照片修改 (品牌共用)","純封面照片修改 (指定門市)","純餐點照片修改 (校稿用)","純餐點照片修改 (無校稿)","Logo 照片修改"])}
       <div id="bannerPhotoNotice" class="notice hidden" style="margin-top:-6px;color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 品牌共用封面照片適用於所有門市；如門市另有設定指定門市封面照片，則以指定門市封面照片為準。</div>
-      <div id="menuModifyNotice" class="notice">⚠️ 請先選擇店家類型與菜單需求類型，系統才會產生對應的 Case Subject 與模板欄位。</div>
+      <div id="menuModifyNotice" class="notice">⚠️ 請先選擇店家類型與菜單需求類型，系統才會產生對應的模板欄位。</div>
       ${subjectInput()}
       <div class="grid hidden" id="menuModifyContactBlock">
         ${field("contact","主要校稿信箱（必填）","email","請填寫主要校稿信箱")}
@@ -1001,10 +1000,9 @@ function renderTemplate(){
 
   if(currentType==="menu_copy"){
     area.innerHTML = `
-      ${select("menuCopyVendorType","店家類型（必填）",["AAA","KA"])}
+      ${select("menuCopyVendorType","店家類型（必填）",["SAM","KAM"])}
       ${select("menuCopyRequestType","菜單需求類型（必填）",["菜單複製"])}
-      <div id="kaCaseTypeBlock" class="hidden">${select("menuCopyCaseSubjectType","KA Case Subject 類型（必填）",["STAT","複製日期"])}</div>
-      <div id="menuCopyNotice" class="notice">⚠️ 請先選擇店家類型；若選 KA，請再選擇 STAT 或複製日期，系統才會產生 Case Subject。</div>
+      <div id="kaCaseTypeBlock" class="hidden">${select("menuCopyCaseSubjectType","KAM 標題類型（必填）",["STAT","複製日期"])}</div>
       ${subjectInput()}
       ${field("muCase","承 MU case","text","請填寫承接的 MU Case 編號或連結")}
       <div class="grid">
@@ -1025,8 +1023,8 @@ function renderTemplate(){
   }
 
   if(currentType==="consumer_note"){
-    area.innerHTML = `${select("consumerNoteStoreType","店家類型（必填）",["AAA","KA、LH"])}
-    <div id="consumerNoteNotice" class="notice">⚠️ 請先選擇 AAA 或 KA、LH，系統才會產生對應的 Case Subject。</div>
+    area.innerHTML = `${select("consumerNoteStoreType","店家類型（必填）",["SAM","KAM"])}
+    <div id="consumerNoteNotice" class="notice">⚠️ 請先選擇 SAM 或 KAM，系統才會產生對應的欄位。</div>
     ${subjectInput()}
     <div class="box pink"><h3>備註功能</h3><p class="muted">開 / 關消費者備註功能，以品牌為單位，不可單店開關。</p></div>
     ${select("consumerNoteMode","操作類型",["開啟消費者備註功能","關閉消費者備註功能"])}
@@ -1035,17 +1033,17 @@ function renderTemplate(){
 
   if(currentType==="store_price_label"){
     upload.classList.add("hidden");
-    area.innerHTML = `${select("storePriceVendorType","店家類型（必填）",["AAA","KA、LH","一般店"])}<div id="storePriceNotice" class="notice">⚠️ 請先選擇 AAA、KA / LH 或一般店，系統才會產生對應的 Case Subject 與欄位。</div>${subjectInput()}<div id="storePriceExtra"></div>`;
+    area.innerHTML = `${select("storePriceVendorType","店家類型（必填）",["SAM","KAM","area"])}<div id="storePriceNotice" class="notice">⚠️ 請先選擇 SAM、KAM 或area，系統才會產生對應的欄位。</div>${subjectInput()}<div id="storePriceExtra"></div>`;
   }
 
   if(currentType==="export_menu"){
-    area.innerHTML = `${select("exportMenuVendorType","店家類型（必填）",["KA、LH","一般店"])}<div id="exportMenuNotice" class="notice">⚠️ 請先選擇 KA、LH 或一般店，系統才會產生對應的 Case Subject 與欄位。</div>${subjectInput()}<div id="exportMenuExtra"></div>`;
+    area.innerHTML = `${select("exportMenuVendorType","店家類型（必填）",["KAM","area"])}<div id="exportMenuNotice" class="notice">⚠️ 請先選擇 KAM 或area，系統才會產生對應的欄位。</div>${subjectInput()}<div id="exportMenuExtra"></div>`;
   }
 
   if(currentType==="restaurant_info"){
     upload.classList.add("hidden");
-    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["AAA","KA、LH"])}
-      <div id="restaurantNotice" class="notice">⚠️ 請先選擇 AAA 或 KA、LH，系統才會產生對應的 Case Subject 與欄位。</div>
+    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["SAM","KAM"])}
+      <div id="restaurantNotice" class="notice">⚠️ 請先選擇 SAM 或 KAM，系統才會產生對應的欄位。</div>
       ${subjectInput()}
       ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
       <div class="box pink">
@@ -1206,7 +1204,7 @@ function renderTemplate(){
         <p class="muted">※ 複製菜單需求，請務必等菜單建置完成（MP Case 關閉）後做申請。</p>
       </div>
       ${select("copyBranchNeed","1. 商家反映需求（必填）",["申請【複製到分店】按鈕","已有【複製到分店】按鈕，需再新增其他可複製分店"])}
-      ${select("copyBranchStoreType","2. 商家類型（必填）",["一般商家","KA品牌之分店門市"])}
+      ${select("copyBranchStoreType","2. 商家類型（必填）",["一般商家","KAM品牌之分店門市"])}
       ${textarea("copyBranchChildVendors","3. 欲開啟複製功能的分店（子菜單）：code + 店家名稱（必填）","申請多店家請換行填寫",5)}
       ${field("copyBranchMasterVendor","4. 複製這間分店菜單（母菜單）：code + 店家名稱（必填）","text","請填寫母菜單 code + 店家名稱")}
       ${field("copyBranchEmail","5. 欲綁定帳號的 Email（必填）","email","請填寫 Email")}
@@ -1379,9 +1377,9 @@ function renderTemplate(){
 
   if(currentType==="project_aaakalh_deal_create"){
     area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>AAA、KA、LH｜建立 Deal 活動</h3><p class="muted">請先選擇活動類型，系統會依類型自動切換 Case Subject 與對應欄位。</p></div>
+      <div class="box pink portal-template-box"><h3>SAM / KAM｜建立 Deal 活動</h3><p class="muted">請先選擇活動類型，系統會依類型自動切換對應欄位。</p></div>
       ${select("aaakalhDealType","活動類型（必填）",["General Deal","PRO Deal","Targeting Deal（新客活動）","BOGO","POS自行設定菜單+專區活動"])}
-      <div id="aaakalhDealNotice" class="notice">⚠️ 請先選擇活動類型，系統才會產生對應的 Case Subject。</div>
+      <div id="aaakalhDealNotice" class="notice">⚠️ 請先選擇活動類型，系統才會產生對應的欄位。</div>
       <div class="grid">
         ${fixedCard("aaakalhParticipationType","參與類型（自動帶入）")}
         ${select("aaakalhProgram","Program（必填）",["Always On - Deals","Pro Always On - Deals","Others - Deals"])}
@@ -1411,7 +1409,7 @@ function renderTemplate(){
 
   if(currentType==="project_aaakalh_deal_cancel"){
     area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>AAA、KA、LH｜Deal 活動取消</h3><p class="muted">適用單店、多店（&gt;10）活動取消。</p></div>
+      <div class="box pink portal-template-box"><h3>SAM / KAM｜Deal 活動取消</h3><p class="muted">適用單店、多店（&gt;10）活動取消。</p></div>
       <div class="grid">
         ${field("aaakalhCancelVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
         ${field("aaakalhCancelVendorName","店家名稱（必填）","text","請填寫店家名稱")}
@@ -1428,10 +1426,10 @@ function renderTemplate(){
 
   if(currentType==="project_kalh_deal_menu_update"){
     area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>KA、LH｜活動設定 + 修改菜單</h3><p class="muted">請先選擇需求模式，系統會依模式自動切換 Case Subject。</p></div>
+      <div class="box pink portal-template-box"><h3>KAM｜活動設定 + 修改菜單</h3><p class="muted">請先選擇需求模式，系統會依模式自動切換模板。</p></div>
       ${select("kalhDealMode","需求模式（必填）",["單店 / 多店","校稿用"])}
       <div class="grid hidden" id="kalhDealContactBlock">${field("contact","主要校稿信箱（必填）","email","請填寫主要校稿信箱")}${field("cc","CC Email（選填）","email","請填寫 CC Email，可留空")}</div>
-      <div id="kalhDealMenuNotice" class="notice">⚠️ 請先選擇需求模式，系統才會產生對應的 Case Subject。</div>
+      <div id="kalhDealMenuNotice" class="notice">⚠️ 請先選擇需求模式，系統才會產生對應的欄位。</div>
       ${field("kalhDealOppCase","OPP QC Case Number（必填）","text","請填寫 OPP QC case number")}
       ${select("kalhDealUpdateMode","更新時間（必填）",["立即","指定日期"])}
       <div id="kalhDealUpdateDateBlock" class="hidden">${field("kalhDealUpdateDate","指定更新日期","date")}</div>
@@ -1452,9 +1450,9 @@ function renderTemplate(){
 
   if(currentType==="project_kalh_deal_menu_sync"){
     area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>KA、LH｜活動複製菜單</h3><p class="muted">請選擇活動複製類型，系統會依類型自動切換 Case Subject。</p></div>
+      <div class="box pink portal-template-box"><h3>KAM｜活動複製菜單</h3><p class="muted">請選擇活動複製類型，系統會依類型自動切換模板。</p></div>
       ${select("kalhSyncType","活動複製類型（必填）",["排程","STAT","純上架活動品項"])}
-      <div id="kalhSyncNotice" class="notice">⚠️ 請先選擇活動複製類型，系統才會產生對應的 Case Subject。</div>
+      <div id="kalhSyncNotice" class="notice">⚠️ 請先選擇活動複製類型，系統才會產生對應的欄位。</div>
       ${field("kalhSyncOppCase","OPP QC Case Number","text","Voucher 無 OPP 請註記")}
       ${field("kalhSyncMuCase","承 Deal w/ MU Case","text","請填寫 Case 編號；無對應 MU case 請備註")}
       <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 校稿完成，再請協助指定日複製菜單後設定活動。</div>
@@ -1569,7 +1567,7 @@ function renderTemplate(){
 if(currentType==="project_aaa_deal_menu"){
     area.innerHTML = `
       ${select("aaaDealMenuType","活動需求類型（必填）",["修改校稿用菜單（有搭配活動）","活動複製菜單 / 菜單版本同步"])}
-      <div id="aaaDealMenuNotice" class="notice">⚠️ 請先選擇活動需求類型，系統才會產生對應的 Case Subject 與模板欄位。</div>
+      <div id="aaaDealMenuNotice" class="notice">⚠️ 請先選擇活動需求類型，系統才會產生對應的欄位。</div>
       ${subjectInput()}
       <div id="aaaDealMenuExtra"></div>
     `;
@@ -1786,8 +1784,8 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
   if(currentType==="menu_copy"){
     const vendor=val("menuCopyVendorType");
     const ka=document.getElementById("kaCaseTypeBlock");
-    if(ka) ka.classList.toggle("hidden", vendor !== "KA");
-    if(vendor !== "KA"){ const k=document.getElementById("menuCopyCaseSubjectType"); if(k) k.value=""; }
+    if(ka) ka.classList.toggle("hidden", vendor !== "KAM");
+    if(vendor !== "KAM"){ const k=document.getElementById("menuCopyCaseSubjectType"); if(k) k.value=""; }
   }
 
   if(currentType==="store_price_label"){
@@ -1803,7 +1801,7 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
     if(storePriceExtraRenderedFor !== v){
       storePriceExtraRenderedFor = v;
 
-      if(v==="AAA" || v==="KA、LH"){
+      if(v==="SAM" || v==="KAM"){
         extra.innerHTML = `${select("storePriceAction","新增 或 移除 <店內價>標籤（擇一選擇）（必填）",["新增 <店內價> 標籤","移除 <店內價> 標籤"])}
         ${textarea("storePriceVendorList","更新門市：code + 店家名稱","請填寫要更新的門市 code + 店家名稱，或於下方上傳名單檔案")}
         <div class="upload">
@@ -1820,7 +1818,7 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
     >
   </div>
 </div>`;
-      } else if(v==="一般店"){
+      } else if(v==="area"){
         extra.innerHTML = `${select("storePriceAction","欲加回 或 拔除店內價標籤（擇一選擇）",["欲加回店內價標籤","欲拔除店內價標籤"])}`;
       }
     }
@@ -1899,8 +1897,8 @@ function computeSubject(){
   if(currentType==="menu_modify"){
     const vendor=val("menuVendorType"), req=val("menuRequestType");
     if(!vendor || !req) return "";
-    const prefix = vendor==="AAA" ? "[AAA]" : "[GMB]";
-    const photoName = vendor==="KA" ? "brand" : vendor;
+    const prefix = vendor==="SAM" ? "[SAM]" : "[GMB]";
+    const photoName = vendor==="KAM" ? "brand" : vendor;
     if(req==="校稿用修改") return `${prefix} Menu update (preview needed) (${b()})`;
     if(req==="單店修改") return `${prefix} Menu update (${b()})`;
     if(req==="純封面照片修改 (品牌共用)") return `[Photo_SSC] Banner update / ${photoName} / chain level`;
@@ -1911,33 +1909,33 @@ function computeSubject(){
   }
   if(currentType==="menu_copy"){
     const vendor=val("menuCopyVendorType"), kt=val("menuCopyCaseSubjectType");
-    if(vendor==="AAA") return `[AAA] Menu sync (${b()}) (複製日期)`;
-    if(vendor==="KA" && kt==="STAT") return `[GMB] Menu sync (${b()}) (STAT)`;
-    if(vendor==="KA" && kt==="複製日期") return `[GMB] Menu sync (${b()}) (複製日期)`;
+    if(vendor==="SAM") return `[SAM] Menu sync (${b()}) (複製日期)`;
+    if(vendor==="KAM" && kt==="STAT") return `[GMB] Menu sync (${b()}) (STAT)`;
+    if(vendor==="KAM" && kt==="複製日期") return `[GMB] Menu sync (${b()}) (複製日期)`;
     return "";
   }
   if(currentType==="plastic_bag") return `[GMB] Menu update (plastic bag) (${b()})`;
   if(currentType==="consumer_note"){
     const v=val("consumerNoteStoreType");
-    if(v==="AAA") return `[AAA] Consumer note setting (${b()})`;
-    if(v==="KA、LH") return `[GMB] Menu update (special instruction) (${b()})`;
+    if(v==="SAM") return `[SAM] Consumer note setting (${b()})`;
+    if(v==="KAM") return `[GMB] Menu update (special instruction) (${b()})`;
     return "";
   }
   if(currentType==="store_price_label"){
     const v=val("storePriceVendorType");
-    if(v==="AAA") return "[AAA] Dine-in price tag update";
-    if(v==="KA、LH") return "[GMB] Dine-in price tag update";
-    if(v==="一般店") return "[AM] Dine-in price tag update";
+    if(v==="SAM") return "[SAM] Dine-in price tag update";
+    if(v==="KAM") return "[GMB] Dine-in price tag update";
+    if(v==="area") return "[AM] Dine-in price tag update";
   }
   if(currentType==="export_menu"){
     const v=val("exportMenuVendorType");
-    if(v==="KA、LH") return "[GMB] Export product list for POS";
-    if(v==="一般店") return "[AM] Export product list for POS";
+    if(v==="KAM") return "[GMB] Export product list for POS";
+    if(v==="area") return "[AM] Export product list for POS";
   }
   if(currentType==="restaurant_info"){
     upload.classList.add("hidden");
-    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["AAA","KA、LH"])}
-      <div id="restaurantNotice" class="notice">⚠️ 請先選擇 AAA 或 KA、LH，系統才會產生對應的 Case Subject 與欄位。</div>
+    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["SAM","KAM"])}
+      <div id="restaurantNotice" class="notice">⚠️ 請先選擇 SAM 或 KAM，系統才會產生對應的欄位。</div>
       ${subjectInput()}
       ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
       <div class="box pink">
@@ -1963,8 +1961,8 @@ function computeSubject(){
   if(currentType==="chain_adjust") return "[AM] Chain Adjustment";
   if(currentType==="project_aaa_deal_menu"){
     const t=val("aaaDealMenuType");
-    if(t==="修改校稿用菜單（有搭配活動）") return `[AAA] Deal with menu update (preview needed) (${b()}) (複製日期)`;
-    if(t==="活動複製菜單 / 菜單版本同步") return `[AAA] Deal with menu sync (${b()}) (複製日期)`;
+    if(t==="修改校稿用菜單（有搭配活動）") return `[SAM] Deal with menu update (preview needed) (${b()}) (複製日期)`;
+    if(t==="活動複製菜單 / 菜單版本同步") return `[SAM] Deal with menu sync (${b()}) (複製日期)`;
     return "";
   }
   if(currentType==="project_kalh_deal_menu_update"){
@@ -1984,7 +1982,7 @@ function computeSubject(){
     const t=val("aaakalhDealType");
     if(t==="General Deal") return "Upgrade/Upsell KAdeal_GM";
     if(t==="PRO Deal") return "Upgrade/Upsell KAPandaPro_GM";
-    if(t==="Targeting Deal（新客活動）") return "Upgrade/Upsell KA Targeting Customer Deal";
+    if(t==="Targeting Deal（新客活動）") return "Upgrade/Upsell KAM Targeting Customer Deal";
     if(t==="BOGO") return "Upgrade/Upsell KAdeal / KAPandaPro_GM(BOGO)";
     if(t==="POS自行設定菜單+專區活動") return "Upgrade/Upsell KAdeal / KAPandaPro_GM(POS)";
     return "";
@@ -2077,7 +2075,7 @@ function renderSummary(){
     row("負責窗口Email",showVal("amEmail")),
     row("需求類別",currentWorkstream ? (currentWorkstream === "menu" ? "🍽️ 菜單" : "⚙️ 活動 / 營運") : "未填寫"),
     row("需求",currentType ? typeInfo[currentType][0] : "未填寫"),
-    row("Case Subject",computeSubject() || "未產生"),
+    row("📄 系統自動產生標題",computeSubject() || "未產生"),
     row("相關檔案連結",showVal("attachmentLink"))
   ].join("");
 
@@ -2134,8 +2132,8 @@ function renderSummary(){
       row("店家類型",showVal("menuCopyVendorType")),
       row("菜單需求類型",showVal("menuCopyRequestType"))
     );
-    if(val("menuCopyVendorType")==="KA"){
-      rows.push(row("KA Case Subject 類型",showVal("menuCopyCaseSubjectType")));
+    if(val("menuCopyVendorType")==="KAM"){
+      rows.push(row("KAM 標題類型",showVal("menuCopyCaseSubjectType")));
     }
     rows.push(
       row("承 MU case",showVal("muCase")),
@@ -2183,8 +2181,8 @@ function renderSummary(){
 
   if(currentType==="restaurant_info"){
     upload.classList.add("hidden");
-    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["AAA","KA、LH"])}
-      <div id="restaurantNotice" class="notice">⚠️ 請先選擇 AAA 或 KA、LH，系統才會產生對應的 Case Subject 與欄位。</div>
+    area.innerHTML = `${select("restaurantInfoStoreType","店家類型（必填）",["SAM","KAM"])}
+      <div id="restaurantNotice" class="notice">⚠️ 請先選擇 SAM 或 KAM，系統才會產生對應的欄位。</div>
       ${subjectInput()}
       ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
       <div class="box pink">
@@ -2334,7 +2332,7 @@ function renderSummary(){
         <p class="muted">※ 複製菜單需求，請務必等菜單建置完成（MP Case 關閉）後做申請。</p>
       </div>
       ${select("copyBranchNeed","1. 商家反映需求（必填）",["申請【複製到分店】按鈕","已有【複製到分店】按鈕，需再新增其他可複製分店"])}
-      ${select("copyBranchStoreType","2. 商家類型（必填）",["一般商家","KA品牌之分店門市"])}
+      ${select("copyBranchStoreType","2. 商家類型（必填）",["一般商家","KAM品牌之分店門市"])}
       ${textarea("copyBranchChildVendors","3. 欲開啟複製功能的分店（子菜單）：code + 店家名稱（必填）","申請多店家請換行填寫",5)}
       ${field("copyBranchMasterVendor","4. 複製這間分店菜單（母菜單）：code + 店家名稱（必填）","text","請填寫母菜單 code + 店家名稱")}
       ${field("copyBranchEmail","5. 欲綁定帳號的 Email（必填）","email","請填寫 Email")}
