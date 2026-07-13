@@ -4,7 +4,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>【foodpanda】品牌需求表單｜v64 換頁置頂預覽</title>
+<title>【foodpanda】需求表單｜入口網站</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
 <link rel="icon"
       href="data:image/svg+xml,
       <svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22>
@@ -15,29 +20,29 @@
   --pink:#ff2b85; --pink-dark:#e01970; --bg:#fff7fa;
   --text:#0f172a; --muted:#64748b; --light:#f8fafc; --border:#e2e8f0; --green:#059669;
 }
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,"Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--text)}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{margin:0;font-family:"Inter","Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--text)}
 .container{max-width:1080px;margin:0 auto;padding:32px 18px 56px}
 .header,.steps,.card{background:#fff;border:1px solid #fce7f3;box-shadow:0 8px 28px rgba(15,23,42,.07)}
 .header{border-radius:28px;padding:30px;margin-bottom:22px}
 .header-row{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
 .badge{display:inline-flex;gap:8px;background:#f1f5f9;color:#475569;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700}
-h1{font-size:34px;margin:18px 0 10px}
-.desc{color:var(--muted);line-height:1.7;max-width:760px;margin:0}
+h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin:18px 0 10px}
+.desc{color:var(--muted);font-weight:400;line-height:1.7;max-width:760px;margin:0}
 .status{background:var(--pink);color:white;border-radius:18px;padding:16px 22px;min-width:120px}
-.status small{display:block;opacity:.75;margin-bottom:5px}.status b{font-size:18px}
+.status small{display:block;font-weight:500;opacity:.75;margin-bottom:5px}.status b{font-size:18px;font-weight:700}
 .steps{border-radius:24px;padding:18px;margin-bottom:22px;display:flex;align-items:center;gap:12px;overflow:auto}
-.step{display:flex;align-items:center;gap:10px;color:#94a3b8;font-weight:800;font-size:14px;white-space:nowrap}
+.step{display:flex;align-items:center;gap:10px;color:#94a3b8;font-weight:700;font-size:14px;white-space:nowrap}
 .circle{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#f1f5f9;color:#64748b}
 .step.active{color:#0f172a}.step.active .circle{background:var(--pink);color:#fff}.step.done .circle{background:var(--green);color:#fff}
 .line{height:1px;background:#e2e8f0;flex:1;min-width:40px}
 .card{border-radius:28px;padding:30px}
 .page{display:none}.page.active{display:block}
 .title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px}
-h2{margin:0;font-size:22px}.sub{color:#94a3b8;font-size:13px;margin-top:7px}
+h2{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em}.sub{color:#94a3b8;font-size:13px;font-weight:400;margin-top:7px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.field{margin-bottom:18px} label{display:block;font-size:14px;font-weight:700;color:#334155;margin-bottom:8px}
-input,select,textarea{width:100%;border:1px solid var(--border);border-radius:14px;padding:14px 15px;font-size:14px;outline:none;background:#fff}
+.field{margin-bottom:18px} label{display:block;font-size:14px;font-weight:600;color:#334155;margin-bottom:8px}
+input,select,textarea{width:100%;border:1px solid var(--border);border-radius:14px;padding:14px 15px;font-size:14px;font-weight:400;outline:none;background:#fff}
 textarea{min-height:110px;resize:vertical}
 input:focus,select:focus,textarea:focus{border-color:var(--pink);box-shadow:0 0 0 4px #fce7f3}
 .required-error{border-color:#ef4444!important;background:#fff1f2!important;box-shadow:0 0 0 4px #fecdd3!important}
@@ -60,9 +65,9 @@ input[readonly]{background:#f8fafc;color:#475569}
   color:#94a3b8;
   font-weight:400;
 }
-.notice{display:flex;gap:8px;background:#f8fafc;border-radius:14px;padding:12px;color:#64748b;font-size:13px;line-height:1.6;margin-bottom:18px}
+.notice{display:flex;gap:8px;background:#f8fafc;border-radius:14px;padding:12px;color:#64748b;font-size:13px;font-weight:400;line-height:1.6;margin-bottom:18px}
 .btn-row{display:flex;justify-content:space-between;gap:12px;margin-top:26px}
-button{border:0;border-radius:14px;padding:12px 18px;font-size:14px;font-weight:800;cursor:pointer}
+button{border:0;border-radius:14px;padding:12px 18px;font-size:14px;font-weight:700;cursor:pointer}
 .btn-primary{background:var(--pink);color:white}.btn-primary:hover{background:var(--pink-dark)}
 button:disabled{opacity:.45;cursor:not-allowed}
 .btn-outline{background:#fff;color:#334155;border:1px solid var(--border)}
@@ -70,7 +75,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .group.category-brand{border:1px solid #fbcfe8;background:#fff7fa;border-radius:24px;padding:18px}
 .group.category-all{border:1px solid #bfdbfe;background:#eff6ff;border-radius:24px;padding:18px}
 .group.category-store{border:1px solid #fde68a;background:#fffbeb;border-radius:24px;padding:18px}
-.group-title{display:flex;align-items:center;gap:12px;font-weight:900;color:#334155;margin-bottom:14px}
+.group-title{display:flex;align-items:center;gap:12px;font-weight:700;color:#334155;margin-bottom:14px}
 .group-title:after{content:"";height:1px;background:#e2e8f0;flex:1}
 .category-brand .group-title{color:#be185d}
 .category-brand .group-title:after{background:#f9a8d4}
@@ -78,12 +83,13 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .category-all .group-title:after{background:#93c5fd}
 .category-store .group-title{color:#b45309}
 .category-store .group-title:after{background:#fcd34d}
-.category-label{display:inline-flex;align-items:center;width:max-content;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;margin-bottom:12px}
+.category-label{display:inline-flex;align-items:center;width:max-content;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;margin-bottom:12px}
 .category-brand .category-label{background:#fce7f3;color:#be185d}
 .category-all .category-label{background:#dbeafe;color:#1d4ed8}
 .category-store .category-label{background:#fef3c7;color:#b45309}
 .request-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .request{text-align:left;background:#fff;border:1px solid var(--border);border-radius:20px;padding:18px;transition:.15s;color:#0f172a}
+.request b{font-weight:700}
 .request:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.08)}
 .request.selected{background:var(--pink);border-color:var(--pink);color:white}
 .category-brand .request.selected{background:var(--pink);border-color:var(--pink);color:white}
@@ -92,11 +98,11 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .request p{margin:8px 0 0;color:#64748b;font-weight:400;line-height:1.5}.request.selected p{color:#ffe4f1}
 .category-all .request.selected p{color:#dbeafe}
 .category-store .request.selected p{color:#fffbeb}
-.pill{background:#f1f5f9;color:#475569;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:700}
+.pill{background:#f1f5f9;color:#475569;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:600}
 .box{border:1px solid var(--border);border-radius:20px;background:#fff;padding:20px;margin-bottom:18px}
-.box.pink{background:var(--bg)}.box h3{font-size:15px;margin:0 0 14px;color:#334155}
+.box.pink{background:var(--bg)}.box h3{font-size:15px;font-weight:700;margin:0 0 14px;color:#334155}
 .upload{border:1px dashed #cbd5e1;border-radius:22px;background:var(--bg);padding:20px;margin-top:18px}
-.upload h3{margin:0 0 6px}.upload p,.muted{margin:0;color:#94a3b8;font-size:13px;line-height:1.6}
+.upload h3{margin:0 0 6px;font-weight:700}.upload p,.muted{margin:0;color:#94a3b8;font-size:13px;font-weight:400;line-height:1.6}
 .summary{background:var(--bg);border-radius:22px;padding:18px;margin-top:24px}
 .summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .summary-row{background:#fff;border:1px solid #f1f5f9;border-radius:14px;padding:12px;display:grid;grid-template-columns:180px 1fr;gap:10px;font-size:14px}
@@ -125,7 +131,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 .workstream-project.selected p{color:#dbeafe !important;}
 
-
 .project-purple{
   border:1px solid #ddd6fe !important;
   background:#f5f3ff !important;
@@ -151,7 +156,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
   color:#ede9fe !important;
 }
 
-
 .all-merchant-subgroup{
   background:#ffffff;
   border:1px solid #bbf7d0;
@@ -165,7 +169,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   gap:10px;
   color:#166534;
   font-size:14px;
-  font-weight:900;
+  font-weight:700;
   margin-bottom:12px;
 }
 .all-merchant-subtitle:after{
@@ -288,6 +292,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   padding:13px 16px;
   border-radius:12px;
   font-size:15px;
+  font-weight:400;
   line-height:1.35;
   color:#0f172a;
   cursor:pointer;
@@ -324,7 +329,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div>
       <div class="badge">📋 Menu Request Portal</div>
       <h1>【foodpanda】品牌需求表單</h1>
-      <p class="desc">請填寫品牌基本資料，選擇需求類型後系統會自動產生對應標題，並可貼上相關檔案連結。</p>
+      <p class="desc">請填寫品牌基本資料，選擇需求類型後系統會自動產生對應標題。</p>
     </div>
     <div class="status"><small>目前狀態</small><b id="statusText">填寫中</b></div>
   </div>
@@ -361,7 +366,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div id="amEmailHint" class="sub">請從名單中選擇負責窗口，系統會自動帶入 Email。</div>
     </div>
   </div>
-  <div id="basicNotice" class="notice">⚠️ 請填寫品牌 / 門市完整名稱，並從名單中選擇負責窗口。</div>
+  <div id="basicNotice" class="notice">⚠️ 請填寫品牌名稱，並從名單中選擇負責窗口。</div>
   <div class="btn-row" style="justify-content:flex-end"><button id="nextBasicBtn" class="btn-primary" onclick="go(2)" disabled style="opacity:.45;cursor:not-allowed">下一步 ›</button></div>
 </section>
 
@@ -516,14 +521,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <span class="pill" id="selectedDesc">請先選擇需求</span>
   </div>
   <div id="templateArea"></div>
-<div id="globalUpload" class="upload">
-  <h3>相關檔案連結</h3>
-  <p>請貼上 Google Drive、Google Sheet 或其他雲端連結。</p>
-  <div class="field" style="margin-top:14px">
-    <label>檔案連結</label>
-    <input id="attachmentLink" type="text" placeholder="請貼上雲端連結">
-  </div>
-</div>
   <div id="requiredWarning" class="notice hidden" style="border:1px solid #fecdd3;background:#fff1f2;color:#dc2626;font-weight:700">⚠️ 還有必填欄位未完成，請先填寫紅框欄位後再送出。</div>
   <div class="btn-row"><button class="btn-outline" onclick="go(3)">‹ 上一步</button><button class="btn-primary" onclick="submitPreview()">送出表單</button></div>
 </section>
@@ -952,7 +949,6 @@ function updateSelectedHeader(){
   document.getElementById("selectedDesc").textContent = currentType ? typeInfo[currentType][1] : "請先選擇需求";
 }
 
-
 function markupNote(id){
   return `<div id="${id}" class="notice hidden" style="margin-top:-10px;color:#dc2626;font-style:italic;font-size:12px;font-weight:500;"></div>`;
 }
@@ -976,9 +972,7 @@ function updateMarkupNote(selectId, noteId){
 function renderTemplate(){
   updateSelectedHeader();
   const area=document.getElementById("templateArea");
-  const upload=document.getElementById("globalUpload");
-  upload.classList.remove("hidden");
-  if(!currentType){
+if(!currentType){
     area.innerHTML = `<div class="notice">⚠️ 請先回到第二頁選擇需求。</div>`;
     return;
   }
@@ -1032,7 +1026,6 @@ function renderTemplate(){
   }
 
   if(currentType==="store_price_label"){
-    upload.classList.add("hidden");
     area.innerHTML = `${select("storePriceVendorType","適用對象（必填）",["SAM","KAM","area"])}<div id="storePriceNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>${subjectInput()}<div id="storePriceExtra"></div>`;
   }
 
@@ -1041,32 +1034,27 @@ function renderTemplate(){
   }
 
   if(currentType==="restaurant_info"){
-    upload.classList.add("hidden");
     area.innerHTML = `${select("restaurantInfoStoreType","適用對象（必填）",["SAM","KAM"])}
       <div id="restaurantNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>
       ${subjectInput()}
       ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
       <div class="box pink">
-        <h3>調整內容</h3>
-        ${textarea("restaurantVendorList","調整內容","請填寫調整內容，或使用下方連結補充名單",4)}
-        <div class="upload" style="background:white">
-          <h3>調整內容連結</h3>
-          <p>請貼上 Google Sheet 或文件連結。</p>
-          <div class="field" style="margin-top:14px">
-            <label>連結</label>
-            <input id="restaurantInfoLink" type="text" placeholder="請貼上連結">
-          </div>
-        </div>
+        <h3>調整內容或連結</h3>
+        ${textarea(
+          "restaurantVendorList",
+          "調整內容或連結（必填）",
+          "請直接填寫調整內容，或貼上 Google Sheet / Google Drive / 文件連結",
+          6
+        )}
       </div>`;
   }
   if(currentType==="pos_issue"){
     area.innerHTML = `${subjectInput()}${field("posVendorCode","店家代碼")}${field("posVendorName","店家名稱")}${textarea("posIssueDescription","狀況描述","請描述 POS 串接異常狀況",5)}`;
   }
 
-
   if(currentType==="use_branch_photos"){
     area.innerHTML = `${subjectInput()}
-      ${field("branchPhotoSource","Please help sync photos from：（必填）","text","code + 店家名稱")}
+      ${field("branchPhotoSource","照片來源店家：（必填）","text","請填寫 code + 店家名稱")}
       ${textarea("branchPhotoVendorList","商家名單（必填）","請填寫 商家名單",4)}
     `;
   }
@@ -1138,8 +1126,6 @@ function renderTemplate(){
       ${textarea("chainAdjustVendorDetail","Vendor detail（更新內容說明）（必填）","請填寫更新內容說明",5)}
     `;
   }
-
-
 
   if(currentType==="project_portal_change_email"){
     area.innerHTML = `${subjectInput()}
@@ -1255,7 +1241,6 @@ function renderTemplate(){
     `;
   }
 
-
   if(currentType==="project_takeout_setting"){
     area.innerHTML = `${subjectInput()}
       <div class="box pink portal-template-box"><h3>外帶自取設置</h3><p class="muted">請選擇商家外帶自取功能要開啟或關閉。</p></div>
@@ -1315,7 +1300,6 @@ function renderTemplate(){
       </div>
     `;
   }
-
 
   if(currentType==="project_auto_accept_adjust"){
     area.innerHTML = `${subjectInput()}
@@ -1584,11 +1568,9 @@ if(currentType==="project_aaa_deal_menu"){
   }
 
   if(["shooting_service","pos_menu_fix","chain_adjust"].includes(currentType)){
-    upload.classList.add("hidden");
-  }
-  if(["use_branch_photos","upload_photo_to_preview","preview_menu_fix","schedule_menu_sync"].includes(currentType)){
-    upload.classList.remove("hidden");
-  }
+}
+  if(["upload_photo_to_preview","preview_menu_fix","schedule_menu_sync"].includes(currentType)){
+}
   renderConditionalBlocks();
   refreshSubject();
   validateRequiredVisible(false);
@@ -1759,11 +1741,11 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
           : (t === "純封面照片修改 (品牌共用)" || t === "Logo 照片修改")
             ? field("photoChain","Chain：Chain code + Chain name","text","例如：TW12345 / Pizza Hut")
             : "";
-        extra.innerHTML = `<div class="box pink"><h3>照片需求資訊</h3><div class="grid">${select("photoUpdateMode","Update date/time",["NOW","MM/DD before xx:xx as TW time"])}</div><div id="photoCustomTime"></div>${photoSourceField}<div class="box"><b>Detail（固定無法修改）</b><p class="muted">${fixedDetail}</p></div>${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive / Dropbox / 圖片連結")}</div>`;
+        extra.innerHTML = `<div class="box pink"><h3>照片需求資訊</h3><div class="grid">${select("photoUpdateMode","Update date/time",["NOW","MM/DD before xx:xx as TW time"])}</div><div id="photoCustomTime"></div>${photoSourceField}<div class="box"><b>Detail（固定無法修改）</b><p class="muted">${fixedDetail}</p></div>${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div>`;
       } else if(t === "單店修改"){
-        extra.innerHTML = `${textarea("vendorList","商家名單（必填）","請填寫 商家名單，可換行填寫多筆\n例如：\n123456 Starbucks 台北站前店\n234567 Starbucks 信義店",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive / Dropbox / 圖片連結")}</div></div>`;
+        extra.innerHTML = `${textarea("vendorList","商家名單（必填）","請填寫 商家名單，可換行填寫多筆\n例如：\n123456 Starbucks 台北站前店\n234567 Starbucks 信義店",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div></div>`;
       } else {
-        extra.innerHTML = `${textarea("masterMenuList","校稿版菜單（必填）","請填寫 校稿版菜單，可換行填寫多筆\n例如：\n123456 Starbucks 台北站前店\n234567 Starbucks 信義店",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="grid">${select("exportMenu","是否需匯出菜單",["是","否"])}${select("remoteCodeUpdate","是否更新 POS 串接碼",["是","否"])}</div><div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive / Dropbox / 圖片連結")}</div></div>`;
+        extra.innerHTML = `${textarea("masterMenuList","校稿版菜單（必填）","請填寫 校稿版菜單，可換行填寫多筆\n例如：\n123456 Starbucks 台北站前店\n234567 Starbucks 信義店",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="grid">${select("exportMenu","是否需匯出菜單",["是","否"])}${select("remoteCodeUpdate","是否更新 POS 串接碼",["是","否"])}</div><div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div></div>`;
       }
     }
 
@@ -1897,8 +1879,19 @@ function computeSubject(){
   if(currentType==="menu_modify"){
     const vendor=val("menuVendorType"), req=val("menuRequestType");
     if(!vendor || !req) return "";
-    const prefix = vendor==="SAM" ? "[SAM]" : "[GMB]";
-    const photoName = vendor==="KAM" ? "brand" : vendor;
+
+    // 畫面顯示 SAM / KAM，但系統標題仍沿用既有代碼：
+    // SAM → AAA、KAM → GMB；照片標題則為 SAM → AAA、KAM → brand。
+    const prefixMap = {
+      SAM: "[AAA]",
+      KAM: "[GMB]"
+    };
+    const photoNameMap = {
+      SAM: "AAA",
+      KAM: "brand"
+    };
+    const prefix = prefixMap[vendor] || "";
+    const photoName = photoNameMap[vendor] || "";
     if(req==="校稿用修改") return `${prefix} Menu update (preview needed) (${b()})`;
     if(req==="單店修改") return `${prefix} Menu update (${b()})`;
     if(req==="純封面照片修改 (品牌共用)") return `[Photo_SSC] Banner update / ${photoName} / chain level`;
@@ -1909,7 +1902,7 @@ function computeSubject(){
   }
   if(currentType==="menu_copy"){
     const vendor=val("menuCopyVendorType"), kt=val("menuCopyCaseSubjectType");
-    if(vendor==="SAM") return `[SAM] Menu sync (${b()}) (複製日期)`;
+    if(vendor==="SAM") return `[AAA] Menu sync (${b()}) (複製日期)`;
     if(vendor==="KAM" && kt==="STAT") return `[GMB] Menu sync (${b()}) (STAT)`;
     if(vendor==="KAM" && kt==="複製日期") return `[GMB] Menu sync (${b()}) (複製日期)`;
     return "";
@@ -1917,13 +1910,13 @@ function computeSubject(){
   if(currentType==="plastic_bag") return `[GMB] Menu update (plastic bag) (${b()})`;
   if(currentType==="consumer_note"){
     const v=val("consumerNoteStoreType");
-    if(v==="SAM") return `[SAM] Consumer note setting (${b()})`;
+    if(v==="SAM") return `[AAA] Consumer note setting (${b()})`;
     if(v==="KAM") return `[GMB] Menu update (special instruction) (${b()})`;
     return "";
   }
   if(currentType==="store_price_label"){
     const v=val("storePriceVendorType");
-    if(v==="SAM") return "[SAM] Dine-in price tag update";
+    if(v==="SAM") return "[AAA] Dine-in price tag update";
     if(v==="KAM") return "[GMB] Dine-in price tag update";
     if(v==="area") return "[AM] Dine-in price tag update";
   }
@@ -1933,22 +1926,18 @@ function computeSubject(){
     if(v==="area") return "[AM] Export product list for POS";
   }
   if(currentType==="restaurant_info"){
-    upload.classList.add("hidden");
     area.innerHTML = `${select("restaurantInfoStoreType","適用對象（必填）",["SAM","KAM"])}
       <div id="restaurantNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>
       ${subjectInput()}
       ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
       <div class="box pink">
-        <h3>調整內容</h3>
-        ${textarea("restaurantVendorList","調整內容","請填寫調整內容，或使用下方連結補充名單",4)}
-        <div class="upload" style="background:white">
-          <h3>調整內容連結</h3>
-          <p>請貼上 Google Sheet 或文件連結。</p>
-          <div class="field" style="margin-top:14px">
-            <label>連結</label>
-            <input id="restaurantInfoLink" type="text" placeholder="請貼上連結">
-          </div>
-        </div>
+        <h3>調整內容或連結</h3>
+        ${textarea(
+          "restaurantVendorList",
+          "調整內容或連結（必填）",
+          "請直接填寫調整內容，或貼上 Google Sheet / Google Drive / 文件連結",
+          6
+        )}
       </div>`;
   }
   if(currentType==="pos_issue") return `[Special] POS 串接異常 (${b()})`;
@@ -1961,8 +1950,8 @@ function computeSubject(){
   if(currentType==="chain_adjust") return "[AM] Chain Adjustment";
   if(currentType==="project_aaa_deal_menu"){
     const t=val("aaaDealMenuType");
-    if(t==="修改校稿用菜單（有搭配活動）") return `[SAM] Deal with menu update (preview needed) (${b()}) (複製日期)`;
-    if(t==="活動複製菜單 / 菜單版本同步") return `[SAM] Deal with menu sync (${b()}) (複製日期)`;
+    if(t==="修改校稿用菜單（有搭配活動）") return `[AAA] Deal with menu update (preview needed) (${b()}) (複製日期)`;
+    if(t==="活動複製菜單 / 菜單版本同步") return `[AAA] Deal with menu sync (${b()}) (複製日期)`;
     return "";
   }
   if(currentType==="project_kalh_deal_menu_update"){
@@ -2040,7 +2029,6 @@ async function confirmSubmit(){
     brand: val("brand"),
     am: val("am"),
     amEmail: val("amEmail"),
-    attachmentLink: val("attachmentLink"),
     mainEmail: val("contact"),
     ccEmail: val("cc"),
     workstream: currentWorkstream === "menu" ? "🍽️ 菜單" : "⚙️ 活動 / 營運",
@@ -2075,8 +2063,7 @@ function renderSummary(){
     row("負責窗口Email",showVal("amEmail")),
     row("需求類別",currentWorkstream ? (currentWorkstream === "menu" ? "🍽️ 菜單" : "⚙️ 活動 / 營運") : "未填寫"),
     row("需求",currentType ? typeInfo[currentType][0] : "未填寫"),
-    row("📄 系統自動產生標題",computeSubject() || "未產生"),
-    row("相關檔案連結",showVal("attachmentLink"))
+    row("📄 系統自動產生標題",computeSubject() || "未產生")
   ].join("");
 
   let rows=[];
@@ -2180,22 +2167,18 @@ function renderSummary(){
   }
 
   if(currentType==="restaurant_info"){
-    upload.classList.add("hidden");
     area.innerHTML = `${select("restaurantInfoStoreType","適用對象（必填）",["SAM","KAM"])}
       <div id="restaurantNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>
       ${subjectInput()}
       ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
       <div class="box pink">
-        <h3>調整內容</h3>
-        ${textarea("restaurantVendorList","調整內容","請填寫調整內容，或使用下方連結補充名單",4)}
-        <div class="upload" style="background:white">
-          <h3>調整內容連結</h3>
-          <p>請貼上 Google Sheet 或文件連結。</p>
-          <div class="field" style="margin-top:14px">
-            <label>連結</label>
-            <input id="restaurantInfoLink" type="text" placeholder="請貼上連結">
-          </div>
-        </div>
+        <h3>調整內容或連結</h3>
+        ${textarea(
+          "restaurantVendorList",
+          "調整內容或連結（必填）",
+          "請直接填寫調整內容，或貼上 Google Sheet / Google Drive / 文件連結",
+          6
+        )}
       </div>`;
   }
   if(currentType==="pos_issue"){
@@ -2265,8 +2248,6 @@ function renderSummary(){
       row("Vendor detail（更新內容說明）",showMultilineVal("chainAdjustVendorDetail"))
     );
   }
-
-
 
   if(currentType==="project_portal_change_email"){
     area.innerHTML = `${subjectInput()}
@@ -2338,7 +2319,6 @@ function renderSummary(){
       ${field("copyBranchEmail","5. 欲綁定帳號的 Email（必填）","email","請填寫 Email")}
     `;
   }
-
 
   if(currentType==="project_auto_accept_adjust"){
     area.innerHTML = `${subjectInput()}
@@ -2613,7 +2593,6 @@ function renderSummary(){
       row("備註",showMultilineVal("specialHoursRemark"))
     );
   }
-
 
   if(currentType==="project_takeout_setting"){
     rows.push(
