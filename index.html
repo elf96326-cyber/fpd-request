@@ -391,7 +391,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 <section class="page" id="page3">
   <div class="title-row"><div><h2>第三頁｜選擇需求</h2><div class="sub">請依需求類型選擇欲申請項目。</div></div></div>
   <div id="menuRequestSection">
-  <div class="group category-brand"><div class="category-label">品牌限定</div><div class="group-title">【僅開放品牌進線】</div><div class="request-grid">
+  <div class="group category-brand"><div class="category-label">SAM / KAM</div><div class="group-title">【SAM / KAM】</div><div class="request-grid">
     <button class="request" data-type="menu_modify" onclick="selectType('menu_modify')"><b>📒 菜單修改</b><p>既有菜單內容、價格、品項或照片調整</p></button>
     <button class="request" data-type="menu_copy" onclick="selectType('menu_copy')"><b>🔗 菜單複製</b><p>將既有菜單內容複製到指定店家或品牌</p></button>
     <button class="request" data-type="plastic_bag" onclick="selectType('plastic_bag')"><b>🛍️ 塑膠袋設定</b><p>僅限更新塑膠袋設定使用</p></button>
@@ -400,12 +400,12 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <button class="request" data-type="pos_issue" onclick="selectType('pos_issue')"><b>⁉️POS 串接異常</b><p>協助回報或追蹤 POS 串接異常問題</p></button>
   </div></div>
 
-  <div class="group category-all"><div class="category-label">品牌 / 一般店皆可</div><div class="group-title">【品牌、一般店皆適用】</div><div class="request-grid">
+  <div class="group category-all"><div class="category-label">SAM / KAM / area</div><div class="group-title">【SAM / KAM / area】</div><div class="request-grid">
     <button class="request" data-type="store_price_label" onclick="selectType('store_price_label')"><b>📌 店內價標籤</b><p>協助設定或調整店內價相關標籤</p></button>
     <button class="request" data-type="export_menu" onclick="selectType('export_menu')"><b>📋 匯出菜單</b><p>協助匯出指定品牌、門市或 校稿版菜單 菜單資料</p></button>
   </div></div>
 
-  <div class="group category-store"><div class="category-label">一般店限定</div><div class="group-title">【僅限一般店】</div><div class="request-grid">
+  <div class="group category-store"><div class="category-label">area</div><div class="group-title">【area】</div><div class="request-grid">
     <button class="request" data-type="use_branch_photos" onclick="selectType('use_branch_photos')"><b>📁 使用既有分店照片</b><p>10 間以上門市</p></button>
     <button class="request" data-type="upload_photo_to_preview" onclick="selectType('upload_photo_to_preview')"><b>📤 提供餐點照連結至校稿用</b><p>不開放單店</p></button>
     <button class="request" data-type="shooting_service" onclick="selectType('shooting_service')"><b>📸 拍攝服務申請</b><p>符合行銷 / 補拍資格</p></button>
@@ -416,22 +416,22 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div></div>
   </div>
   <div id="projectRequestSection" class="hidden">
-<div class="group category-brand"><div class="category-label">AAA</div><div class="group-title">【僅限麥當勞、星巴克、漢堡王、達美樂、必勝客、肯德基】</div><div class="request-grid">
+<div class="group category-brand"><div class="category-label">SAM</div><div class="group-title">【SAM】</div><div class="request-grid">
 <button class="request" data-type="project_aaa_deal_menu" onclick="selectType('project_aaa_deal_menu')"><b>活動設定 + 活動菜單修改</b></button>
 <button class="request" data-type="project_aaa_device_replacement" onclick="selectType('project_aaa_device_replacement')"><b>換機申請</b></button>
 </div></div>
 
-<div class="group project-purple"><div class="category-label">AAA、KA、LH</div><div class="group-title">【一般店不可申請】</div><div class="request-grid">
+<div class="group project-purple"><div class="category-label">SAM / KAM</div><div class="group-title">【SAM / KAM】</div><div class="request-grid">
 <button class="request" data-type="project_aaakalh_deal_create" onclick="selectType('project_aaakalh_deal_create')"><b>🎯 建立 Deal 活動</b><p>General / PRO / Targeting / BOGO / POS 專區活動</p></button>
 <button class="request" data-type="project_aaakalh_deal_cancel" onclick="selectType('project_aaakalh_deal_cancel')"><b>❌ Deal 活動取消</b><p>單店、多店（&gt;10）活動取消</p></button>
 </div></div>
 
-<div class="group category-all"><div class="category-label">KA、LH</div><div class="group-title">【KA、LH】</div><div class="request-grid">
+<div class="group category-all"><div class="category-label">KAM</div><div class="group-title">【KAM】</div><div class="request-grid">
 <button class="request" data-type="project_kalh_deal_menu_update" onclick="selectType('project_kalh_deal_menu_update')"><b>📢 活動設定 + 修改菜單</b><p>整合單店 / 多店與校稿用活動菜單修改</p></button>
 <button class="request" data-type="project_kalh_deal_menu_sync" onclick="selectType('project_kalh_deal_menu_sync')"><b>🔄 活動複製菜單</b><p>整合排程、STAT、純上架活動品項</p></button>
 </div></div>
 
-<div class="group category-store"><div class="category-label">一般店</div><div class="group-title">【僅限一般店】</div><div class="request-grid">
+<div class="group category-store"><div class="category-label">area</div><div class="group-title">【are】</div><div class="request-grid">
 <button class="request" data-type="project_store_cancel_deal" onclick="selectType('project_store_cancel_deal')"><b>取消活動並恢復店內價菜單</b></button>
 <button class="request" data-type="project_store_join_deal" onclick="selectType('project_store_join_deal')"><b>新參加 / 更換 活動+修改活動菜單</b></button>
 <button class="request" data-type="project_store_preview_menu" onclick="selectType('project_store_preview_menu')"><b>修改校稿用菜單</b></button>
@@ -439,7 +439,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 </div></div>
 
 <div class="group" style="border:1px solid #bbf7d0;background:#f0fdf4;border-radius:24px;padding:18px">
-<div class="category-label" style="background:#dcfce7;color:#166534">全部皆適用</div>
+<div class="category-label" style="background:#dcfce7;color:#166534">SAM / KAM / area</div>
 <div class="group-title">【全商家皆適用】</div>
 
 <div class="all-merchant-subgroup">
