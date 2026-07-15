@@ -1034,20 +1034,53 @@ if(!currentType){
   }
 
   if(currentType==="restaurant_info"){
-    area.innerHTML = `${select("restaurantInfoStoreType","適用對象（必填）",["SAM","KAM"])}
-      <div id="restaurantNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>
+    area.innerHTML = `
+      ${select(
+        "restaurantInfoStoreType",
+        "適用對象（必填）",
+        ["SAM","KAM"]
+      )}
+
+      <div id="restaurantNotice" class="notice">
+        ⚠️ 請先選擇適用對象，系統才會產生對應的欄位。
+      </div>
+
       ${subjectInput()}
-      ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
+
+      ${select(
+        "restaurantInfoAction",
+        "新增 / 修改 / 刪除 餐廳資訊欄內容（必填）",
+        [
+          "新增餐廳資訊欄內容",
+          "修改餐廳資訊欄內容",
+          "刪除餐廳資訊欄內容"
+        ]
+      )}
+
       <div class="box pink">
-        <h3>調整內容或連結</h3>
+        <h3>調整內容</h3>
+
         ${textarea(
           "restaurantVendorList",
-          "調整內容或連結（必填）",
-          "請直接填寫調整內容，或貼上 Google Sheet / Google Drive / 文件連結",
+          "調整內容（必填）",
+          "請直接填寫需要新增、修改或刪除的餐廳資訊內容",
           6
         )}
-      </div>`;
+      </div>
+
+      <div class="box">
+        <h3>店家清單</h3>
+
+        ${field(
+          "restaurantVendorLink",
+          "店家清單連結（必填）",
+          "text",
+          "請貼上 Google Sheet 連結"
+        )}
+      </div>
+    `;
   }
+  
   if(currentType==="pos_issue"){
     area.innerHTML = `${subjectInput()}${field("posVendorCode","店家代碼")}${field("posVendorName","店家名稱")}${textarea("posIssueDescription","狀況描述","請描述 POS 串接異常狀況",5)}`;
   }
@@ -1926,19 +1959,10 @@ function computeSubject(){
     if(v==="area") return "[AM] Export product list for POS";
   }
   if(currentType==="restaurant_info"){
-    area.innerHTML = `${select("restaurantInfoStoreType","適用對象（必填）",["SAM","KAM"])}
-      <div id="restaurantNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>
-      ${subjectInput()}
-      ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
-      <div class="box pink">
-        <h3>調整內容或連結</h3>
-        ${textarea(
-          "restaurantVendorList",
-          "調整內容或連結（必填）",
-          "請直接填寫調整內容，或貼上 Google Sheet / Google Drive / 文件連結",
-          6
-        )}
-      </div>`;
+    const vendor = val("restaurantInfoStoreType");
+    if(vendor === "SAM") return `[AAA] Restaurant information update (${b()})`;
+    if(vendor === "KAM") return `[GMB] Restaurant information update (${b()})`;
+    return "";
   }
   if(currentType==="pos_issue") return `[Special] POS 串接異常 (${b()})`;
   if(currentType==="use_branch_photos") return "[AM] Photo update / chain vendor";
@@ -2167,19 +2191,12 @@ function renderSummary(){
   }
 
   if(currentType==="restaurant_info"){
-    area.innerHTML = `${select("restaurantInfoStoreType","適用對象（必填）",["SAM","KAM"])}
-      <div id="restaurantNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>
-      ${subjectInput()}
-      ${select("restaurantInfoAction","新增 / 修改 / 刪除 餐廳資訊欄內容",["新增餐廳資訊欄內容","修改餐廳資訊欄內容","刪除餐廳資訊欄內容"])}
-      <div class="box pink">
-        <h3>調整內容或連結</h3>
-        ${textarea(
-          "restaurantVendorList",
-          "調整內容或連結（必填）",
-          "請直接填寫調整內容，或貼上 Google Sheet / Google Drive / 文件連結",
-          6
-        )}
-      </div>`;
+    rows.push(
+      row("適用對象", showVal("restaurantInfoStoreType")),
+      row("操作類型", showVal("restaurantInfoAction")),
+      row("調整內容", showMultilineVal("restaurantVendorList")),
+      row("店家清單連結", showVal("restaurantVendorLink"))
+    );
   }
   if(currentType==="pos_issue"){
     rows.push(
