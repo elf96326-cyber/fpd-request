@@ -2048,6 +2048,41 @@ function submitPreview(){
   if(!validateRequiredVisible(true)) return;
   go(5);
 }
+/* =========================
+   將摘要欄位轉成穩定的結構化文字
+
+   避免欄位內容換行後，寄信時標題與內容錯位。
+========================= */
+function buildDetailsText(){
+  const summaryRows = document.querySelectorAll("#summaryDetails .summary-row");
+  const blocks = [];
+
+  summaryRows.forEach(function(summaryRow){
+    const labelElement = summaryRow.querySelector("b");
+    const valueElement = summaryRow.querySelector("span");
+
+    const label = labelElement
+      ? labelElement.innerText.trim()
+      : "";
+
+    const value = valueElement
+      ? valueElement.innerText.trim()
+      : "未填寫";
+
+    if(!label) return;
+
+    blocks.push([
+      "[[FIELD]]",
+      label,
+      "[[VALUE]]",
+      value || "未填寫",
+      "[[END]]"
+    ].join("\n"));
+  });
+
+  return blocks.join("\n");
+}
+
 async function confirmSubmit(){
   const payload = {
     brand: val("brand"),
@@ -2058,7 +2093,7 @@ async function confirmSubmit(){
     workstream: currentWorkstream === "menu" ? "🍽️ 菜單" : "⚙️ 活動 / 營運",
     requestType: currentType ? typeInfo[currentType][0] : "",
     caseSubject: computeSubject() || "",
-    details: document.getElementById("summaryDetails").innerText || ""
+    details: buildDetailsText()
   };
 
   try {
