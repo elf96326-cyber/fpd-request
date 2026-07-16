@@ -328,7 +328,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <div class="header-row">
     <div>
       <div class="badge">📋 Menu Request Portal</div>
-      <h1>【foodpanda】需求表單</h1>
+      <h1>【foodpanda】品牌需求表單</h1>
       <p class="desc">請填寫品牌基本資料，選擇需求類型後系統會自動產生對應標題。</p>
     </div>
     <div class="status"><small>目前狀態</small><b id="statusText">填寫中</b></div>
@@ -943,6 +943,63 @@ function portalVendorGrid(){
 }
 function portalNote(){
   return `${textarea("portalRemark","備註","請填寫補充說明，可留空",3)}`;
+}
+
+function projectBrandEmailBlock(){
+  return `
+    <div class="box" id="projectBrandEmailBlock">
+      ${field(
+        "brandEmail",
+        "品牌信箱（必填）",
+        "email",
+        "請填寫收件 Email"
+      )}
+    </div>
+  `;
+}
+
+function insertProjectBrandEmailBlock(area){
+  if(currentWorkstream !== "project" || !area || document.getElementById("brandEmail")){
+    return;
+  }
+
+  area.insertAdjacentHTML("beforeend", projectBrandEmailBlock());
+
+  const emailBlock = document.getElementById("projectBrandEmailBlock");
+  if(!emailBlock) return;
+
+  const labels = Array.from(area.querySelectorAll(".field label"));
+
+  // 優先放在店家名稱相關欄位的下方。
+  const merchantNameLabel = labels.find(label => {
+    const text = label.textContent.trim();
+    return (
+      text.includes("店家名稱") ||
+      text.includes("商家名稱") ||
+      text.includes("Vendor name")
+    );
+  });
+
+  if(merchantNameLabel){
+    const fieldWrapper = merchantNameLabel.closest(".field");
+    const gridWrapper = fieldWrapper ? fieldWrapper.closest(".grid") : null;
+    const anchor = gridWrapper || fieldWrapper;
+
+    if(anchor){
+      anchor.insertAdjacentElement("afterend", emailBlock);
+      return;
+    }
+  }
+
+  // 沒有店家名稱欄位的模板，改放在系統標題下方，避免留在頁面最底部。
+  const subjectWrap = area.querySelector("#subjectWrap");
+  if(subjectWrap){
+    subjectWrap.insertAdjacentElement("afterend", emailBlock);
+    return;
+  }
+
+  // 最後備援：直接放在模板最上方。
+  area.insertAdjacentElement("afterbegin", emailBlock);
 }
 function updateSelectedHeader(){
   document.getElementById("selectedName").textContent = currentType ? typeInfo[currentType][0] : "未選擇";
@@ -1604,6 +1661,10 @@ if(currentType==="project_aaa_deal_menu"){
 }
   if(["upload_photo_to_preview","preview_menu_fix","schedule_menu_sync"].includes(currentType)){
 }
+
+  // 活動／營運所有需求統一加入品牌信箱，並放在店家名稱附近。
+  insertProjectBrandEmailBlock(area);
+
   renderConditionalBlocks();
   refreshSubject();
   validateRequiredVisible(false);
@@ -2088,7 +2149,9 @@ async function confirmSubmit(){
     brand: val("brand"),
     am: val("am"),
     amEmail: val("amEmail"),
-    mainEmail: val("contact"),
+    mainEmail: currentWorkstream === "project"
+      ? val("brandEmail")
+      : val("contact"),
     ccEmail: val("cc"),
     workstream: currentWorkstream === "menu" ? "🍽️ 菜單" : "⚙️ 活動 / 營運",
     requestType: currentType ? typeInfo[currentType][0] : "",
@@ -2126,6 +2189,10 @@ function renderSummary(){
   ].join("");
 
   let rows=[];
+
+  if(currentWorkstream === "project"){
+    rows.push(row("品牌信箱", showVal("brandEmail")));
+  }
 
   if(currentType==="menu_modify"){
     rows.push(
