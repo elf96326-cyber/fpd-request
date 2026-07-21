@@ -331,6 +331,42 @@ button:disabled{opacity:.45;cursor:not-allowed}
   }
 }
 
+
+/* 店家資料查詢 */
+.vendor-lookup{
+  border:1px solid #fbcfe8;
+  background:linear-gradient(135deg,#fff7fa 0%,#ffffff 100%);
+  border-radius:22px;
+  padding:20px;
+  margin-bottom:24px;
+}
+.vendor-lookup-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+.vendor-lookup-title{font-size:17px;font-weight:800;color:#be185d;margin-bottom:5px}
+.vendor-search-row{display:grid;grid-template-columns:1fr auto;gap:10px}
+.vendor-search-row button{min-width:96px}
+.vendor-results{display:grid;gap:10px;margin-top:14px}
+.vendor-result-card{
+  width:100%;text-align:left;background:#fff;border:1px solid #e2e8f0;border-radius:16px;
+  padding:14px 16px;transition:.15s;color:#0f172a
+}
+.vendor-result-card:hover{border-color:#ff2b85;box-shadow:0 8px 20px rgba(255,43,133,.12);transform:translateY(-1px)}
+.vendor-result-card.selected{border:2px solid #ff2b85;background:#fff0f6}
+.vendor-result-name{font-weight:800;margin-bottom:8px}
+.vendor-result-meta{display:flex;flex-wrap:wrap;gap:8px 14px;color:#64748b;font-size:12px;font-weight:500}
+.vendor-selected{
+  margin-top:16px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:16px;padding:15px
+}
+.vendor-selected-title{font-weight:800;color:#166534;margin-bottom:10px}
+.vendor-selected-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.vendor-selected-item{background:#fff;border:1px solid #dcfce7;border-radius:12px;padding:10px}
+.vendor-selected-item small{display:block;color:#64748b;margin-bottom:4px}.vendor-selected-item b{font-size:13px}
+.vendor-system-note{margin-top:12px;color:#64748b;font-size:12px;line-height:1.6}
+.vendor-search-row button.is-loading{opacity:.7;cursor:wait}
+@media(max-width:760px){
+  .vendor-lookup-head{flex-direction:column}.vendor-search-row{grid-template-columns:1fr}
+  .vendor-search-row button{width:100%}.vendor-selected-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -357,7 +393,43 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 <main class="card">
 <section class="page active" id="page1">
-  <div class="title-row"><div><h2>第一頁｜基本資料</h2><div class="sub">請填寫品牌與負責窗口資訊。</div></div></div>
+  <div class="title-row"><div><h2>第一頁｜基本資料</h2><div class="sub">請先查詢店家資料，或直接填寫品牌與負責窗口資訊。</div></div></div>
+
+  <div class="vendor-lookup">
+    <div class="vendor-lookup-head">
+      <div>
+        <div class="vendor-lookup-title">🔎 先查詢店家資料</div>
+        <div class="sub">可輸入店家代碼、Chain code 或品牌／門市完整名稱。選擇結果後會自動帶入下方品牌欄位。</div>
+      </div>
+      <span class="pill">選填</span>
+    </div>
+
+    <div class="vendor-search-row">
+      <input id="vendorSearchKeyword" placeholder="例如：tw123456、TW_CHAIN_001、星巴克（南港店）" onkeydown="if(event.key==='Enter'){event.preventDefault();searchVendor();}">
+      <button type="button" class="btn-primary" onclick="searchVendor()">查詢</button>
+    </div>
+
+    <div id="vendorSearchHint" class="sub" style="margin-top:10px">輸入至少 2 個字元後查詢。</div>
+    <div id="vendorSearchResults" class="vendor-results"></div>
+
+    <div id="selectedVendorCard" class="vendor-selected hidden">
+      <div class="vendor-selected-title">✓ 已選擇店家資料</div>
+      <div class="vendor-selected-grid">
+        <div class="vendor-selected-item"><small>店家代碼</small><b id="selectedVendorCodeText">—</b></div>
+        <div class="vendor-selected-item"><small>Chain code</small><b id="selectedChainCodeText">—</b></div>
+        <div class="vendor-selected-item"><small>完整名稱</small><b id="selectedVendorNameText">—</b></div>
+      </div>
+      <div class="btn-row" style="margin-top:12px;justify-content:flex-end">
+        <button type="button" class="btn-outline" onclick="clearSelectedVendor()">清除選擇</button>
+      </div>
+    </div>
+
+    <input type="hidden" id="selectedVendorCode">
+    <input type="hidden" id="selectedChainCode">
+    <input type="hidden" id="selectedVendorFullName">
+    <div class="vendor-system-note">資料來源：店家資料庫。查不到資料時，請確認關鍵字或直接填寫需求。</div>
+  </div>
+
   <div class="grid">
     <div class="field"><label>品牌名稱（必填）</label><input id="brand" placeholder="範例：星巴克、Mister Donut、迷克夏" oninput="validateBasic()"></div>
     <div class="field">
@@ -563,6 +635,169 @@ let storePriceExtraRenderedFor = "";
 let AM_EMAIL_MAP = {};
 let AM_LIST = [];
 let amListLoaded = false;
+
+// 店家資料查詢：透過 Apps Script action=searchVendor 取得正式資料。
+function escapeVendorHtml(value){
+  return String(value || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function normalizeVendorItem(item){
+  return {
+    vendorCode: String(
+      item.vendorCode ??
+      item.vendor_code ??
+      item.code ??
+      item["店家代碼"] ??
+      ""
+    ).trim(),
+    chainCode: String(
+      item.chainCode ??
+      item.chain_code ??
+      item.chain ??
+      item["Chain code"] ??
+      item["chain code"] ??
+      ""
+    ).trim(),
+    fullName: String(
+      item.fullName ??
+      item.full_name ??
+      item.vendorName ??
+      item.vendor_name ??
+      item.name ??
+      item["完整名稱"] ??
+      item["店家完整名稱"] ??
+      item["店家名稱"] ??
+      ""
+    ).trim()
+  };
+}
+
+async function searchVendor(){
+  const input=document.getElementById("vendorSearchKeyword");
+  const results=document.getElementById("vendorSearchResults");
+  const hint=document.getElementById("vendorSearchHint");
+  const searchButton=document.querySelector(".vendor-search-row .btn-primary");
+  if(!input || !results || !hint) return;
+
+  const keyword=input.value.trim();
+  results.innerHTML="";
+
+  if(keyword.length < 2){
+    hint.textContent="請至少輸入 2 個字元再查詢。";
+    hint.style.color="#dc2626";
+    return;
+  }
+
+  hint.textContent="查詢中，請稍候…";
+  hint.style.color="#64748b";
+
+  if(searchButton){
+    searchButton.disabled=true;
+    searchButton.classList.add("is-loading");
+    searchButton.textContent="查詢中";
+  }
+
+  try{
+    const url =
+      GAS_URL +
+      "?action=searchVendor&keyword=" +
+      encodeURIComponent(keyword);
+
+    const response=await fetch(url,{
+      method:"GET",
+      cache:"no-store"
+    });
+
+    if(!response.ok){
+      throw new Error("HTTP " + response.status);
+    }
+
+    const result=await response.json();
+
+    if(result && result.success === false){
+      throw new Error(result.message || "查詢失敗");
+    }
+
+    const rawData=Array.isArray(result)
+      ? result
+      : Array.isArray(result?.data)
+        ? result.data
+        : [];
+
+    const matched=rawData
+      .map(normalizeVendorItem)
+      .filter(item => item.vendorCode || item.chainCode || item.fullName)
+      .slice(0,20);
+
+    hint.style.color="#64748b";
+    hint.textContent=matched.length
+      ? `找到 ${matched.length} 筆符合資料`
+      : "找不到符合資料，請確認店家代碼、Chain code 或完整名稱。";
+
+    matched.forEach(item => {
+      const button=document.createElement("button");
+      button.type="button";
+      button.className="vendor-result-card";
+      button.innerHTML=`
+        <div class="vendor-result-name">${escapeVendorHtml(item.fullName || "未提供完整名稱")}</div>
+        <div class="vendor-result-meta">
+          <span>店家代碼：${escapeVendorHtml(item.vendorCode || "—")}</span>
+          <span>Chain code：${escapeVendorHtml(item.chainCode || "—")}</span>
+        </div>`;
+      button.addEventListener("click",()=>selectVendor(item,button));
+      results.appendChild(button);
+    });
+  }catch(error){
+    console.error("店家資料查詢失敗：",error);
+    hint.textContent="目前無法查詢店家資料，請稍後再試，或直接填寫需求。";
+    hint.style.color="#dc2626";
+  }finally{
+    if(searchButton){
+      searchButton.disabled=false;
+      searchButton.classList.remove("is-loading");
+      searchButton.textContent="查詢";
+    }
+  }
+}
+
+function selectVendor(item,button){
+  document.querySelectorAll(".vendor-result-card").forEach(el=>el.classList.remove("selected"));
+  if(button) button.classList.add("selected");
+
+  document.getElementById("selectedVendorCode").value=item.vendorCode || "";
+  document.getElementById("selectedChainCode").value=item.chainCode || "";
+  document.getElementById("selectedVendorFullName").value=item.fullName || "";
+  document.getElementById("selectedVendorCodeText").textContent=item.vendorCode || "—";
+  document.getElementById("selectedChainCodeText").textContent=item.chainCode || "—";
+  document.getElementById("selectedVendorNameText").textContent=item.fullName || "—";
+  document.getElementById("selectedVendorCard").classList.remove("hidden");
+
+  const brand=document.getElementById("brand");
+  if(brand && item.fullName){
+    brand.value=item.fullName;
+    brand.dispatchEvent(new Event("input",{bubbles:true}));
+  }
+
+  validateBasic();
+}
+
+function clearSelectedVendor(){
+  ["selectedVendorCode","selectedChainCode","selectedVendorFullName"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value="";
+  });
+
+  const card=document.getElementById("selectedVendorCard");
+  if(card) card.classList.add("hidden");
+
+  document.querySelectorAll(".vendor-result-card").forEach(el=>el.classList.remove("selected"));
+}
+
 
 async function loadAMList(){
   try{
@@ -2215,6 +2450,9 @@ function buildDetailsText(){
 async function confirmSubmit(){
   const payload = {
     brand: val("brand"),
+    selectedVendorCode: val("selectedVendorCode"),
+    selectedChainCode: val("selectedChainCode"),
+    selectedVendorFullName: val("selectedVendorFullName"),
     am: val("am"),
     amEmail: val("amEmail"),
     mainEmail: currentWorkstream === "project"
@@ -2247,7 +2485,14 @@ async function confirmSubmit(){
 }
 function row(label,value){ return `<div class="summary-row"><b>${label}</b><span>${value || "未填寫"}</span></div>`; }
 function renderSummary(){
+  const selectedVendorRows = val("selectedVendorFullName") ? [
+    row("查詢到的店家代碼",showVal("selectedVendorCode")),
+    row("查詢到的 Chain code",showVal("selectedChainCode")),
+    row("查詢到的完整名稱",showVal("selectedVendorFullName"))
+  ] : [];
+
   document.getElementById("summaryBasic").innerHTML = [
+    ...selectedVendorRows,
     row("品牌 / 門市完整名稱",showVal("brand")),
     row("負責窗口",showVal("am")),
     row("負責窗口Email",showVal("amEmail")),
@@ -2863,6 +3108,13 @@ function resetPreview(){
   document.querySelectorAll("input,textarea").forEach(el=>{ if(el.type!=="file") el.value=""; });
   document.querySelectorAll("select").forEach(el=>el.value="");
   document.querySelectorAll(".request").forEach(btn=>btn.classList.remove("selected"));
+  const vendorResults=document.getElementById("vendorSearchResults");
+  const vendorKeyword=document.getElementById("vendorSearchKeyword");
+  const vendorHint=document.getElementById("vendorSearchHint");
+  if(vendorResults) vendorResults.innerHTML="";
+  if(vendorKeyword) vendorKeyword.value="";
+  if(vendorHint){ vendorHint.textContent="輸入至少 2 個字元後查詢。"; vendorHint.style.color="#64748b"; }
+  clearSelectedVendor();
   updateWorkstreamUI();
   document.getElementById("statusText").textContent="填寫中";
   go(1);
