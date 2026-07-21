@@ -925,7 +925,36 @@ function selectType(type){
   }
   document.querySelectorAll(".request").forEach(btn=>btn.classList.toggle("selected",btn.dataset.type===type));
 }
+function buildHalfHourTimeOptions(){
+  const options = [];
+
+  for(let hour = 0; hour < 24; hour++){
+    ["00","30"].forEach(minute => {
+      const hourText = String(hour).padStart(2,"0");
+      const value = `${hourText}:${minute}`;
+      options.push(`<option value="${value}">${value}</option>`);
+    });
+  }
+
+  return options.join("");
+}
+
 function field(id,label,type="text",placeholder="請填寫"){
+  if(type === "time"){
+    return `
+      <div class="field">
+        <label>${label}</label>
+        <select
+          id="${id}"
+          onchange="refreshSubject(); renderConditionalBlocks(); validateRequiredVisible(false);"
+        >
+          <option value="">請選擇時間</option>
+          ${buildHalfHourTimeOptions()}
+        </select>
+      </div>
+    `;
+  }
+
   return `<div class="field"><label>${label}</label><input id="${id}" type="${type}" placeholder="${placeholder}" oninput="refreshSubject(); validateRequiredVisible(false)"></div>`;
 }
 function select(id,label,options){
