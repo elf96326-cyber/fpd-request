@@ -240,6 +240,17 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 @media(max-width:760px){.all-merchant-subgroup .request-grid{grid-template-columns:1fr}}
 
+.info-note{
+  margin-top:16px;
+  padding:14px 16px;
+  border-radius:14px;
+  background:#f8fafc;
+  border:1px dashed #cbd5e1;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.7;
+}
+
 /* AM 搜尋式下拉選單 */
 .am-search-wrapper{
   position:relative;
@@ -950,7 +961,7 @@ function projectBrandEmailBlock(){
     <div id="projectBrandEmailBlock">
       ${field(
         "brandEmail",
-        "品牌信箱（必填）",
+        "窗口信箱（必填）",
         "email",
         "請填寫收件 Email"
       )}
@@ -1267,7 +1278,7 @@ if(!currentType){
       ${portalVendorGrid()}
       <div class="grid">
         ${field("portalEmail","Email（必填）","email","請填寫 Email")}
-        ${field("portalPermission","權限需調整為（必填）","text","請填寫需調整為的權限")}
+        ${select("portalPermission","權限需調整為（必填）",["Admin","Manager","Reporting","Operations","Support","Finance"])}
       </div>
       ${portalNote()}
     `;
@@ -1280,7 +1291,7 @@ if(!currentType){
         <p class="muted">※ 複製菜單需求，請務必等菜單建置完成（MP Case 關閉）後做申請。</p>
       </div>
       ${select("copyBranchNeed","1. 商家反映需求（必填）",["申請【複製到分店】按鈕","已有【複製到分店】按鈕，需再新增其他可複製分店"])}
-      ${select("copyBranchStoreType","2. 商家類型（必填）",["一般商家","KAM品牌之分店門市"])}
+      ${select("copyBranchStoreType","2. 商家類型（必填）",["area","KAM"])}
       ${textarea("copyBranchChildVendors","3. 欲開啟複製功能的分店（子菜單）：code + 店家名稱（必填）","申請多店家請換行填寫",5)}
       ${field("copyBranchMasterVendor","4. 複製這間分店菜單（母菜單）：code + 店家名稱（必填）","text","請填寫母菜單 code + 店家名稱")}
       ${field("copyBranchEmail","5. 欲綁定帳號的 Email（必填）","email","請填寫 Email")}
@@ -1841,13 +1852,12 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
       menuModifyExtraRenderedFor = t;
 
       if(isPhoto){
-        const fixedDetail = getPhotoFixedDetail(t);
         const photoSourceField = t === "純餐點照片修改 (校稿用)"
           ? field("photoMasterMenu","校稿版菜單：code + 店家名稱","text","請填寫 校稿版菜單：code + 店家名稱")
           : (t === "純封面照片修改 (品牌共用)" || t === "Logo 照片修改")
             ? field("photoChain","Chain：Chain code + Chain name","text","例如：TW12345 / Pizza Hut")
             : "";
-        extra.innerHTML = `<div class="box pink"><h3>照片需求資訊</h3><div class="grid">${select("photoUpdateMode","Update date/time",["NOW","MM/DD before xx:xx as TW time"])}</div><div id="photoCustomTime"></div>${photoSourceField}<div class="box"><b>Detail（固定無法修改）</b><p class="muted">${fixedDetail}</p></div>${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div>`;
+        extra.innerHTML = `<div class="box pink"><h3>照片需求資訊</h3><div class="grid">${select("photoUpdateMode","Update date/time",["NOW","MM/DD before xx:xx as TW time"])}</div><div id="photoCustomTime"></div>${photoSourceField}${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div>`;
       } else if(t === "單店修改"){
         extra.innerHTML = `${textarea("vendorList","商家名單（必填）","請填寫 商家名單，可換行填寫多筆\n例如：\n123456 Starbucks 台北站前店\n234567 Starbucks 信義店",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div></div>`;
       } else {
@@ -1914,7 +1924,7 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
 
   if(currentType==="export_menu"){
     const v=val("exportMenuVendorType"), extra=document.getElementById("exportMenuExtra");
-    if(extra) extra.innerHTML = v ? `${textarea("exportMenuVendorInfo","店家資訊：code + 店家名稱","請填寫店家 code + 店家名稱")}<div class="box pink">店家欲串接POS機，需提供全品項總表給POS廠商，再請完成後告知。</div>` : "";
+    if(extra) extra.innerHTML = v ? `${textarea("exportMenuVendorInfo","店家資訊：code + 店家名稱","請填寫店家 code + 店家名稱")}` : "";
   }
 
   if(currentType==="project_aaa_deal_menu"){
@@ -2079,20 +2089,7 @@ function computeSubject(){
   if(currentType==="project_store_join_deal") return "[AM] Deal with menu update";
   if(currentType==="project_store_preview_menu") return "[AM] Deal with menu update (preview needed)";
   if(currentType==="project_store_menu_sync") return "[AM] Deal with menu update (menu sync)";
-  if(currentType==="project_portal_change_email") return "商家修改信箱";
-  if(currentType==="project_portal_create_account") return "創建Protal帳號";
-  if(currentType==="project_portal_bind_account") return "商家綁定帳號";
-  if(currentType==="project_portal_radmin_remove") return "Radmin移除商家";
-  if(currentType==="project_portal_adjust_permission") return "商家調整權限";
-  if(currentType==="project_portal_copy_branch_button") return "複製到分店按鈕";
-  if(currentType==="project_login_forgot_password") return "商家忘記密碼";
-  if(currentType==="project_login_add_phone") return "新增手機號碼作為第二登入方式";
-  if(currentType==="project_special_hours") return "Backoffice 設置特殊營業時間";
-  if(currentType==="project_takeout_setting") return "商家外帶自取設定";
-  if(currentType==="project_takeout_time") return "更改外帶自取時間";
-  if(currentType==="project_display_device_issue") return "前後台顯示、設備串接異常回報";
-  if(currentType==="project_preorder_adjust") return "預訂單功能調整";
-  if(currentType==="project_auto_accept_adjust") return "自動接單調整";
+    if(currentType==="project_auto_accept_adjust") return "自動接單調整";
   if(currentType==="project_prep_time_adjust") return "製餐時間調整";
   if(currentType==="project_prep_time_query") return "製餐時間查詢";
   if(currentType==="project_transmission_device"){
@@ -2153,6 +2150,36 @@ function buildDetailsText(){
     ].join("\n"));
   });
 
+  // 匯出菜單的固定文字不顯示在填寫畫面或送出前確認，
+  // 僅在正式送出時自動加入給後續處理部門。
+  if(currentType === "export_menu"){
+    blocks.push([
+      "[[FIELD]]",
+      "固定說明",
+      "[[VALUE]]",
+      "店家欲串接POS機，需提供全品項總表給POS廠商，再請完成後告知。",
+      "[[END]]"
+    ].join("\n"));
+  }
+
+  // 照片需求的固定英文不顯示在填寫畫面或送出前確認，
+  // 僅在正式送出時依選擇的照片類型自動加入 Detail。
+  if(currentType === "menu_modify"){
+    const photoRequestType = val("menuRequestType");
+    if(photoOnly.includes(photoRequestType)){
+      const fixedDetail = getPhotoFixedDetail(photoRequestType);
+      if(fixedDetail){
+        blocks.push([
+          "[[FIELD]]",
+          "Detail",
+          "[[VALUE]]",
+          fixedDetail,
+          "[[END]]"
+        ].join("\n"));
+      }
+    }
+  }
+
   return blocks.join("\n");
 }
 
@@ -2203,7 +2230,7 @@ function renderSummary(){
   let rows=[];
 
   if(currentWorkstream === "project"){
-    rows.push(row("品牌信箱", showVal("brandEmail")));
+    rows.push(row("窗口信箱", showVal("brandEmail")));
   }
 
   if(currentType==="menu_modify"){
@@ -2229,7 +2256,6 @@ function renderSummary(){
         rows.push(row("Chain：Chain code + Chain name",showVal("photoChain")));
       }
       rows.push(
-        row("Detail",getPhotoFixedDetail(req)),
         row("照片更新門市 / 校稿用",showMultilineVal("photoStoreList")),
         row("Photo link",showVal("photoLink"))
       );
@@ -2299,8 +2325,7 @@ function renderSummary(){
   if(currentType==="export_menu"){
     rows.push(
       row("適用對象",showVal("exportMenuVendorType")),
-      row("店家資訊：code + 店家名稱",showVal("exportMenuVendorInfo")),
-      row("固定說明","店家欲串接POS機，需提供全品項總表給POS廠商，再請完成後告知。")
+      row("店家資訊：code + 店家名稱",showVal("exportMenuVendorInfo"))
     );
   }
 
@@ -2427,77 +2452,6 @@ function renderSummary(){
       row("統一塑膠袋金額",showVal("syncBag")),
       row("未統一塑膠袋金額之分店",showMultilineVal("syncBagException"))
     );
-  }
-
-  if(currentType==="project_portal_change_email"){
-    area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫商家目前綁定信箱與欲修改的新信箱。</p></div>
-      ${portalVendorGrid()}
-      <div class="grid">
-        ${field("portalOriginalEmail","原綁定 Email（必填）","email","請填寫原綁定 Email")}
-        ${select("portalRemoveOriginalEmail","是否移除原綁定 Email（必填）",["是","否"])}
-      </div>
-      ${field("portalNewEmail","需修改的新 Email（必填）","email","請填寫需修改的新 Email")}
-      ${portalNote()}
-    `;
-  }
-
-  if(currentType==="project_portal_create_account"){
-    area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫欲建立的 Portal 帳號資訊。</p></div>
-      ${portalVendorGrid()}
-      <div class="grid">
-        ${field("portalAccountName","創建帳號名稱（必填）","text","請填寫創建帳號名稱")}
-        ${field("portalEmail","Email（必填）","email","請填寫 Email")}
-      </div>
-      ${select("portalPermission","權限（必填）",["Admin","Manager","Reporting","Operations","Support","Finance"])}
-      ${portalNote()}
-    `;
-  }
-
-  if(currentType==="project_portal_bind_account"){
-    area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫商家與需綁定的帳號 Email。</p></div>
-      ${portalVendorGrid()}
-      ${field("portalBindEmail","需綁定的 Email（必填）","email","請填寫需綁定的 Email")}
-      ${portalNote()}
-    `;
-  }
-
-  if(currentType==="project_portal_radmin_remove"){
-    area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫需從 Radmin 移除的商家與原綁定 Email。</p></div>
-      ${portalVendorGrid()}
-      ${field("portalOriginalEmail","原綁定 Email（必填）","email","請填寫原綁定 Email")}
-      ${portalNote()}
-    `;
-  }
-
-  if(currentType==="project_portal_adjust_permission"){
-    area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>Portal 帳號綁定（綁定權限申請）</h3><p class="muted">請填寫欲調整權限的 Email 與目標權限。</p></div>
-      ${portalVendorGrid()}
-      <div class="grid">
-        ${field("portalEmail","Email（必填）","email","請填寫 Email")}
-        ${select("portalPermission","權限需調整為（必填）",["Admin","Manager","Reporting","Operations","Support"])}
-                )}
-      </div>
-      ${portalNote()}
-    `;
-  }
-
-  if(currentType==="project_portal_copy_branch_button"){
-    area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box">
-        <h3>複製到分店按鈕</h3>
-        <p class="muted">※ 複製菜單需求，請務必等菜單建置完成（MP Case 關閉）後做申請。</p>
-      </div>
-      ${select("copyBranchNeed","1. 商家反映需求（必填）",["申請【複製到分店】按鈕","已有【複製到分店】按鈕，需再新增其他可複製分店"])}
-      ${select("copyBranchStoreType","2. 商家類型（必填）",["一般商家","KAM品牌之分店門市"])}
-      ${textarea("copyBranchChildVendors","3. 欲開啟複製功能的分店（子菜單）：code + 店家名稱（必填）","申請多店家請換行填寫",5)}
-      ${field("copyBranchMasterVendor","4. 複製這間分店菜單（母菜單）：code + 店家名稱（必填）","text","請填寫母菜單 code + 店家名稱")}
-      ${field("copyBranchEmail","5. 欲綁定帳號的 Email（必填）","email","請填寫 Email")}
-    `;
   }
 
   if(currentType==="project_auto_accept_adjust"){
