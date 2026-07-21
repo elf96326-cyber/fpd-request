@@ -328,8 +328,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <div class="header-row">
     <div>
       <div class="badge">📋 Menu Request Portal</div>
-      <h1>【foodpanda】品牌需求表單</h1>
-      <p class="desc">請填寫品牌基本資料，選擇需求類型後系統會自動產生對應標題。</p>
+      <h1>【foodpanda】需求表單</h1>
+      <p class="desc">請填寫基本資料，選擇需求類型後系統會自動產生對應模板。</p>
     </div>
     <div class="status"><small>目前狀態</small><b id="statusText">填寫中</b></div>
   </div>
@@ -1587,7 +1587,7 @@ if(!currentType){
   
   if(currentType==="project_store_cancel_deal"){
     area.innerHTML=`${subjectInput()}
-    <div class="upload"><h3>活動已取消 MMT 截圖</h3><inputtype="text" placeholder="請貼上雲端連結"/></div>
+    <div class="upload"><h3>活動已取消 MMT 截圖</h3>${field("cancelMmtLink","活動已取消 MMT 截圖連結","text","請貼上雲端連結")}</div>
     ${select("cancelMarkup","【抬價漲幅】",["0%"])}
     ${select("cancelFull","是否依照菜單更新整份菜單(含價格、新增品項、下架品項)",["是","否"])}
     ${select("cancelPriceOnly","僅需調整後台品項金額，不需另外上架餐點",["是","否"])}`;
@@ -1595,10 +1595,10 @@ if(!currentType){
 
   if(currentType==="project_store_join_deal"){
     area.innerHTML=`${subjectInput()}
-    ${select("dealType","活動類型（必填）",["一般","Pro"])}
+    ${select("dealType","參加活動（必填）",["一般","PRO"])}
     <div class="grid">
-      ${field("dealAmount","滿額門檻","number","100")}
-      ${field("dealDiscount","折扣","text","9")}
+      ${fixedCard("dealAmount","滿額門檻","選擇參加活動後自動帶入")}
+      ${fixedCard("dealDiscount","折扣","選擇參加活動後自動帶入")}
     </div>
     ${select("dealMarkup","【抬價漲幅】",["12%","20%","0%"])}${markupNote("dealMarkupNote")}
     ${select("dealFull","是否依照菜單更新整份菜單",["是","否"])}
@@ -1608,10 +1608,10 @@ if(!currentType){
 
   if(currentType==="project_store_preview_menu"){
     area.innerHTML=`${subjectInput()}
-    ${select("previewDealType","活動類型（必填）",["一般","Pro"])}
+    ${select("previewDealType","參加活動（必填）",["一般","PRO"])}
     <div class="grid">
-      ${field("previewAmount","滿額門檻","number","100")}
-      ${field("previewDiscount","折扣","text","9")}
+      ${fixedCard("previewAmount","滿額門檻","選擇參加活動後自動帶入")}
+      ${fixedCard("previewDiscount","折扣","選擇參加活動後自動帶入")}
     </div>
     ${select("previewMarkup","【抬價漲幅】",["12%","20%","0%"])}${markupNote("previewMarkupNote")}
     ${field("previewStoreMenu","校稿版菜單：店家代碼 + 店家名稱","text","請填寫")}
@@ -1625,10 +1625,10 @@ if(!currentType){
 
   if(currentType==="project_store_menu_sync"){
     area.innerHTML=`${subjectInput()}
-    ${select("syncDealType","活動類型（必填）",["一般","Pro"])}
+    ${select("syncDealType","參加活動（必填）",["一般","PRO"])}
     <div class="grid">
-      ${field("syncAmount","滿額門檻","number","100")}
-      ${field("syncDiscount","折扣","text","9")}
+      ${fixedCard("syncAmount","滿額門檻","選擇參加活動後自動帶入")}
+      ${fixedCard("syncDiscount","折扣","選擇參加活動後自動帶入")}
     </div>
     ${select("syncMarkup","【抬價漲幅】",["12%","20%","0%"])}${markupNote("syncMarkupNote")}
     ${field("syncMaster","校稿版菜單：店家代碼 + 店家名稱","text","請填寫")}
@@ -1671,6 +1671,18 @@ if(currentType==="project_aaa_deal_menu"){
 }
 
 function renderConditionalBlocks(){
+  const dealType = val("dealType");
+  setFixedCard("dealAmount", dealType ? "滿 100" : "", "選擇參加活動後自動帶入");
+  setFixedCard("dealDiscount", dealType === "一般" ? "9 折" : (dealType === "PRO" ? "85 折" : ""), "選擇參加活動後自動帶入");
+
+  const previewDealType = val("previewDealType");
+  setFixedCard("previewAmount", previewDealType ? "滿 100" : "", "選擇參加活動後自動帶入");
+  setFixedCard("previewDiscount", previewDealType === "一般" ? "9 折" : (previewDealType === "PRO" ? "85 折" : ""), "選擇參加活動後自動帶入");
+
+  const syncDealType = val("syncDealType");
+  setFixedCard("syncAmount", syncDealType ? "滿 100" : "", "選擇參加活動後自動帶入");
+  setFixedCard("syncDiscount", syncDealType === "一般" ? "9 折" : (syncDealType === "PRO" ? "85 折" : ""), "選擇參加活動後自動帶入");
+
   const orderSystemFaq = document.getElementById("orderSystemFaqChecked");
   const orderSystemFaqNotice = document.getElementById("orderSystemFaqNotice");
   if(orderSystemFaq && orderSystemFaqNotice){
@@ -2365,6 +2377,55 @@ function renderSummary(){
   if(currentType==="chain_adjust"){
     rows.push(
       row("Vendor detail（更新內容說明）",showMultilineVal("chainAdjustVendorDetail"))
+    );
+  }
+
+  if(currentType==="project_store_cancel_deal"){
+    rows.push(
+      row("活動已取消 MMT 截圖連結",showVal("cancelMmtLink")),
+      row("抬價漲幅",showVal("cancelMarkup")),
+      row("是否依照菜單更新整份菜單",showVal("cancelFull")),
+      row("僅需調整後台品項金額，不需另外上架餐點",showVal("cancelPriceOnly"))
+    );
+  }
+
+  if(currentType==="project_store_join_deal"){
+    rows.push(
+      row("參加活動",showVal("dealType")),
+      row("滿額門檻",showVal("dealAmount")),
+      row("折扣",showVal("dealDiscount")),
+      row("抬價漲幅",showVal("dealMarkup")),
+      row("是否依照菜單更新整份菜單",showVal("dealFull")),
+      row("僅需調整抬價金額，不需另外上架餐點",showVal("dealPriceOnly")),
+      row("有提供抬價金額的餐點是否一併上架",showVal("dealPriceItem"))
+    );
+  }
+
+  if(currentType==="project_store_preview_menu"){
+    rows.push(
+      row("參加活動",showVal("previewDealType")),
+      row("滿額門檻",showVal("previewAmount")),
+      row("折扣",showVal("previewDiscount")),
+      row("抬價漲幅",showVal("previewMarkup")),
+      row("校稿版菜單：店家代碼 + 店家名稱",showVal("previewStoreMenu")),
+      row("是否依照菜單更新整份菜單",showVal("previewFull2")),
+      row("僅需調整抬價金額，不需另外上架餐點",showVal("previewPriceOnly2")),
+      row("有提供抬價金額的餐點是否一併上架",showVal("previewPriceItem2")),
+      row("統一塑膠袋金額",showVal("previewBag")),
+      row("未統一塑膠袋金額之分店",showMultilineVal("previewBagException"))
+    );
+  }
+
+  if(currentType==="project_store_menu_sync"){
+    rows.push(
+      row("參加活動",showVal("syncDealType")),
+      row("滿額門檻",showVal("syncAmount")),
+      row("折扣",showVal("syncDiscount")),
+      row("抬價漲幅",showVal("syncMarkup")),
+      row("校稿版菜單：店家代碼 + 店家名稱",showVal("syncMaster")),
+      row("商家名單",showVal("syncVendorList")),
+      row("統一塑膠袋金額",showVal("syncBag")),
+      row("未統一塑膠袋金額之分店",showMultilineVal("syncBagException"))
     );
   }
 
