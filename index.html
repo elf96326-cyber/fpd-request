@@ -357,7 +357,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   margin-top:16px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:16px;padding:15px
 }
 .vendor-selected-title{font-weight:800;color:#166534;margin-bottom:10px}
-.vendor-selected-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.vendor-selected-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .vendor-selected-item{background:#fff;border:1px solid #dcfce7;border-radius:12px;padding:10px}
 .vendor-selected-item small{display:block;color:#64748b;margin-bottom:4px}.vendor-selected-item b{font-size:13px}
 .vendor-system-note{margin-top:12px;color:#64748b;font-size:12px;line-height:1.6}
@@ -405,7 +405,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     </div>
 
     <div class="vendor-search-row">
-      <input id="vendorSearchKeyword" placeholder="例如：tw123456、TW_CHAIN_001、星巴克（南港店）" onkeydown="if(event.key==='Enter'){event.preventDefault();searchVendor();}">
+      <input id="vendorSearchKeyword" placeholder="例如：cf4ah、mcos、星巴克" onkeydown="if(event.key==='Enter'){event.preventDefault();searchVendor();}">
       <button type="button" class="btn-primary" onclick="searchVendor()">查詢</button>
     </div>
 
@@ -418,6 +418,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <div class="vendor-selected-item"><small>店家代碼</small><b id="selectedVendorCodeText">—</b></div>
         <div class="vendor-selected-item"><small>Chain code</small><b id="selectedChainCodeText">—</b></div>
         <div class="vendor-selected-item"><small>完整名稱</small><b id="selectedVendorNameText">—</b></div>
+        <div class="vendor-selected-item"><small>負責窗口</small><b id="selectedVendorAmText">—</b></div>
       </div>
       <div class="btn-row" style="margin-top:12px;justify-content:flex-end">
         <button type="button" class="btn-outline" onclick="clearSelectedVendor()">清除選擇</button>
@@ -427,6 +428,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <input type="hidden" id="selectedVendorCode">
     <input type="hidden" id="selectedChainCode">
     <input type="hidden" id="selectedVendorFullName">
+    <input type="hidden" id="selectedVendorAm">
     <div class="vendor-system-note">資料來源：店家資料庫。查不到資料時，請確認關鍵字或直接填寫需求。</div>
   </div>
 
@@ -673,6 +675,15 @@ function normalizeVendorItem(item){
       item["店家完整名稱"] ??
       item["店家名稱"] ??
       ""
+    ).trim(),
+    am: String(
+      item.am ??
+      item.owner ??
+      item.accountManager ??
+      item.account_manager ??
+      item["負責窗口"] ??
+      item["AM"] ??
+      ""
     ).trim()
   };
 }
@@ -748,6 +759,7 @@ async function searchVendor(){
         <div class="vendor-result-meta">
           <span>店家代碼：${escapeVendorHtml(item.vendorCode || "—")}</span>
           <span>Chain code：${escapeVendorHtml(item.chainCode || "—")}</span>
+          <span>負責窗口：${escapeVendorHtml(item.am || "—")}</span>
         </div>`;
       button.addEventListener("click",()=>selectVendor(item,button));
       results.appendChild(button);
@@ -772,9 +784,11 @@ function selectVendor(item,button){
   document.getElementById("selectedVendorCode").value=item.vendorCode || "";
   document.getElementById("selectedChainCode").value=item.chainCode || "";
   document.getElementById("selectedVendorFullName").value=item.fullName || "";
+  document.getElementById("selectedVendorAm").value=item.am || "";
   document.getElementById("selectedVendorCodeText").textContent=item.vendorCode || "—";
   document.getElementById("selectedChainCodeText").textContent=item.chainCode || "—";
   document.getElementById("selectedVendorNameText").textContent=item.fullName || "—";
+  document.getElementById("selectedVendorAmText").textContent=item.am || "—";
   document.getElementById("selectedVendorCard").classList.remove("hidden");
 
   const brand=document.getElementById("brand");
@@ -787,7 +801,7 @@ function selectVendor(item,button){
 }
 
 function clearSelectedVendor(){
-  ["selectedVendorCode","selectedChainCode","selectedVendorFullName"].forEach(id=>{
+  ["selectedVendorCode","selectedChainCode","selectedVendorFullName","selectedVendorAm"].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value="";
   });
