@@ -1513,6 +1513,7 @@ if(!currentType){
   if(currentType==="upload_photo_to_preview"){
     area.innerHTML = `${subjectInput()}
       ${field("previewPhotoMasterMenu","校稿版菜單：code + name（必填）","text","請填寫 校稿版菜單：code + name")}
+      ${field("previewPhotoLink","餐點照片連結（必填）","url","請貼上 Google Drive、Google Photos 或其他雲端連結")}
     `;
   }
 
@@ -2747,7 +2748,8 @@ function renderSummary(){
 
   if(currentType==="upload_photo_to_preview"){
     rows.push(
-      row("校稿版菜單：code + name",showVal("previewPhotoMasterMenu"))
+      row("校稿版菜單：code + name",showVal("previewPhotoMasterMenu")),
+      row("餐點照片連結",showVal("previewPhotoLink"))
     );
   }
 
