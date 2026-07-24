@@ -407,7 +407,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   margin-top:16px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:16px;padding:15px
 }
 .vendor-selected-title{font-weight:800;color:#166534;margin-bottom:10px}
-.vendor-selected-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.vendor-selected-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
 .vendor-selected-item{background:#fff;border:1px solid #dcfce7;border-radius:12px;padding:10px}
 .vendor-selected-item small{display:block;color:#64748b;margin-bottom:4px}.vendor-selected-item b{font-size:13px}
 .vendor-system-note{margin-top:12px;color:#64748b;font-size:12px;line-height:1.6}
@@ -415,6 +415,85 @@ button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:760px){
   .vendor-lookup-head{flex-direction:column}.vendor-search-row{grid-template-columns:1fr}
   .vendor-search-row button{width:100%}.vendor-selected-grid{grid-template-columns:1fr}
+}
+
+
+/* 後續頁面：目前申請資訊 */
+.application-info-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin:0 0 22px;
+  padding:15px 17px;
+  border:1px solid #fbcfe8;
+  border-radius:18px;
+  background:linear-gradient(135deg,#fff7fa 0%,#ffffff 100%);
+}
+.application-info-main{min-width:0}
+.application-info-title{
+  color:#be185d;
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+.application-info-items{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px 14px;
+  color:#334155;
+  font-size:13px;
+  line-height:1.55;
+}
+.application-info-item{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.application-info-item b{
+  color:#0f172a;
+  font-weight:700;
+}
+.application-info-edit{
+  flex:0 0 auto;
+  padding:9px 13px;
+  border-radius:12px;
+  background:#fff;
+  color:#be185d;
+  border:1px solid #f9a8d4;
+  white-space:nowrap;
+}
+.application-info-edit:hover{
+  background:#fff0f6;
+}
+.application-group-missing{
+  color:#b45309 !important;
+}
+.group.recommended-group{
+  position:relative;
+  box-shadow:0 0 0 3px rgba(255,43,133,.12),0 10px 24px rgba(15,23,42,.06);
+}
+.group-recommend-badge{
+  display:inline-flex;
+  align-items:center;
+  margin-left:8px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#dcfce7;
+  color:#166534;
+  font-size:11px;
+  font-weight:800;
+  vertical-align:middle;
+}
+@media(max-width:760px){
+  .application-info-card{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .application-info-edit{
+    width:100%;
+  }
 }
 
 </style>
@@ -469,6 +548,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <div class="vendor-selected-item"><small>Chain code</small><b id="selectedChainCodeText">—</b></div>
         <div class="vendor-selected-item"><small>完整名稱</small><b id="selectedVendorNameText">—</b></div>
         <div class="vendor-selected-item"><small>負責窗口</small><b id="selectedVendorAmText">—</b></div>
+        <div class="vendor-selected-item"><small>組別</small><b id="selectedVendorGroupText">—</b></div>        
       </div>
       <div class="btn-row" style="margin-top:12px;justify-content:flex-end">
         <button type="button" class="btn-outline" onclick="clearSelectedVendor()">清除選擇</button>
@@ -479,6 +559,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <input type="hidden" id="selectedChainCode">
     <input type="hidden" id="selectedVendorFullName">
     <input type="hidden" id="selectedVendorAm">
+    <input type="hidden" id="selectedVendorGroup">
     <div class="vendor-system-note">資料來源：foodpanda 內部資料庫。若無符合結果，請確認查詢條件，或直接填寫品牌資訊。</div>
   </div>
 
@@ -526,6 +607,18 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="sub">請先選擇這次要建立菜單 需求或 活動 / 營運 需求。</div>
     </div>
   </div>
+
+  <div class="application-info-card" data-application-info>
+    <div class="application-info-main">
+      <div class="application-info-title">目前申請資訊</div>
+      <div class="application-info-items">
+        <span class="application-info-item">🏷️ <b data-info-brand>未填寫</b></span>
+        <span class="application-info-item">👤 負責窗口：<b data-info-am>未填寫</b></span>
+        <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
+      </div>
+    </div>
+    <button type="button" class="application-info-edit" onclick="go(1)">修改基本資料</button>
+  </div>
   <div class="request-grid">
     <button class="request workstream-menu" data-workstream="menu" onclick="selectWorkstream('menu')">
       <b style="font-size:22px;">🍽️菜單</b>
@@ -544,8 +637,20 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 <section class="page" id="page3">
   <div class="title-row"><div><h2>第三頁｜選擇需求</h2><div class="sub">請依本次需求選擇對應的申請項目。</div></div></div>
+
+  <div class="application-info-card" data-application-info>
+    <div class="application-info-main">
+      <div class="application-info-title">目前申請資訊</div>
+      <div class="application-info-items">
+        <span class="application-info-item">🏷️ <b data-info-brand>未填寫</b></span>
+        <span class="application-info-item">👤 負責窗口：<b data-info-am>未填寫</b></span>
+        <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
+      </div>
+    </div>
+    <button type="button" class="application-info-edit" onclick="go(1)">修改基本資料</button>
+  </div>
   <div id="menuRequestSection">
-  <div class="group category-brand"><div class="category-label">SAM / KAM</div><div class="request-grid">
+  <div class="group category-brand"><div class="category-label">🔵Blue / 🟢Green</div><div class="request-grid">
     <button class="request" data-type="menu_modify" onclick="selectType('menu_modify')"><b>📒 菜單修改</b><p>既有菜單內容、價格、品項或照片調整</p></button>
     <button class="request" data-type="menu_copy" onclick="selectType('menu_copy')"><b>🔗 菜單複製</b><p>將既有菜單內容複製到指定店家或品牌</p></button>
     <button class="request" data-type="plastic_bag" onclick="selectType('plastic_bag')"><b>🛍️ 塑膠袋設定</b><p>僅限更新塑膠袋設定使用</p></button>
@@ -554,12 +659,12 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <button class="request" data-type="pos_issue" onclick="selectType('pos_issue')"><b>⁉️POS 串接異常</b><p>協助回報或追蹤 POS 串接異常問題</p></button>
   </div></div>
 
-  <div class="group category-all"><div class="category-label">SAM / KAM / area</div><div class="request-grid">
+  <div class="group category-all"><div class="category-label">🔵Blue / 🟢Green / 🟡Yellow</div><div class="request-grid">
     <button class="request" data-type="store_price_label" onclick="selectType('store_price_label')"><b>📌 店內價標籤</b><p>協助設定或調整店內價相關標籤</p></button>
     <button class="request" data-type="export_menu" onclick="selectType('export_menu')"><b>📋 匯出菜單</b><p>協助匯出指定品牌、門市或 校稿版菜單 菜單資料</p></button>
   </div></div>
 
-  <div class="group category-store"><div class="category-label">area</div><div class="request-grid">
+  <div class="group category-store"><div class="category-label">🟡Yellow</div><div class="request-grid">
     <button class="request" data-type="use_branch_photos" onclick="selectType('use_branch_photos')"><b>📁 使用既有分店照片</b><p>10 間以上門市</p></button>
     <button class="request" data-type="upload_photo_to_preview" onclick="selectType('upload_photo_to_preview')"><b>📤 提供餐點照連結至校稿用</b><p>不開放單店</p></button>
     <button class="request" data-type="shooting_service" onclick="selectType('shooting_service')"><b>📸 拍攝服務申請</b><p>符合行銷 / 補拍資格</p></button>
@@ -570,22 +675,22 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div></div>
   </div>
   <div id="projectRequestSection" class="hidden">
-<div class="group category-brand"><div class="category-label">SAM</div><div class="request-grid">
+<div class="group category-brand"><div class="category-label">🔵Blue</div><div class="request-grid">
 <button class="request" data-type="project_aaa_deal_menu" onclick="selectType('project_aaa_deal_menu')"><b>活動設定 + 活動菜單修改</b></button>
 <button class="request" data-type="project_aaa_device_replacement" onclick="selectType('project_aaa_device_replacement')"><b>換機申請</b></button>
 </div></div>
 
-<div class="group project-purple"><div class="category-label">SAM / KAM</div><div class="request-grid">
+<div class="group project-purple"><div class="category-label">🔵Blue / 🟢Green</div><div class="request-grid">
 <button class="request" data-type="project_aaakalh_deal_create" onclick="selectType('project_aaakalh_deal_create')"><b>🎯 建立 Deal 活動</b><p>General / PRO / Targeting / BOGO / POS 專區活動</p></button>
 <button class="request" data-type="project_aaakalh_deal_cancel" onclick="selectType('project_aaakalh_deal_cancel')"><b>❌ Deal 活動取消</b><p>單店、多店（&gt;10）活動取消</p></button>
 </div></div>
 
-<div class="group category-all"><div class="category-label">KAM</div><div class="request-grid">
+<div class="group category-all"><div class="category-label">🟢Green</div><div class="request-grid">
 <button class="request" data-type="project_kalh_deal_menu_update" onclick="selectType('project_kalh_deal_menu_update')"><b>📢 活動設定 + 修改菜單</b><p>整合單店 / 多店與校稿用活動菜單修改</p></button>
 <button class="request" data-type="project_kalh_deal_menu_sync" onclick="selectType('project_kalh_deal_menu_sync')"><b>🔄 活動複製菜單</b><p>整合排程、STAT、純上架活動品項</p></button>
 </div></div>
 
-<div class="group category-store"><div class="category-label">area</div><div class="request-grid">
+<div class="group category-store"><div class="category-label">🟡Yellow</div><div class="request-grid">
 <button class="request" data-type="project_store_cancel_deal" onclick="selectType('project_store_cancel_deal')"><b>取消活動並恢復店內價菜單</b></button>
 <button class="request" data-type="project_store_join_deal" onclick="selectType('project_store_join_deal')"><b>新參加 / 更換 活動+修改活動菜單</b></button>
 <button class="request" data-type="project_store_preview_menu" onclick="selectType('project_store_preview_menu')"><b>修改校稿用菜單</b></button>
@@ -593,7 +698,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 </div></div>
 
 <div class="group" style="border:1px solid #bbf7d0;background:#f0fdf4;border-radius:24px;padding:18px">
-<div class="category-label" style="background:#dcfce7;color:#166534">SAM / KAM / area</div>
+<div class="category-label" style="background:#dcfce7;color:#166534">🔵Blue / 🟢Green / 🟡Yellow</div>
 
 <div class="all-merchant-subgroup">
   <div class="all-merchant-subtitle">🔑 Portal 帳號綁定（綁定權限申請）</div>
@@ -669,6 +774,18 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div><h2>第四頁｜需求內容</h2><div class="sub">目前選擇：<span id="selectedName">未選擇</span></div></div>
     <span class="pill" id="selectedDesc">請先選擇需求</span>
   </div>
+
+  <div class="application-info-card" data-application-info>
+    <div class="application-info-main">
+      <div class="application-info-title">目前申請資訊</div>
+      <div class="application-info-items">
+        <span class="application-info-item">🏷️ <b data-info-brand>未填寫</b></span>
+        <span class="application-info-item">👤 負責窗口：<b data-info-am>未填寫</b></span>
+        <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
+      </div>
+    </div>
+    <button type="button" class="application-info-edit" onclick="go(1)">修改基本資料</button>
+  </div>
   <div id="templateArea"></div>
   <div id="requiredWarning" class="notice hidden" style="border:1px solid #fecdd3;background:#fff1f2;color:#dc2626;font-weight:700">⚠️ 還有必填欄位未完成，請先填寫紅框欄位後再送出。</div>
   <div class="btn-row"><button class="btn-outline" onclick="go(3)">‹ 上一步</button><button class="btn-primary" onclick="submitPreview()">送出表單</button></div>
@@ -676,6 +793,18 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 <section class="page" id="page5">
   <div style="text-align:center"><div style="font-size:48px;color:#ff2b85">📋</div><h2>送出前確認</h2><div class="sub">請再次確認填寫內容是否正確，確認後才會正式送出。</div></div>
+
+  <div class="application-info-card" data-application-info>
+    <div class="application-info-main">
+      <div class="application-info-title">目前申請資訊</div>
+      <div class="application-info-items">
+        <span class="application-info-item">🏷️ <b data-info-brand>未填寫</b></span>
+        <span class="application-info-item">👤 負責窗口：<b data-info-am>未填寫</b></span>
+        <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
+      </div>
+    </div>
+    <button type="button" class="application-info-edit" onclick="go(1)">修改基本資料</button>
+  </div>
   <div class="summary"><h3>申請摘要</h3><div class="summary-grid" id="summaryBasic"></div><div style="border-top:1px solid #f9a8d4;margin:18px 0"></div><h3>填寫內容</h3><div id="summaryDetails"></div></div>
   <div class="btn-row" style="justify-content:center">
     <button id="backToEditBtn" type="button" class="btn-outline" onclick="go(4)">返回編輯</button>
@@ -756,6 +885,12 @@ function normalizeVendorItem(item){
       item["負責窗口"] ??
       item["AM"] ??
       ""
+    ).trim(),
+    group: String(
+      item.group ??
+      item.team ??
+      item["組別"] ??
+      ""
     ).trim()
   };
 }
@@ -832,6 +967,7 @@ async function searchVendor(){
           <span>店家代碼：${escapeVendorHtml(item.vendorCode || "—")}</span>
           <span>Chain code：${escapeVendorHtml(item.chainCode || "—")}</span>
           <span>負責窗口：${escapeVendorHtml(item.am || "—")}</span>
+          <span>組別：${escapeVendorHtml(item.group || "—")}</span>
         </div>`;
       button.addEventListener("click",()=>selectVendor(item,button));
       results.appendChild(button);
@@ -862,6 +998,8 @@ function selectVendor(item,button){
   document.getElementById("selectedVendorNameText").textContent=item.fullName || "—";
   document.getElementById("selectedVendorAmText").textContent=item.am || "—";
   document.getElementById("selectedVendorCard").classList.remove("hidden");
+  document.getElementById("selectedVendorGroup").value=item.group || "";
+  document.getElementById("selectedVendorGroupText").textContent=getGroupDisplayName(item.group, "—");
 
   const brand=document.getElementById("brand");
   if(brand && item.fullName){
@@ -873,7 +1011,7 @@ function selectVendor(item,button){
 }
 
 function clearSelectedVendor(){
-  ["selectedVendorCode","selectedChainCode","selectedVendorFullName","selectedVendorAm"].forEach(id=>{
+  ["selectedVendorCode","selectedChainCode","selectedVendorFullName","selectedVendorAm","selectedVendorGroup"].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value="";
   });
@@ -882,6 +1020,7 @@ function clearSelectedVendor(){
   if(card) card.classList.add("hidden");
 
   document.querySelectorAll(".vendor-result-card").forEach(el=>el.classList.remove("selected"));
+  updateApplicationInfo();
 }
 
 
@@ -1036,16 +1175,16 @@ const typeInfo = {
   chain_adjust:["Chain 調整","商家退出加盟需調整 Chain"],
   project_general:["Project 需求","專案型需求入口，模板欄位後續新增"],
   project_other:["其他 Project 需求","預留 Project 子項目，之後可依流程擴充"],
-  project_aaa_deal_menu:["活動設定 + 活動菜單修改","SAM 活動設定、活動校稿菜單修改或活動菜單複製 / 版本同步"],
+  project_aaa_deal_menu:["活動設定 + 活動菜單修改","🔵Blue 活動設定、活動校稿菜單修改或活動菜單複製 / 版本同步"],
   project_aaa_device_replacement:["換機申請","設備異常換機評估"],
-  project_aaakalh_deal_create:["建立 Deal 活動","SAM / KAM area不可申請活動建立"],
-  project_aaakalh_deal_cancel:["Deal 活動取消","SAM / KAM 單店、多店活動取消"],
-  project_kalh_deal_menu_update:["活動設定 + 修改菜單","KAM 活動內容建立與菜單修改"],
-  project_kalh_deal_menu_sync:["活動複製菜單","KAM 活動菜單複製、排程或純上架活動品項"],
-  project_store_cancel_deal:["取消活動並恢復店內價菜單","area活動取消"],
-  project_store_join_deal:["新參加 / 更換 活動+修改活動菜單","area活動設定"],
-  project_store_preview_menu:["修改校稿用菜單","area校稿菜單修改"],
-  project_store_menu_sync:["複製","area菜單複製"],
+  project_aaakalh_deal_create:["建立 Deal 活動","🔵Blue / 🟢Green 可申請，🟡Yellow 不適用"],
+  project_aaakalh_deal_cancel:["Deal 活動取消","🔵Blue / 🟢Green 單店、多店活動取消"],
+  project_kalh_deal_menu_update:["活動設定 + 修改菜單","🟢Green 活動內容建立與菜單修改"],
+  project_kalh_deal_menu_sync:["活動複製菜單","🟢Green 活動菜單複製、排程或純上架活動品項"],
+  project_store_cancel_deal:["取消活動並恢復店內價菜單","🟡Yellow 活動取消"],
+  project_store_join_deal:["新參加 / 更換 活動+修改活動菜單","🟡Yellow 活動設定"],
+  project_store_preview_menu:["修改校稿用菜單","🟡Yellow 校稿菜單修改"],
+  project_store_menu_sync:["複製","🟡Yellow 菜單複製"],
   project_portal_change_email:["商家修改信箱","Portal 帳號綁定（綁定權限申請）"],
   project_portal_create_account:["創建Protal帳號","Portal 帳號綁定（綁定權限申請）"],
   project_portal_bind_account:["商家綁定帳號","Portal 帳號綁定（綁定權限申請）"],
@@ -1101,6 +1240,7 @@ function validateBasic(){
     btn.style.cursor = valid ? "pointer" : "not-allowed";
   }
   if(notice) notice.classList.toggle("hidden", valid);
+  updateApplicationInfo();
 }
 
 function clearRequiredErrors(scope=document){
@@ -1156,6 +1296,67 @@ function validateRequiredVisible(showErrors=true){
 
 function val(id){ const el=document.getElementById(id); return el ? (el.value || "") : ""; }
 function showVal(id){ return val(id) || "未填寫"; }
+
+function getGroupDisplayName(group, emptyText="尚未查詢"){
+  const normalized = String(group || "").trim();
+  const displayMap = {
+    SAM: "🔵Blue",
+    KAM: "🟢Green",
+    area: "🟡Yellow",
+    Blue: "🔵Blue",
+    Green: "🟢Green",
+    Yellow: "🟡Yellow",
+    "🔵Blue": "🔵Blue",
+    "🟢Green": "🟢Green",
+    "🟡Yellow": "🟡Yellow"
+  };
+  return normalized ? (displayMap[normalized] || normalized) : emptyText;
+}
+
+function updateApplicationInfo(){
+  const brand = val("brand") || "未填寫";
+  const am = val("am") || "未填寫";
+  const rawGroup = val("selectedVendorGroup");
+  const group = getGroupDisplayName(rawGroup);
+
+  document.querySelectorAll("[data-info-brand]").forEach(el=>el.textContent=brand);
+  document.querySelectorAll("[data-info-am]").forEach(el=>el.textContent=am);
+  document.querySelectorAll("[data-info-group]").forEach(el=>el.textContent=group);
+  document.querySelectorAll("[data-info-group-wrap]").forEach(el=>{
+    el.classList.toggle("application-group-missing", !rawGroup);
+  });
+
+  updateRecommendedGroups();
+}
+
+function updateRecommendedGroups(){
+  const groupDisplay = getGroupDisplayName(val("selectedVendorGroup"), "");
+  document.querySelectorAll("#page3 .group").forEach(group=>{
+    group.classList.remove("recommended-group");
+    group.querySelectorAll(".group-recommend-badge").forEach(badge=>badge.remove());
+
+    if(!groupDisplay) return;
+
+    const label = group.querySelector(":scope > .category-label");
+    if(!label || !label.textContent.includes(groupDisplay)) return;
+
+    group.classList.add("recommended-group");
+    const badge = document.createElement("span");
+    badge.className = "group-recommend-badge";
+    badge.textContent = "符合目前組別";
+    label.insertAdjacentElement("afterend", badge);
+  });
+}
+
+function showVendorType(id){
+  const displayMap = {
+    SAM: "🔵Blue",
+    KAM: "🟢Green",
+    area: "🟡Yellow"
+  };
+  const value = val(id);
+  return value ? (displayMap[value] || value) : "未填寫";
+}
 function showMultilineVal(id){ return val(id) || "未填寫"; }
 function getPhotoUpdateDateTimeSummary(){
   const mode = val("photoUpdateMode");
@@ -1197,6 +1398,7 @@ function go(n){
     }
   }
   if(n===5) renderSummary();
+  updateApplicationInfo();
 
   // 換頁後固定回到頁面最上方，避免從上一頁的捲動位置開始顯示
   requestAnimationFrame(() => {
@@ -1236,6 +1438,7 @@ function renderRequestSelection(){
   document.querySelectorAll(".request").forEach(btn=>{
     if(btn.dataset.type) btn.classList.toggle("selected", btn.dataset.type === currentType);
   });
+  updateRecommendedGroups();
 }
 function selectType(type){
   if(currentType !== type){
@@ -1279,7 +1482,11 @@ function field(id,label,type="text",placeholder="請填寫"){
   return `<div class="field"><label>${label}</label><input id="${id}" type="${type}" placeholder="${placeholder}" oninput="refreshSubject(); validateRequiredVisible(false)"></div>`;
 }
 function select(id,label,options){
-  return `<div class="field"><label>${label}</label><select id="${id}" onchange="refreshSubject(); renderConditionalBlocks(); validateRequiredVisible(false);"><option value="">請選擇</option>${options.map(o=>`<option value="${o}">${o}</option>`).join("")}</select></div>`;
+  return `<div class="field"><label>${label}</label><select id="${id}" onchange="refreshSubject(); renderConditionalBlocks(); validateRequiredVisible(false);"><option value="">請選擇</option>${options.map(o=>{
+    const value = typeof o === "object" ? o.value : o;
+    const text = typeof o === "object" ? o.label : o;
+    return `<option value="${value}">${text}</option>`;
+  }).join("")}</select></div>`;
 }
 function textarea(id,label,placeholder="請填寫",rows=4){
   return `<div class="field"><label>${label}</label><textarea id="${id}" rows="${rows}" placeholder="${placeholder}" oninput="validateRequiredVisible(false)"></textarea></div>`;
@@ -1397,7 +1604,10 @@ if(!currentType){
 
   if(currentType==="menu_modify"){
     area.innerHTML = `
-      ${select("menuVendorType","適用對象（必填）",["SAM","KAM"])}
+      ${select("menuVendorType","適用對象（必填）",[
+          { value: "SAM", label: "🔵Blue" },
+          { value: "KAM", label: "🟢Green" }
+        ])}
       ${select("menuRequestType","菜單需求類型（必填）",["校稿用修改","單店修改","純封面照片修改 (品牌共用)","純封面照片修改 (指定門市)","純餐點照片修改 (校稿用)","純餐點照片修改 (無校稿)","Logo 照片修改"])}
       <div id="bannerPhotoNotice" class="notice hidden" style="margin-top:-6px;color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 品牌共用封面照片適用於所有門市；如門市另有設定指定門市封面照片，則以指定門市封面照片為準。</div>
       <div id="menuModifyNotice" class="notice">⚠️ 請先選擇適用對象與菜單需求類型，系統才會產生對應的模板欄位。</div>
@@ -1412,9 +1622,12 @@ if(!currentType){
 
   if(currentType==="menu_copy"){
     area.innerHTML = `
-      ${select("menuCopyVendorType","適用對象（必填）",["SAM","KAM"])}
+      ${select("menuCopyVendorType","適用對象（必填）",[
+          { value: "SAM", label: "🔵Blue" },
+          { value: "KAM", label: "🟢Green" }
+        ])}
       ${select("menuCopyRequestType","菜單需求類型（必填）",["菜單複製"])}
-      <div id="kaCaseTypeBlock" class="hidden">${select("menuCopyCaseSubjectType","KAM 標題類型（必填）",["STAT","複製日期"])}</div>
+      <div id="kaCaseTypeBlock" class="hidden">${select("menuCopyCaseSubjectType","🟢Green 標題類型（必填）",["STAT","複製日期"])}</div>
       ${subjectInput()}
       ${field("muCase","承 MU case","text","請填寫承接的 MU Case 編號或連結")}
       <div class="grid">
@@ -1435,7 +1648,10 @@ if(!currentType){
   }
 
   if(currentType==="consumer_note"){
-    area.innerHTML = `${select("consumerNoteStoreType","適用對象（必填）",["SAM","KAM"])}
+    area.innerHTML = `${select("consumerNoteStoreType","適用對象（必填）",[
+          { value: "SAM", label: "🔵Blue" },
+          { value: "KAM", label: "🟢Green" }
+        ])}
     <div id="consumerNoteNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>
     ${subjectInput()}
     <div class="box pink"><h3>備註功能</h3><p class="muted">開 / 關消費者備註功能，以品牌為單位，不可單店開關。</p></div>
@@ -1444,11 +1660,18 @@ if(!currentType){
   }
 
   if(currentType==="store_price_label"){
-    area.innerHTML = `${select("storePriceVendorType","適用對象（必填）",["SAM","KAM","area"])}<div id="storePriceNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>${subjectInput()}<div id="storePriceExtra"></div>`;
+    area.innerHTML = `${select("storePriceVendorType","適用對象（必填）",[
+        { value: "SAM", label: "🔵Blue" },
+        { value: "KAM", label: "🟢Green" },
+        { value: "area", label: "🟡Yellow" }
+      ])}<div id="storePriceNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>${subjectInput()}<div id="storePriceExtra"></div>`;
   }
 
   if(currentType==="export_menu"){
-    area.innerHTML = `${select("exportMenuVendorType","適用對象（必填）",["KAM","area"])}<div id="exportMenuNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>${subjectInput()}<div id="exportMenuExtra"></div>`;
+    area.innerHTML = `${select("exportMenuVendorType","適用對象（必填）",[
+        { value: "KAM", label: "🟢Green" },
+        { value: "area", label: "🟡Yellow" }
+      ])}<div id="exportMenuNotice" class="notice">⚠️ 請先選擇適用對象，系統才會產生對應的欄位。</div>${subjectInput()}<div id="exportMenuExtra"></div>`;
   }
 
   if(currentType==="restaurant_info"){
@@ -1456,7 +1679,10 @@ if(!currentType){
       ${select(
         "restaurantInfoStoreType",
         "適用對象（必填）",
-        ["SAM","KAM"]
+        [
+          { value: "SAM", label: "🔵Blue" },
+          { value: "KAM", label: "🟢Green" }
+        ]
       )}
 
       <div id="restaurantNotice" class="notice">
@@ -1642,7 +1868,10 @@ if(!currentType){
         <p class="muted">※ 複製菜單需求，請務必等菜單建置完成（MP Case 關閉）後做申請。</p>
       </div>
       ${select("copyBranchNeed","1. 商家反映需求（必填）",["申請【複製到分店】按鈕","已有【複製到分店】按鈕，需再新增其他可複製分店"])}
-      ${select("copyBranchStoreType","2. 商家類型（必填）",["area","KAM"])}
+      ${select("copyBranchStoreType","2. 商家類型（必填）",[
+        { value: "area", label: "🟡Yellow" },
+        { value: "KAM", label: "🟢Green" }
+      ])}
       ${textarea("copyBranchChildVendors","3. 欲開啟複製功能的分店（子菜單）：code + 店家名稱（必填）","申請多店家請換行填寫",5)}
       ${field("copyBranchMasterVendor","4. 複製這間分店菜單（母菜單）：code + 店家名稱（必填）","text","請填寫母菜單 code + 店家名稱")}
       ${field("copyBranchEmail","5. 欲綁定帳號的 Email（必填）","email","請填寫 Email")}
@@ -1813,7 +2042,7 @@ if(!currentType){
 
   if(currentType==="project_aaakalh_deal_create"){
     area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>SAM / KAM｜建立 Deal 活動</h3><p class="muted">請先選擇活動類型，系統會依類型自動切換對應欄位。</p></div>
+      <div class="box pink portal-template-box"><h3>🔵Blue / 🟢Green｜建立 Deal 活動</h3><p class="muted">請先選擇活動類型，系統會依類型自動切換對應欄位。</p></div>
       ${select("aaakalhDealType","活動類型（必填）",["General Deal","PRO Deal","Targeting Deal（新客活動）","BOGO","POS自行設定菜單+專區活動"])}
       <div id="aaakalhDealNotice" class="notice">⚠️ 請先選擇活動類型，系統才會產生對應的欄位。</div>
       <div class="grid">
@@ -1845,7 +2074,7 @@ if(!currentType){
 
   if(currentType==="project_aaakalh_deal_cancel"){
     area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>SAM / KAM｜Deal 活動取消</h3><p class="muted">適用單店、多店（&gt;10）活動取消。</p></div>
+      <div class="box pink portal-template-box"><h3>🔵Blue / 🟢Green｜Deal 活動取消</h3><p class="muted">適用單店、多店（&gt;10）活動取消。</p></div>
       <div class="grid">
         ${field("aaakalhCancelVendorCode","店家代碼（必填）","text","請填寫店家代碼")}
         ${field("aaakalhCancelVendorName","店家名稱（必填）","text","請填寫店家名稱")}
@@ -1862,7 +2091,7 @@ if(!currentType){
 
   if(currentType==="project_kalh_deal_menu_update"){
     area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>KAM｜活動設定 + 修改菜單</h3><p class="muted">請先選擇需求模式，系統會依模式自動切換模板。</p></div>
+      <div class="box pink portal-template-box"><h3>🟢Green｜活動設定 + 修改菜單</h3><p class="muted">請先選擇需求模式，系統會依模式自動切換模板。</p></div>
       ${select("kalhDealMode","需求模式（必填）",["單店 / 多店","校稿用"])}
       <div class="grid hidden" id="kalhDealContactBlock">${field("contact","主要校稿信箱（必填）","email","請填寫主要校稿信箱")}${field("cc","CC Email（選填）","email","請填寫 CC Email，可留空")}</div>
       <div id="kalhDealMenuNotice" class="notice">⚠️ 請先選擇需求模式，系統才會產生對應的欄位。</div>
@@ -1886,7 +2115,7 @@ if(!currentType){
 
   if(currentType==="project_kalh_deal_menu_sync"){
     area.innerHTML = `${subjectInput()}
-      <div class="box pink portal-template-box"><h3>KAM｜活動複製菜單</h3><p class="muted">請選擇活動複製類型，系統會依類型自動切換模板。</p></div>
+      <div class="box pink portal-template-box"><h3>🟢Green｜活動複製菜單</h3><p class="muted">請選擇活動複製類型，系統會依類型自動切換模板。</p></div>
       ${select("kalhSyncType","活動複製類型（必填）",["排程","STAT","純上架活動品項"])}
       <div id="kalhSyncNotice" class="notice">⚠️ 請先選擇活動複製類型，系統才會產生對應的欄位。</div>
       ${field("kalhSyncOppCase","OPP QC Case Number","text","Voucher 無 OPP 請註記")}
@@ -2616,6 +2845,7 @@ function renderSummary(){
     row("品牌 / 門市完整名稱",showVal("brand")),
     row("負責窗口",showVal("am")),
     row("負責窗口Email",showVal("amEmail")),
+    row("組別",getGroupDisplayName(val("selectedVendorGroup"))),
     row("需求類別",currentWorkstream ? (currentWorkstream === "menu" ? "🍽️ 菜單" : "⚙️ 活動 / 營運") : "未填寫"),
     row("需求",currentType ? typeInfo[currentType][0] : "未填寫"),
     row("📄 系統自動產生標題",computeSubject() || "未產生")
@@ -2629,7 +2859,7 @@ function renderSummary(){
 
   if(currentType==="menu_modify"){
     rows.push(
-      row("適用對象",showVal("menuVendorType")),
+      row("適用對象",showVendorType("menuVendorType")),
       row("菜單需求類型",showVal("menuRequestType"))
     );
 
@@ -2674,11 +2904,11 @@ function renderSummary(){
 
   if(currentType==="menu_copy"){
     rows.push(
-      row("適用對象",showVal("menuCopyVendorType")),
+      row("適用對象",showVendorType("menuCopyVendorType")),
       row("菜單需求類型",showVal("menuCopyRequestType"))
     );
     if(val("menuCopyVendorType")==="KAM"){
-      rows.push(row("KAM 標題類型",showVal("menuCopyCaseSubjectType")));
+      rows.push(row("🟢Green 標題類型",showVal("menuCopyCaseSubjectType")));
     }
     rows.push(
       row("承 MU case",showVal("muCase")),
@@ -2702,7 +2932,7 @@ function renderSummary(){
 
   if(currentType==="consumer_note"){
     rows.push(
-      row("適用對象",showVal("consumerNoteStoreType")),
+      row("適用對象",showVendorType("consumerNoteStoreType")),
       row("操作類型",showVal("consumerNoteMode")),
       row("品牌 / Chain code",showVal("specialVendorList"))
     );
@@ -2710,7 +2940,7 @@ function renderSummary(){
 
   if(currentType==="store_price_label"){
     rows.push(
-      row("適用對象",showVal("storePriceVendorType")),
+      row("適用對象",showVendorType("storePriceVendorType")),
       row("更新門市：code + 店家名稱",showMultilineVal("storePriceVendorList")),
       row("店內價標籤操作",showVal("storePriceAction"))
     );
@@ -2718,14 +2948,14 @@ function renderSummary(){
 
   if(currentType==="export_menu"){
     rows.push(
-      row("適用對象",showVal("exportMenuVendorType")),
+      row("適用對象",showVendorType("exportMenuVendorType")),
       row("店家資訊：code + 店家名稱",showVal("exportMenuVendorInfo"))
     );
   }
 
   if(currentType==="restaurant_info"){
     rows.push(
-      row("適用對象", showVal("restaurantInfoStoreType")),
+      row("適用對象", showVendorType("restaurantInfoStoreType")),
       row("操作類型", showVal("restaurantInfoAction")),
       row("調整內容", showMultilineVal("restaurantVendorList")),
       row("店家清單連結", showVal("restaurantVendorLink"))
@@ -3091,7 +3321,7 @@ function renderSummary(){
   if(currentType==="project_portal_copy_branch_button"){
     rows.push(
       row("商家反映需求",showVal("copyBranchNeed")),
-      row("商家類型",showVal("copyBranchStoreType")),
+      row("商家類型",showVendorType("copyBranchStoreType")),
       row("欲開啟複製功能的分店（子菜單）",showMultilineVal("copyBranchChildVendors")),
       row("複製這間分店菜單（母菜單）",showVal("copyBranchMasterVendor")),
       row("欲綁定帳號的 Email",showVal("copyBranchEmail"))
