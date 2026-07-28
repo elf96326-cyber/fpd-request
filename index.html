@@ -417,6 +417,74 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .vendor-search-row button{width:100%}.vendor-selected-grid{grid-template-columns:1fr}
 }
 
+.cc-email-section{
+  margin-bottom:18px;
+}
+
+.cc-email-header{
+  margin-bottom:10px;
+}
+
+.cc-email-header label{
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  color:#334155;
+  margin-bottom:4px;
+}
+
+.cc-email-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.cc-email-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  align-items:center;
+}
+
+.cc-email-row input{
+  margin:0;
+}
+
+.cc-remove-btn{
+  width:44px;
+  height:44px;
+  padding:0;
+  border-radius:12px;
+  background:#fff;
+  color:#94a3b8;
+  border:1px solid #e2e8f0;
+  font-size:14px;
+}
+
+.cc-remove-btn:hover{
+  background:#fff1f2;
+  color:#dc2626;
+  border-color:#fecdd3;
+}
+
+.cc-add-btn{
+  margin-top:10px;
+  padding:9px 13px;
+  background:#fff;
+  color:#ff2b85;
+  border:1px dashed #f9a8d4;
+  font-size:13px;
+}
+
+.cc-add-btn:hover{
+  background:#fff0f6;
+}
+
+.cc-add-btn:disabled{
+  color:#94a3b8;
+  border-color:#e2e8f0;
+  background:#f8fafc;
+}
 
 /* 後續頁面：目前申請資訊 */
 .application-info-card{
@@ -496,6 +564,109 @@ button:disabled{opacity:.45;cursor:not-allowed}
   }
 }
 
+
+/* 團隊服務時間提醒 */
+.service-time-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin:-4px 0 22px;
+  padding:16px 18px;
+  border-radius:20px;
+  border:1px solid #d1fae5;
+  background:linear-gradient(135deg,#f0fdf4 0%,#ffffff 100%);
+  box-shadow:0 6px 18px rgba(15,23,42,.05);
+  transition:.2s ease;
+}
+.service-time-card.after-hours{
+  border-color:#fed7aa;
+  background:linear-gradient(135deg,#fff7ed 0%,#ffffff 100%);
+}
+.service-time-icon{
+  flex:0 0 auto;
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:#dcfce7;
+  font-size:20px;
+}
+.service-time-card.after-hours .service-time-icon{
+  background:#ffedd5;
+}
+.service-time-main{
+  flex:1;
+  min-width:0;
+}
+.service-time-status{
+  font-size:14px;
+  font-weight:800;
+  color:#166534;
+  margin-bottom:4px;
+}
+.service-time-card.after-hours .service-time-status{
+  color:#c2410c;
+}
+.service-time-text{
+  color:#475569;
+  font-size:13px;
+  line-height:1.65;
+}
+.service-time-rule{
+  flex:0 0 auto;
+  min-width:150px;
+  text-align:center;
+  padding:10px 14px;
+  border-radius:16px;
+  background:#ffffff;
+  border:1px solid #dcfce7;
+  color:#64748b;
+  line-height:1.25;
+}
+.service-time-card.after-hours .service-time-rule{
+  border-color:#fed7aa;
+}
+.service-time-rule span{
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.4px;
+  margin-bottom:3px;
+}
+.service-time-rule b{
+  display:block;
+  color:#166534;
+  font-size:24px;
+  font-weight:900;
+  letter-spacing:-.02em;
+  line-height:1.1;
+  margin-bottom:3px;
+}
+.service-time-card.after-hours .service-time-rule b{
+  color:#c2410c;
+}
+.service-time-rule small{
+  display:block;
+  font-size:11px;
+  color:#94a3b8;
+}
+
+.service-time-text strong{
+  color:#334155;
+  font-weight:800;
+}
+
+@media(max-width:760px){
+  .service-time-card{
+    align-items:flex-start;
+  }
+  .service-time-rule{
+    display:none;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -510,6 +681,21 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div class="status"><small>目前狀態</small><b id="statusText">填寫中</b></div>
   </div>
 </header>
+
+<div id="serviceTimeCard" class="service-time-card" role="status" aria-live="polite">
+  <div class="service-time-icon" id="serviceTimeIcon">🕒</div>
+  <div class="service-time-main">
+    <div class="service-time-status" id="serviceTimeStatus">服務時間確認中…</div>
+    <div class="service-time-text" id="serviceTimeText">
+      17:30 前送出的需求將於當日安排處理；17:30 後送出的需求將於下一個工作日安排處理。
+    </div>
+  </div>
+  <div class="service-time-rule">
+    <span>服務截止時間</span>
+    <b>17:30</b>
+    <small>台灣時間（TW time）</small>
+  </div>
+</div>
 
 <div class="steps">
   <div class="step active" id="s1"><div class="circle">1</div><span>基本資料</span></div><div class="line"></div>
@@ -837,7 +1023,94 @@ let storePriceExtraRenderedFor = "";
 let AM_EMAIL_MAP = {};
 let AM_LIST = [];
 let amListLoaded = false;
+
 let isSubmitting = false;
+
+/* =========================
+   團隊服務時間提醒
+========================= */
+
+function getTaipeiTimeParts(){
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei",
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  }).formatToParts(new Date());
+
+  const result = {};
+  parts.forEach(function(part){
+    if(part.type !== "literal"){
+      result[part.type] = part.value;
+    }
+  });
+
+  return {
+    weekday: result.weekday || "",
+    hour: Number(result.hour || 0),
+    minute: Number(result.minute || 0)
+  };
+}
+
+function updateServiceTimeNotice(){
+  const card = document.getElementById("serviceTimeCard");
+  const icon = document.getElementById("serviceTimeIcon");
+  const status = document.getElementById("serviceTimeStatus");
+  const text = document.getElementById("serviceTimeText");
+
+  if(!card || !icon || !status || !text) return;
+
+  const taipei = getTaipeiTimeParts();
+  const isWeekend =
+    taipei.weekday === "Sat" ||
+    taipei.weekday === "Sun";
+
+  const currentMinutes =
+    taipei.hour * 60 +
+    taipei.minute;
+
+  const cutoffMinutes =
+    17 * 60 + 30;
+
+  const isAfterCutoff =
+    currentMinutes > cutoffMinutes;
+
+  const isAfterHours =
+    isWeekend || isAfterCutoff;
+
+  card.classList.toggle(
+    "after-hours",
+    isAfterHours
+  );
+
+  if(isWeekend){
+    icon.textContent = "🟠";
+    status.textContent = "目前為非服務日";
+    text.innerHTML =
+      `現在送出的需求，將於下一個工作日安排處理。<br>
+       <strong>平日服務截止時間：17:30（台灣時間）</strong>`;
+    return;
+  }
+
+  if(isAfterCutoff){
+    icon.textContent = "🟠";
+    status.textContent = "目前已超過今日服務時間";
+    text.innerHTML =
+      `目前送出的需求，將於下一個工作日安排處理。<br>
+       <strong>平日服務截止時間：17:30（台灣時間）</strong>`;
+    return;
+  }
+
+  icon.textContent = "🟢";
+  status.textContent = "目前為服務時間內";
+  text.innerHTML =
+    `現在送出需求，將於當日安排處理。`;
+}
+
+updateServiceTimeNotice();
+setInterval(updateServiceTimeNotice, 60000);
+
 
 // 店家資料查詢：透過 Apps Script action=searchVendor 取得正式資料。
 function escapeVendorHtml(value){
@@ -1296,6 +1569,18 @@ function validateRequiredVisible(showErrors=true){
 
 function val(id){ const el=document.getElementById(id); return el ? (el.value || "") : ""; }
 function showVal(id){ return val(id) || "未填寫"; }
+function getCcEmails(){
+  return ["cc","cc2","cc3","cc4","cc5"]
+    .map(id=>val(id).trim())
+    .filter(Boolean);
+}
+function getCcSummary(){
+  return getCcEmails().join("\n");
+}
+function pushCcSummary(rows){
+  const ccSummary = getCcSummary();
+  if(ccSummary) rows.push(row("CC Email", ccSummary));
+}
 
 function getGroupDisplayName(group, emptyText="尚未查詢"){
   const normalized = String(group || "").trim();
@@ -1481,6 +1766,125 @@ function field(id,label,type="text",placeholder="請填寫"){
 
   return `<div class="field"><label>${label}</label><input id="${id}" type="${type}" placeholder="${placeholder}" oninput="refreshSubject(); validateRequiredVisible(false)"></div>`;
 }
+function ccFields(){
+  return `
+    <div class="cc-email-section">
+      <div class="cc-email-header">
+        <div>
+          <label>CC Email（選填）</label>
+          <div class="sub">如需副本通知其他人員，可新增 Email，最多 5 組。</div>
+        </div>
+      </div>
+
+      <div id="ccEmailList" class="cc-email-list">
+        ${createCcEmailRow(1)}
+      </div>
+
+      <button
+        type="button"
+        class="cc-add-btn"
+        id="addCcBtn"
+        onclick="addCcEmail()"
+      >
+        ＋ 新增 CC
+      </button>
+    </div>
+  `;
+}
+
+function createCcEmailRow(index){
+  const id = index === 1 ? "cc" : `cc${index}`;
+
+  return `
+    <div class="cc-email-row" data-cc-index="${index}">
+      <input
+        id="${id}"
+        type="email"
+        placeholder="例如：name@grab.com"
+        oninput="refreshSubject(); validateRequiredVisible(false)"
+      >
+
+      ${
+        index > 1
+          ? `
+            <button
+              type="button"
+              class="cc-remove-btn"
+              onclick="removeCcEmail(${index})"
+              aria-label="移除 CC Email"
+            >
+              ✕
+            </button>
+          `
+          : ""
+      }
+    </div>
+  `;
+}
+
+
+function addCcEmail(){
+  const list = document.getElementById("ccEmailList");
+  if(!list) return;
+
+  const rows = list.querySelectorAll(".cc-email-row");
+
+  if(rows.length >= 5){
+    return;
+  }
+
+  const usedIndexes = Array.from(rows).map(row =>
+    Number(row.dataset.ccIndex)
+  );
+
+  let nextIndex = 1;
+
+  for(let i = 1; i <= 5; i++){
+    if(!usedIndexes.includes(i)){
+      nextIndex = i;
+      break;
+    }
+  }
+
+  list.insertAdjacentHTML(
+    "beforeend",
+    createCcEmailRow(nextIndex)
+  );
+
+  updateCcAddButton();
+}
+
+
+function removeCcEmail(index){
+  const row = document.querySelector(
+    `.cc-email-row[data-cc-index="${index}"]`
+  );
+
+  if(row){
+    row.remove();
+  }
+
+  updateCcAddButton();
+}
+
+
+function updateCcAddButton(){
+  const list = document.getElementById("ccEmailList");
+  const btn = document.getElementById("addCcBtn");
+
+  if(!list || !btn) return;
+
+  const count =
+    list.querySelectorAll(".cc-email-row").length;
+
+  btn.disabled = count >= 5;
+
+  btn.textContent =
+    count >= 5
+      ? "已達 5 組 CC 上限"
+      : "＋ 新增 CC";
+}
+
 function select(id,label,options){
   return `<div class="field"><label>${label}</label><select id="${id}" onchange="refreshSubject(); renderConditionalBlocks(); validateRequiredVisible(false);"><option value="">請選擇</option>${options.map(o=>{
     const value = typeof o === "object" ? o.value : o;
@@ -1614,7 +2018,7 @@ if(!currentType){
       ${subjectInput()}
       <div class="grid hidden" id="menuModifyContactBlock">
         ${field("contact","主要校稿信箱（必填）","email","請填寫主要校稿信箱")}
-        ${field("cc","CC Email（選填）","email","請填寫 CC Email，可留空")}
+        ${ccFields()}
       </div>
       <div id="menuModifyExtra"></div>
     `;
@@ -2093,7 +2497,7 @@ if(!currentType){
     area.innerHTML = `${subjectInput()}
       <div class="box pink portal-template-box"><h3>🟢Green｜活動設定 + 修改菜單</h3><p class="muted">請先選擇需求模式，系統會依模式自動切換模板。</p></div>
       ${select("kalhDealMode","需求模式（必填）",["單店 / 多店","校稿用"])}
-      <div class="grid hidden" id="kalhDealContactBlock">${field("contact","主要校稿信箱（必填）","email","請填寫主要校稿信箱")}${field("cc","CC Email（選填）","email","請填寫 CC Email，可留空")}</div>
+      <div class="grid hidden" id="kalhDealContactBlock">${field("contact","主要校稿信箱（必填）","email","請填寫主要校稿信箱")}${ccFields()}</div>
       <div id="kalhDealMenuNotice" class="notice">⚠️ 請先選擇需求模式，系統才會產生對應的欄位。</div>
       ${field("kalhDealOppCase","OPP QC Case Number（必填）","text","請填寫 OPP QC case number")}
       ${select("kalhDealUpdateMode","更新時間（必填）",["立即","指定日期"])}
@@ -2437,11 +2841,23 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
           : (t === "純封面照片修改 (品牌共用)" || t === "Logo 照片修改")
             ? field("photoChain","Chain：Chain code + Chain name","text","例如：TW12345 / Pizza Hut")
             : "";
-        extra.innerHTML = `<div class="box pink"><h3>照片需求資訊</h3><div class="grid">${select("photoUpdateMode","Update date/time",["NOW","MM/DD before xx:xx as TW time"])}</div><div id="photoCustomTime"></div>${photoSourceField}${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div>`;
+        extra.innerHTML = `<div class="box pink"><h3>照片需求資訊</h3><div class="grid">${select("photoUpdateMode","Update date/time",["NOW","MM/DD before xx:xx as TW time"])}</div><div id="photoUpdateHint" class="sub" style="margin-top:-8px;margin-bottom:16px"></div><div id="photoCustomTime"></div>${photoSourceField}${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div>`;
       } else if(t === "單店修改"){
-        extra.innerHTML = `${textarea("vendorList","商家名單（必填）","請填寫 商家名單，可換行填寫多筆\n例如：\n123456 Starbucks 台北站前店\n234567 Starbucks 信義店",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div></div>`;
+        extra.innerHTML = `${textarea("vendorList","商家名單（必填）","請填寫 商家名單，可換行填寫多筆\n例如：\ny1al STARBUCKS 星巴克 (敦和門市)\ni1ks STARBUCKS 星巴克 (板雙門市)",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div></div>`;
       } else {
-        extra.innerHTML = `${textarea("masterMenuList","校稿版菜單（必填）","請填寫 校稿版菜單，可換行填寫多筆\n例如：\n123456 Starbucks 台北站前店\n234567 Starbucks 信義店",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="grid">${select("exportMenu","是否需匯出菜單",["是","否"])}${select("remoteCodeUpdate","是否更新 POS 串接碼",["是","否"])}</div><div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div></div>`;
+        extra.innerHTML = `${textarea("masterMenuList","校稿版菜單（必填）","請填寫 校稿版菜單，可換行填寫多筆\n例如：\ny1al STARBUCKS 星巴克 (敦和門市)\ni1ks STARBUCKS 星巴克 (板雙門市)",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="grid">${select("exportMenu","是否需匯出菜單",["是","否"])}${select("remoteCodeUpdate","是否更新 POS 串接碼",["是","否"])}</div><div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div></div>`;
+      }
+    }
+
+    const photoUpdateHint = document.getElementById("photoUpdateHint");
+    if(photoUpdateHint){
+      const mode = val("photoUpdateMode");
+      if(mode === "NOW"){
+        photoUpdateHint.textContent = "💡 NOW：收到需求後即可安排更新，無需指定日期與時間。";
+      }else if(mode === "MM/DD before xx:xx as TW time"){
+        photoUpdateHint.textContent = "💡 指定時間：請填寫希望完成更新的日期與時間，時間皆以台灣時間（TW time）為準。";
+      }else{
+        photoUpdateHint.textContent = "";
       }
     }
 
@@ -2521,10 +2937,17 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
       extra.innerHTML = `
         ${field("aaaDealPreviewMasterMenu","校稿版菜單：代碼 + 名稱（必填）","text","請填寫校稿版菜單：代碼 + 名稱")}
         <div class="notice" style="margin-top:-10px;color:#64748b;font-size:12px;">此為提供校稿版菜單</div>
-        <div class="grid">
-  ${field("contact","主要校稿信箱（必填）","email","請填寫主要校稿信箱")}
-  ${field("cc","CC Email（選填）","email","請填寫 CC Email，可留空")}
+        <div class="email-contact-section">
+  ${field(
+    "contact",
+    "主要校稿信箱（必填）",
+    "email",
+    "請填寫主要校稿信箱"
+  )}
+
+  ${ccFields()}
 </div>
+
         ${field("aaaDealCategoryName","活動類別名稱（必填）","text","請填寫活動類別名稱")}
         ${textarea("aaaDealCategoryDesc","活動類別敘述","請填寫活動類別敘述",3)}
         ${textarea("aaaDealItemInfo","活動品項名稱 + 活動原價 +（折扣後金額）（必填）","請填寫活動品項名稱、活動原價與折扣後金額",4)}
@@ -2793,7 +3216,7 @@ async function confirmSubmit(){
     mainEmail: currentWorkstream === "project"
       ? val("brandEmail")
       : val("contact"),
-    ccEmail: val("cc"),
+    ccEmail: getCcEmails().join(", "),
     workstream: currentWorkstream === "menu" ? "🍽️ 菜單" : "⚙️ 活動 / 營運",
     requestType: currentType ? typeInfo[currentType][0] : "",
     caseSubject: computeSubject() || "",
@@ -2865,10 +3288,8 @@ function renderSummary(){
 
     const req = val("menuRequestType");
     if(needsMenuModifyContact(req)){
-      rows.push(
-        row("主要校稿信箱",showVal("contact")),
-        row("CC Email",showVal("cc"))
-      );
+      rows.push(row("主要校稿信箱",showVal("contact")));
+      pushCcSummary(rows);
     }
 
     if(photoOnly.includes(req)){
@@ -3200,6 +3621,10 @@ function renderSummary(){
       row("是否為 fp fund",showVal("kalhDealFpFund")),
       row("是否有照片需求",showVal("kalhDealPhotoNeed"))
     );
+    if(val("kalhDealMode")==="校稿用"){
+      rows.push(row("主要校稿信箱",showVal("contact")));
+      pushCcSummary(rows);
+    }
     if(val("kalhDealPhotoNeed")==="Yes"){
       rows.push(
         row("照片更新門市",showMultilineVal("kalhDealPhotoStores")),
@@ -3259,7 +3684,6 @@ function renderSummary(){
       rows.push(
         row("校稿版菜單：店家代碼 + 店家名稱",showVal("aaaDealPreviewMasterMenu")),
         row("主要校稿信箱",showVal("contact")),
-        row("CC Email",showVal("cc")),
         row("活動類別名稱",showVal("aaaDealCategoryName")),
         row("活動類別敘述",showMultilineVal("aaaDealCategoryDesc")),
         row("活動品項名稱 + 活動原價 +（折扣後金額）",showMultilineVal("aaaDealItemInfo")),
@@ -3268,6 +3692,7 @@ function renderSummary(){
         row("照片更新門市 / 校稿用",showMultilineVal("aaaDealPhotoStore")),
         row("照片檔案",showVal("aaaDealPhotoLink"))
       );
+      pushCcSummary(rows);
     }
 
     if(t==="活動複製菜單 / 菜單版本同步"){
