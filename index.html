@@ -67,6 +67,35 @@ input[readonly]{background:#f8fafc;color:#475569}
 }
 .notice{display:flex;gap:8px;background:#f8fafc;border-radius:14px;padding:12px;color:#64748b;font-size:13px;font-weight:400;line-height:1.6;margin-bottom:18px}
 .btn-row{display:flex;justify-content:space-between;gap:12px;margin-top:26px}
+.btn-actions-right{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  margin-left:auto;
+}
+.btn-clear-form{
+  background:#fff;
+  color:#64748b;
+  border:1px solid #cbd5e1;
+}
+.btn-clear-form:hover{
+  background:#f8fafc;
+  color:#dc2626;
+  border-color:#fecdd3;
+}
+@media(max-width:520px){
+  .btn-row{
+    align-items:stretch;
+  }
+  .btn-actions-right{
+    flex:1;
+    flex-wrap:wrap;
+  }
+  .btn-actions-right button{
+    flex:1 1 auto;
+  }
+}
 button{border:0;border-radius:14px;padding:12px 18px;font-size:14px;font-weight:700;cursor:pointer}
 .btn-primary{background:var(--pink);color:white}.btn-primary:hover{background:var(--pink-dark)}
 button:disabled{opacity:.45;cursor:not-allowed}
@@ -806,10 +835,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <h1>【foodpanda】需求表單</h1>
       <p class="desc">請確認品牌資訊並選擇需求項目，系統將依申請內容提供對應填寫欄位。</p>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end">
-      <button type="button" class="btn-outline" onclick="requestInternalLeave(()=>location.href=location.pathname)">離開表單</button>
-      <div class="status"><small>目前狀態</small><b id="statusText">填寫中</b></div>
-    </div>
+    <div class="status"><small>目前狀態</small><b id="statusText">填寫中</b></div>
   </div>
 </header>
 
@@ -912,7 +938,10 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div id="basicNotice" class="notice">⚠️ 請填寫品牌名稱，並從名單中選擇負責窗口。</div>
 
     <div class="btn-row" style="justify-content:flex-end">
-      <button id="nextBasicBtn" class="btn-primary" onclick="go(2)" disabled style="opacity:.45;cursor:not-allowed">下一步 ›</button>
+      <div class="btn-actions-right">
+        <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
+        <button id="nextBasicBtn" class="btn-primary" onclick="go(2)" disabled style="opacity:.45;cursor:not-allowed">下一步 ›</button>
+      </div>
     </div>
   </div>
 </section>
@@ -949,7 +978,10 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div>
   <div class="btn-row">
     <button class="btn-outline" onclick="go(1)">‹ 上一步</button>
-    <button id="nextWorkstreamBtn" class="btn-primary" onclick="go(3)" disabled style="opacity:.45;cursor:not-allowed">下一步 ›</button>
+    <div class="btn-actions-right">
+      <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
+      <button id="nextWorkstreamBtn" class="btn-primary" onclick="go(3)" disabled style="opacity:.45;cursor:not-allowed">下一步 ›</button>
+    </div>
   </div>
 </section>
 
@@ -1085,7 +1117,13 @@ button:disabled{opacity:.45;cursor:not-allowed}
 </div>
 </div>
 </div>
-<div class="btn-row"><button class="btn-outline" onclick="go(2)">‹ 上一步</button><button class="btn-primary" onclick="go(4)">下一步 ›</button></div>
+<div class="btn-row">
+  <button class="btn-outline" onclick="go(2)">‹ 上一步</button>
+  <div class="btn-actions-right">
+    <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
+    <button class="btn-primary" onclick="go(4)">下一步 ›</button>
+  </div>
+</div>
 </section>
 
 <section class="page" id="page4">
@@ -1108,7 +1146,13 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div>
   <div id="templateArea"></div>
   <div id="requiredWarning" class="notice hidden" style="border:1px solid #fecdd3;background:#fff1f2;color:#dc2626;font-weight:700">⚠️ 還有必填欄位未完成，請先填寫紅框欄位後再送出。</div>
-  <div class="btn-row"><button class="btn-outline" onclick="go(3)">‹ 上一步</button><button class="btn-primary" onclick="submitPreview()">送出表單</button></div>
+  <div class="btn-row">
+    <button class="btn-outline" onclick="go(3)">‹ 上一步</button>
+    <div class="btn-actions-right">
+      <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
+      <button class="btn-primary" onclick="submitPreview()">送出表單</button>
+    </div>
+  </div>
 </section>
 
 <section class="page" id="page5">
@@ -1138,6 +1182,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <div class="summary"><h3>申請摘要</h3><div class="summary-grid" id="summaryBasic"></div><div style="border-top:1px solid #f9a8d4;margin:18px 0"></div><h3>填寫內容</h3><div id="summaryDetails"></div></div>
   <div class="btn-row" style="justify-content:center">
     <button id="backToEditBtn" type="button" class="btn-outline" onclick="go(4)">返回編輯</button>
+    <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
     <button id="confirmSubmitBtn" type="button" class="btn-primary" onclick="confirmSubmit()">確認並送出</button>
   </div>
   <div id="submitStatusNote" class="submit-status-note" role="status" aria-live="polite">
