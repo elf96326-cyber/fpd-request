@@ -401,6 +401,22 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 .vendor-result-card:hover{border-color:#ff2b85;box-shadow:0 8px 20px rgba(255,43,133,.12);transform:translateY(-1px)}
 .vendor-result-card.selected{border:2px solid #ff2b85;background:#fff0f6}
+.vendor-more-btn{
+  width:100%;
+  padding:11px 14px;
+  margin-top:2px;
+  border-radius:14px;
+  background:#fff;
+  border:1px dashed #f9a8d4;
+  color:#be185d;
+  font-size:13px;
+  font-weight:700;
+  transition:.15s;
+}
+.vendor-more-btn:hover{
+  background:#fff0f6;
+  border-color:#ff2b85;
+}
 .vendor-result-name{font-weight:800;margin-bottom:8px}
 .vendor-result-meta{display:flex;flex-wrap:wrap;gap:8px 14px;color:#64748b;font-size:12px;font-weight:500}
 .vendor-selected{
@@ -575,13 +591,13 @@ button:disabled{opacity:.45;cursor:not-allowed}
   padding:16px 18px;
   border-radius:20px;
   border:1px solid #d1fae5;
-  background:linear-gradient(135deg,#f0fdf4 0%,#ffffff 100%);
+  background:#f0fdf4;
   box-shadow:0 6px 18px rgba(15,23,42,.05);
   transition:.2s ease;
 }
 .service-time-card.after-hours{
   border-color:#fed7aa;
-  background:linear-gradient(135deg,#fff7ed 0%,#ffffff 100%);
+  background:#fff7ed;
 }
 .service-time-icon{
   flex:0 0 auto;
@@ -620,13 +636,10 @@ button:disabled{opacity:.45;cursor:not-allowed}
   text-align:center;
   padding:10px 14px;
   border-radius:16px;
-  background:#ffffff;
-  border:1px solid #dcfce7;
+  background:transparent;
+  border:0;
   color:#64748b;
   line-height:1.25;
-}
-.service-time-card.after-hours .service-time-rule{
-  border-color:#fed7aa;
 }
 .service-time-rule span{
   display:block;
@@ -714,7 +727,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div class="vendor-lookup-head">
       <div>
         <div class="vendor-lookup-title">🔎 品牌商家資料查詢</div>
-        <div class="sub">可輸入<strong>店家代碼</strong>、<strong>Chain code</strong> 或<strong>品牌門市關鍵字</strong>；選擇店家後，系統將自動帶入相關資訊。</div>
+        <div class="sub">可輸入<strong>店家代碼</strong>、<strong>品牌代碼</strong> 或<strong>品牌門市關鍵字</strong>；選擇店家後，系統將自動帶入相關資訊。</div>
       </div>
       <span class="pill">選填</span>
     </div>
@@ -731,7 +744,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="vendor-selected-title">✅選擇資訊已帶入</div>
       <div class="vendor-selected-grid">
         <div class="vendor-selected-item"><small>店家代碼</small><b id="selectedVendorCodeText">—</b></div>
-        <div class="vendor-selected-item"><small>Chain code</small><b id="selectedChainCodeText">—</b></div>
+        <div class="vendor-selected-item"><small>品牌代碼</small><b id="selectedChainCodeText">—</b></div>
         <div class="vendor-selected-item"><small>完整名稱</small><b id="selectedVendorNameText">—</b></div>
         <div class="vendor-selected-item"><small>負責窗口</small><b id="selectedVendorAmText">—</b></div>
         <div class="vendor-selected-item"><small>組別</small><b id="selectedVendorGroupText">—</b></div>        
@@ -798,8 +811,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div class="application-info-main">
       <div class="application-info-title">目前申請資訊</div>
       <div class="application-info-items">
-        <span class="application-info-item">🏷️ <b data-info-brand>未填寫</b></span>
-        <span class="application-info-item">👤 負責窗口：<b data-info-am>未填寫</b></span>
+        <span class="application-info-item">🏷️ 完整名稱： <b data-info-brand>未填寫</b></span>
+        <span class="application-info-item hidden" data-info-vendor-code-wrap>🔢 店家代碼：<b data-info-vendor-code></b></span>
+        <span class="application-info-item hidden" data-info-chain-code-wrap>🔗 品牌代碼：<b data-info-chain-code></b></span>
         <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
       </div>
     </div>
@@ -828,8 +842,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div class="application-info-main">
       <div class="application-info-title">目前申請資訊</div>
       <div class="application-info-items">
-        <span class="application-info-item">🏷️ <b data-info-brand>未填寫</b></span>
-        <span class="application-info-item">👤 負責窗口：<b data-info-am>未填寫</b></span>
+        <span class="application-info-item">🏷️ 完整名稱： <b data-info-brand>未填寫</b></span>
+        <span class="application-info-item hidden" data-info-vendor-code-wrap>🔢 店家代碼：<b data-info-vendor-code></b></span>
+        <span class="application-info-item hidden" data-info-chain-code-wrap>🔗 品牌代碼：<b data-info-chain-code></b></span>
         <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
       </div>
     </div>
@@ -965,8 +980,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div class="application-info-main">
       <div class="application-info-title">目前申請資訊</div>
       <div class="application-info-items">
-        <span class="application-info-item">🏷️ <b data-info-brand>未填寫</b></span>
-        <span class="application-info-item">👤 負責窗口：<b data-info-am>未填寫</b></span>
+        <span class="application-info-item">🏷️ 完整名稱： <b data-info-brand>未填寫</b></span>
+        <span class="application-info-item hidden" data-info-vendor-code-wrap>🔢 店家代碼：<b data-info-vendor-code></b></span>
+        <span class="application-info-item hidden" data-info-chain-code-wrap>🔗 品牌代碼：<b data-info-chain-code></b></span>
         <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
       </div>
     </div>
@@ -984,8 +1000,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div class="application-info-main">
       <div class="application-info-title">目前申請資訊</div>
       <div class="application-info-items">
-        <span class="application-info-item">🏷️ <b data-info-brand>未填寫</b></span>
-        <span class="application-info-item">👤 負責窗口：<b data-info-am>未填寫</b></span>
+        <span class="application-info-item">🏷️ 完整名稱： <b data-info-brand>未填寫</b></span>
+        <span class="application-info-item hidden" data-info-vendor-code-wrap>🔢 店家代碼：<b data-info-vendor-code></b></span>
+        <span class="application-info-item hidden" data-info-chain-code-wrap>🔗 品牌代碼：<b data-info-chain-code></b></span>
         <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
       </div>
     </div>
@@ -1025,6 +1042,7 @@ let AM_LIST = [];
 let amListLoaded = false;
 
 let isSubmitting = false;
+let currentVendorResults = [];
 
 /* =========================
    團隊服務時間提醒
@@ -1135,7 +1153,7 @@ function normalizeVendorItem(item){
       item.chainCode ??
       item.chain_code ??
       item.chain ??
-      item["Chain code"] ??
+      item["品牌代碼"] ??
       item["chain code"] ??
       ""
     ).trim(),
@@ -1177,6 +1195,7 @@ async function searchVendor(){
 
   const keyword=input.value.trim();
   results.innerHTML="";
+  currentVendorResults=[];
 
   if(keyword.length < 2){
     hint.textContent="請至少輸入 2 個字元再查詢。";
@@ -1223,28 +1242,18 @@ async function searchVendor(){
     const matched=rawData
       .map(normalizeVendorItem)
       .filter(item => item.vendorCode || item.chainCode || item.fullName)
-      .slice(0,20);
+      .slice(0,10);
+
+    currentVendorResults = matched;
 
     hint.style.color="#64748b";
-    hint.textContent=matched.length
-      ? `找到 ${matched.length} 筆符合資料`
-      : "找不到符合資料，請確認店家代碼、Chain code 或完整名稱。";
 
-    matched.forEach(item => {
-      const button=document.createElement("button");
-      button.type="button";
-      button.className="vendor-result-card";
-      button.innerHTML=`
-        <div class="vendor-result-name">${escapeVendorHtml(item.fullName || "未提供完整名稱")}</div>
-        <div class="vendor-result-meta">
-          <span>店家代碼：${escapeVendorHtml(item.vendorCode || "—")}</span>
-          <span>Chain code：${escapeVendorHtml(item.chainCode || "—")}</span>
-          <span>負責窗口：${escapeVendorHtml(item.am || "—")}</span>
-          <span>組別：${escapeVendorHtml(item.group || "—")}</span>
-        </div>`;
-      button.addEventListener("click",()=>selectVendor(item,button));
-      results.appendChild(button);
-    });
+    if(!matched.length){
+      hint.textContent="找不到符合資料，請確認店家代碼、品牌代碼 或完整名稱。";
+      results.innerHTML="";
+    }else{
+      renderVendorResults(false);
+    }
   }catch(error){
     console.error("店家資料查詢失敗：",error);
     hint.textContent="目前無法查詢店家資料，請稍後再試，或直接填寫需求。";
@@ -1255,6 +1264,78 @@ async function searchVendor(){
       searchButton.classList.remove("is-loading");
       searchButton.textContent="查詢";
     }
+  }
+}
+
+
+function renderVendorResults(showAll=false){
+  const results=document.getElementById("vendorSearchResults");
+  const hint=document.getElementById("vendorSearchHint");
+
+  if(!results) return;
+
+  const matched=Array.isArray(currentVendorResults)
+    ? currentVendorResults
+    : [];
+
+  results.innerHTML="";
+
+  const visibleResults=
+    showAll
+      ? matched
+      : matched.slice(0,3);
+
+  visibleResults.forEach(item => {
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="vendor-result-card";
+
+    button.innerHTML=`
+      <div class="vendor-result-name">${escapeVendorHtml(item.fullName || "未提供完整名稱")}</div>
+      <div class="vendor-result-meta">
+        <span>店家代碼：${escapeVendorHtml(item.vendorCode || "—")}</span>
+        <span>品牌代碼：${escapeVendorHtml(item.chainCode || "—")}</span>
+        <span>負責窗口：${escapeVendorHtml(item.am || "—")}</span>
+        <span>組別：${escapeVendorHtml(item.group || "—")}</span>
+      </div>`;
+
+    button.addEventListener(
+      "click",
+      ()=>selectVendor(item,button)
+    );
+
+    results.appendChild(button);
+  });
+
+  if(matched.length > 3){
+    const moreButton=document.createElement("button");
+    moreButton.type="button";
+    moreButton.className="vendor-more-btn";
+
+    if(showAll){
+      moreButton.textContent="收合結果 ↑";
+      moreButton.addEventListener(
+        "click",
+        ()=>renderVendorResults(false)
+      );
+    }else{
+      moreButton.textContent=
+        `↓ 顯示其他 ${matched.length - 3} 筆相關結果 ↓`;
+
+      moreButton.addEventListener(
+        "click",
+        ()=>renderVendorResults(true)
+      );
+    }
+
+    results.appendChild(moreButton);
+  }
+
+  if(hint && matched.length){
+    hint.textContent=
+      matched.length > 3
+        ? `找到 ${matched.length} 筆符合資料，優先顯示最相關的 3 筆。`
+        : `找到 ${matched.length} 筆符合資料`;
   }
 }
 
@@ -1602,16 +1683,51 @@ function updateApplicationInfo(){
   const brand = val("brand") || "未填寫";
   const am = val("am") || "未填寫";
   const rawGroup = val("selectedVendorGroup");
-  const group = getGroupDisplayName(rawGroup);
+  const group = getGroupDisplayName(rawGroup, "尚未查詢");
+  const vendorCode = val("selectedVendorCode").trim();
+  const chainCode = val("selectedChainCode").trim();
 
-  document.querySelectorAll("[data-info-brand]").forEach(el=>el.textContent=brand);
-  document.querySelectorAll("[data-info-am]").forEach(el=>el.textContent=am);
-  document.querySelectorAll("[data-info-group]").forEach(el=>el.textContent=group);
-  document.querySelectorAll("[data-info-group-wrap]").forEach(el=>{
-    el.classList.toggle("application-group-missing", !rawGroup);
+  document.querySelectorAll("[data-application-info]").forEach(card=>{
+    const brandEl = card.querySelector("[data-info-brand]");
+    const amEl = card.querySelector("[data-info-am]");
+    const groupEl = card.querySelector("[data-info-group]");
+    const groupWrap = card.querySelector("[data-info-group-wrap]");
+    const vendorCodeEl = card.querySelector("[data-info-vendor-code]");
+    const vendorCodeWrap = card.querySelector("[data-info-vendor-code-wrap]");
+    const chainCodeEl = card.querySelector("[data-info-chain-code]");
+    const chainCodeWrap = card.querySelector("[data-info-chain-code-wrap]");
+
+    if(brandEl) brandEl.textContent = brand;
+    if(amEl) amEl.textContent = am;
+
+    if(groupEl) groupEl.textContent = group;
+    if(groupWrap){
+      groupWrap.classList.toggle(
+        "application-group-missing",
+        !rawGroup
+      );
+    }
+
+    if(vendorCodeEl){
+      vendorCodeEl.textContent = vendorCode;
+    }
+    if(vendorCodeWrap){
+      vendorCodeWrap.classList.toggle(
+        "hidden",
+        !vendorCode
+      );
+    }
+
+    if(chainCodeEl){
+      chainCodeEl.textContent = chainCode;
+    }
+    if(chainCodeWrap){
+      chainCodeWrap.classList.toggle(
+        "hidden",
+        !chainCode
+      );
+    }
   });
-
-  updateRecommendedGroups();
 }
 
 function updateRecommendedGroups(){
@@ -2038,7 +2154,7 @@ if(!currentType){
         ${field("updateDate","更新日期【非假日】","date")}
         ${field("updateTime","更新時間","time")}
         ${field("updateDateNote","特殊時段更新備註 / 原因簡述","text","※若需於特殊時段更新，請備註告知原因")}
-        ${field("chainCode","Chain code","text","請填寫 Chain code")}
+        ${field("chainCode","品牌代碼","text","請填寫 品牌代碼")}
       </div>
       ${field("copyMasterMenu","校稿版菜單","text","請填寫要複製的 校稿版菜單 名稱或連結")}
       ${select("itemSupplyStatus","既有品項供應狀態【擇一】",["Same as Master Vendor (品項同校稿版狀態)","Keep as Outlet Vendor (品項維持原分店狀態)"])}
@@ -2060,7 +2176,7 @@ if(!currentType){
     ${subjectInput()}
     <div class="box pink"><h3>備註功能</h3><p class="muted">開 / 關消費者備註功能，以品牌為單位，不可單店開關。</p></div>
     ${select("consumerNoteMode","操作類型",["開啟消費者備註功能","關閉消費者備註功能"])}
-    ${field("specialVendorList","品牌 / Chain code","text","請填寫品牌或 Chain code")}`;
+    ${field("specialVendorList","品牌 / 品牌代碼","text","請填寫品牌或 品牌代碼")}`;
   }
 
   if(currentType==="store_price_label"){
@@ -2135,7 +2251,7 @@ if(!currentType){
 
   if(currentType==="use_branch_photos"){
     area.innerHTML = `${subjectInput()}
-      ${field("branchPhotoSource","照片來源店家：（必填）","text","請填寫 code + 店家名稱")}
+      ${field("branchPhotoSource","照片來源店家：（必填）","text","請填寫 店家代碼 + 完整名稱")}
       ${textarea("branchPhotoVendorList","商家名單（必填）","請填寫 商家名單",4)}
     `;
   }
@@ -2174,7 +2290,7 @@ if(!currentType){
     area.innerHTML = `${subjectInput()}
       <div class="box pink">
         <h3>【菜單更新內容】</h3>
-        ${field("previewMenuFixVendor","修改校稿版本：code + 店家名稱（必填）","text","請填寫 code + 店家名稱")}
+        ${field("previewMenuFixVendor","修改校稿版本：店家代碼 + 完整名稱（必填）","text","請填寫 店家代碼 + 完整名稱")}
       </div>
       <div class="box">
         <h3>※ 以下請依實際需求選擇填寫，勿全部複製貼上</h3>
@@ -2192,7 +2308,7 @@ if(!currentType){
       ${field("scheduleMuCase","承MU CASE（必填）","text","請填寫承 MU CASE")}
       <div class="box pink">
         <h3>【菜單更新內容】</h3>
-        ${field("scheduleMasterMenu","校稿版菜單：code + 店家名稱（必填）","text","請填寫 校稿版菜單：code + 店家名稱")}
+        ${field("scheduleMasterMenu","校稿版菜單：店家代碼 + 完整名稱（必填）","text","請填寫 校稿版菜單：店家代碼 + 完整名稱")}
         ${field("schedulePlasticBagAmount","統一塑膠袋金額","text","___元 ※5元(含)以上再請附上相關公告佐證")}
         ${textarea("schedulePlasticBagException","未統一塑膠袋金額之分店","code + 店家 + 塑膠袋金額：___元",3)}
       </div>
@@ -2276,8 +2392,8 @@ if(!currentType){
         { value: "area", label: "🟡Yellow" },
         { value: "KAM", label: "🟢Green" }
       ])}
-      ${textarea("copyBranchChildVendors","3. 欲開啟複製功能的分店（子菜單）：code + 店家名稱（必填）","申請多店家請換行填寫",5)}
-      ${field("copyBranchMasterVendor","4. 複製這間分店菜單（母菜單）：code + 店家名稱（必填）","text","請填寫母菜單 code + 店家名稱")}
+      ${textarea("copyBranchChildVendors","3. 欲開啟複製功能的分店（子菜單）：店家代碼 + 完整名稱（必填）","申請多店家請換行填寫",5)}
+      ${field("copyBranchMasterVendor","4. 複製這間分店菜單（母菜單）：店家代碼 + 完整名稱（必填）","text","請填寫母菜單 店家代碼 + 完整名稱")}
       ${field("copyBranchEmail","5. 欲綁定帳號的 Email（必填）","email","請填寫 Email")}
     `;
   }
@@ -2502,7 +2618,7 @@ if(!currentType){
       ${field("kalhDealOppCase","OPP QC Case Number（必填）","text","請填寫 OPP QC case number")}
       ${select("kalhDealUpdateMode","更新時間（必填）",["立即","指定日期"])}
       <div id="kalhDealUpdateDateBlock" class="hidden">${field("kalhDealUpdateDate","指定更新日期","date")}</div>
-      ${textarea("kalhDealVendors","更新門市（必填）","請填寫 code + 店家名稱，可換行填寫多筆",4)}
+      ${textarea("kalhDealVendors","更新門市（必填）","請填寫 店家代碼 + 完整名稱，可換行填寫多筆",4)}
       ${field("kalhDealType","活動類型（必填）","text","請填寫活動類型")}
       ${textarea("kalhDealPeriod","活動走期（必填）","請填寫活動走期；走期會放在類別敘述 - CT",3)}
       ${textarea("kalhDealContent","活動內容（必填）","請填寫活動品項 + 活動原價 + 折扣後金額",4)}
@@ -2513,7 +2629,7 @@ if(!currentType){
         ${select("kalhDealFpFund","是否為 fp fund（必填）",["Yes","No"])}
       </div>
       ${select("kalhDealPhotoNeed","是否有照片相關需求（必填）",["Yes","No"])}
-      <div id="kalhDealPhotoBlock" class="box pink hidden"><h3>【如有照片相關需求，請同附以下資訊】</h3>${textarea("kalhDealPhotoStores","照片更新門市","請填寫 code + 店家名稱，可換行填寫多筆",4)}${field("kalhDealPhotoLink","照片檔案【link】","text","請貼上照片檔案 link")}</div>
+      <div id="kalhDealPhotoBlock" class="box pink hidden"><h3>【如有照片相關需求，請同附以下資訊】</h3>${textarea("kalhDealPhotoStores","照片更新門市","請填寫 店家代碼 + 完整名稱，可換行填寫多筆",4)}${field("kalhDealPhotoLink","照片檔案【link】","text","請貼上照片檔案 link")}</div>
     `;
   }
 
@@ -2536,13 +2652,13 @@ if(!currentType){
       </div>
       <div class="notice" style="color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 若需於特殊時段更新，請備註告知原因。</div>
       ${textarea("kalhSyncUpdateNote","更新資訊備註","如需暫下何品項請註記；若無預設為開啟",3)}
-      ${field("kalhSyncChainCode","品牌代碼（Chain Code）（必填）","text","請填寫 Chain code")}
-      ${field("kalhSyncMasterMenu","校稿版菜單：code + 店家名稱（必填）","text","請填寫校稿版菜單：code + 店家名稱")}
+      ${field("kalhSyncChainCode","品牌代碼（Chain Code）（必填）","text","請填寫 品牌代碼")}
+      ${field("kalhSyncMasterMenu","校稿版菜單：店家代碼 + 完整名稱（必填）","text","請填寫校稿版菜單：店家代碼 + 完整名稱")}
       ${select("kalhSyncSupplyStatus","既有品項供應狀態【擇一】（必填）",["Same as Master Vendor (品項同校稿版狀態)","Keep as Outlet Vendor (品項維持原分店狀態)"])}
       <div id="kalhSyncScheduledBlock" class="box pink hidden"><h3>排程活動資訊</h3>${field("kalhSyncDealType","活動類型","text","請填寫活動類型")}${textarea("kalhSyncDealPeriod","活動走期","請填寫活動走期",3)}${textarea("kalhSyncDealContent","活動內容","請填寫活動品項 + 活動原價 + 折扣後金額",4)}${textarea("kalhSyncDealUpdateDesc","更新內容描述","如品項有客製化需求請詳述；topping 不可設定加價選擇",4)}</div>
-      ${field("kalhSyncVendorList","商家名單【link】（必填）","text","請貼上商家名單 link（code + 店家名稱 + 菜單版本 + chain 狀態）")}
+      ${field("kalhSyncVendorList","商家名單【link】（必填）","text","請貼上商家名單 link（店家代碼 + 完整名稱 + 菜單版本 + chain 狀態）")}
       ${select("kalhSyncPhotoNeed","是否有照片相關需求（必填）",["Yes","No"])}
-      <div id="kalhSyncPhotoBlock" class="box pink hidden"><h3>【如有照片相關需求，請同附以下資訊】</h3>${textarea("kalhSyncPhotoStores","照片更新門市 / 校稿用","請填寫 code + 店家名稱，可換行填寫多筆",4)}${field("kalhSyncPhotoLink","照片檔案【link】","text","請貼上照片檔案 link")}</div>
+      <div id="kalhSyncPhotoBlock" class="box pink hidden"><h3>【如有照片相關需求，請同附以下資訊】</h3>${textarea("kalhSyncPhotoStores","照片更新門市 / 校稿用","請填寫 店家代碼 + 完整名稱，可換行填寫多筆",4)}${field("kalhSyncPhotoLink","照片檔案【link】","text","請貼上照片檔案 link")}</div>
     `;
   }
 
@@ -2837,15 +2953,15 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
 
       if(isPhoto){
         const photoSourceField = t === "純餐點照片修改 (校稿用)"
-          ? field("photoMasterMenu","校稿版菜單：code + 店家名稱","text","請填寫 校稿版菜單：code + 店家名稱")
+          ? field("photoMasterMenu","校稿版菜單：店家代碼 + 完整名稱","text","請填寫 校稿版菜單：店家代碼 + 完整名稱")
           : (t === "純封面照片修改 (品牌共用)" || t === "Logo 照片修改")
-            ? field("photoChain","Chain：Chain code + Chain name","text","例如：TW12345 / Pizza Hut")
+            ? field("photoChain","Chain","text","例如：TW12345 / Pizza Hut")
             : "";
-        extra.innerHTML = `<div class="box pink"><h3>照片需求資訊</h3><div class="grid">${select("photoUpdateMode","Update date/time",["NOW","MM/DD before xx:xx as TW time"])}</div><div id="photoUpdateHint" class="sub" style="margin-top:-8px;margin-bottom:16px"></div><div id="photoCustomTime"></div>${photoSourceField}${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div>`;
+        extra.innerHTML = `<div class="box pink"><h3>照片需求資訊</h3><div class="grid">${select("photoUpdateMode","Update date/time 更新時間",["NOW","Scheduled"])}</div><div id="photoUpdateHint" class="sub" style="margin-top:-8px;margin-bottom:16px"></div><div id="photoCustomTime"></div>${photoSourceField}${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","照片連結","text","請貼上 Google Drive 連結")}</div>`;
       } else if(t === "單店修改"){
-        extra.innerHTML = `${textarea("vendorList","商家名單（必填）","請填寫 商家名單，可換行填寫多筆\n例如：\ny1al STARBUCKS 星巴克 (敦和門市)\ni1ks STARBUCKS 星巴克 (板雙門市)",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div></div>`;
+        extra.innerHTML = `${textarea("vendorList","商家名單（必填）","請填寫 商家名單，可換行填寫多筆\n例如：\ny1al STARBUCKS 星巴克 (敦和門市)\ni1ks STARBUCKS 星巴克 (板雙門市)",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","照片連結","text","請貼上 Google Drive 連結")}</div></div>`;
       } else {
-        extra.innerHTML = `${textarea("masterMenuList","校稿版菜單（必填）","請填寫 校稿版菜單，可換行填寫多筆\n例如：\ny1al STARBUCKS 星巴克 (敦和門市)\ni1ks STARBUCKS 星巴克 (板雙門市)",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="grid">${select("exportMenu","是否需匯出菜單",["是","否"])}${select("remoteCodeUpdate","是否更新 POS 串接碼",["是","否"])}</div><div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","Photo link","text","請貼上 Google Drive 連結")}</div></div>`;
+        extra.innerHTML = `${textarea("masterMenuList","校稿版菜單（必填）","請填寫 校稿版菜單，可換行填寫多筆\n例如：\ny1al STARBUCKS 星巴克 (敦和門市)\ni1ks STARBUCKS 星巴克 (板雙門市)",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="grid">${select("exportMenu","是否需匯出菜單",["是","否"])}${select("remoteCodeUpdate","是否更新 POS 串接碼",["是","否"])}</div><div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","照片連結","text","請貼上 Google Drive 連結")}</div></div>`;
       }
     }
 
@@ -2854,7 +2970,7 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
       const mode = val("photoUpdateMode");
       if(mode === "NOW"){
         photoUpdateHint.textContent = "💡 NOW：收到需求後即可安排更新，無需指定日期與時間。";
-      }else if(mode === "MM/DD before xx:xx as TW time"){
+      }else if(mode === "Scheduled"){
         photoUpdateHint.textContent = "💡 指定時間：請填寫希望完成更新的日期與時間，時間皆以台灣時間（TW time）為準。";
       }else{
         photoUpdateHint.textContent = "";
@@ -2863,10 +2979,10 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
 
     const customTime = document.getElementById("photoCustomTime");
     if(customTime){
-      const shouldShowCustomTime = val("photoUpdateMode")==="MM/DD before xx:xx as TW time";
+      const shouldShowCustomTime = val("photoUpdateMode")==="Scheduled";
 
       if(shouldShowCustomTime && !document.getElementById("photoUpdateDate")){
-        customTime.innerHTML = `<div class="grid">${field("photoUpdateDate","Date","date")}${field("photoUpdateTime","Before time（TW time）","time")}</div>`;
+        customTime.innerHTML = `<div class="grid">${field("photoUpdateDate","Date 日期","date")}${field("photoUpdateTime","Time 時間","time")}</div>`;
       }
 
       if(document.getElementById("photoUpdateDate")){
@@ -2897,7 +3013,7 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
 
       if(v==="SAM" || v==="KAM"){
         extra.innerHTML = `${select("storePriceAction","新增 或 移除 <店內價>標籤（擇一選擇）（必填）",["新增 <店內價> 標籤","移除 <店內價> 標籤"])}
-        ${textarea("storePriceVendorList","更新門市：code + 店家名稱","請填寫要更新的門市 code + 店家名稱，或於下方上傳名單檔案")}
+        ${textarea("storePriceVendorList","更新門市：店家代碼 + 完整名稱","請填寫要更新的門市 店家代碼 + 完整名稱，或於下方上傳名單檔案")}
         <div class="upload">
   <h3>店內菜單翻拍照連結</h3>
   <p>請貼上 Google Drive、Google Photos 或其他雲端連結</p>
@@ -2920,7 +3036,7 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
 
   if(currentType==="export_menu"){
     const v=val("exportMenuVendorType"), extra=document.getElementById("exportMenuExtra");
-    if(extra) extra.innerHTML = v ? `${textarea("exportMenuVendorInfo","店家資訊：code + 店家名稱","請填寫店家 code + 店家名稱")}` : "";
+    if(extra) extra.innerHTML = v ? `${textarea("exportMenuVendorInfo","店家資訊：店家代碼 + 完整名稱","請填寫店家 店家代碼 + 完整名稱")}` : "";
   }
 
   if(currentType==="project_aaa_deal_menu"){
@@ -2973,7 +3089,7 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
           ${field("aaaDealUpdateTime","更新時間（必填）","time")}
         </div>
         <div class="notice" style="margin-top:-10px;color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 ※若需於特殊時段更新，請備註告知原因</div>
-        ${field("aaaDealChainCode","Chain code（必填）","text","請填寫 Chain code")}
+        ${field("aaaDealChainCode","品牌代碼（必填）","text","請填寫 品牌代碼")}
         ${field("aaaDealSyncMasterMenu","校稿版菜單：代碼 + 名稱（必填）","text","請填寫校稿版菜單：代碼 + 名稱")}
         <div class="field">
           <label>既有品項供應狀態【擇一】（必填）</label>
@@ -3259,7 +3375,7 @@ function row(label,value){ return `<div class="summary-row"><b>${label}</b><span
 function renderSummary(){
   const selectedVendorRows = val("selectedVendorFullName") ? [
     row("查詢到的店家代碼",showVal("selectedVendorCode")),
-    row("查詢到的 Chain code",showVal("selectedChainCode")),
+    row("查詢到的 品牌代碼",showVal("selectedChainCode")),
     row("查詢到的完整名稱",showVal("selectedVendorFullName"))
   ] : [];
 
@@ -3293,23 +3409,23 @@ function renderSummary(){
     }
 
     if(photoOnly.includes(req)){
-      rows.push(row("Update date/time",getPhotoUpdateDateTimeSummary()));
+      rows.push(row("Update date/time 更新時間",getPhotoUpdateDateTimeSummary()));
       if(req === "純餐點照片修改 (校稿用)"){
-        rows.push(row("校稿版菜單：code + 店家名稱",showVal("photoMasterMenu")));
+        rows.push(row("校稿版菜單：店家代碼 + 完整名稱",showVal("photoMasterMenu")));
       }
       if(req === "純封面照片修改 (品牌共用)" || req === "Logo 照片修改"){
-        rows.push(row("Chain：Chain code + Chain name",showVal("photoChain")));
+        rows.push(row("Chain",showVal("photoChain")));
       }
       rows.push(
         row("照片更新門市 / 校稿用",showMultilineVal("photoStoreList")),
-        row("Photo link",showVal("photoLink"))
+        row("照片連結",showVal("photoLink"))
       );
     }else if(req === "單店修改"){
       rows.push(
         row("商家名單",showMultilineVal("vendorList")),
         row("更新內容描述",showMultilineVal("updateDescription")),
         row("照片更新門市 / 校稿用",showMultilineVal("photoStoreList")),
-        row("Photo link",showVal("photoLink"))
+        row("照片連結",showVal("photoLink"))
       );
     }else{
       rows.push(
@@ -3318,7 +3434,7 @@ function renderSummary(){
         row("是否需匯出菜單",showVal("exportMenu")),
         row("是否更新 POS 串接碼",showVal("remoteCodeUpdate")),
         row("照片更新門市 / 校稿用",showMultilineVal("photoStoreList")),
-        row("Photo link",showVal("photoLink"))
+        row("照片連結",showVal("photoLink"))
       );
     }
   }
@@ -3336,7 +3452,7 @@ function renderSummary(){
       row("更新日期【非假日】",showVal("updateDate")),
       row("更新時間",showVal("updateTime")),
       row("特殊時段更新備註 / 原因簡述",showVal("updateDateNote")),
-      row("Chain code",showVal("chainCode")),
+      row("品牌代碼",showVal("chainCode")),
       row("校稿版菜單",showVal("copyMasterMenu")),
       row("既有品項供應狀態",showVal("itemSupplyStatus")),
       row("商家名單（連結）",showVal("vendorListLink")),
@@ -3355,14 +3471,14 @@ function renderSummary(){
     rows.push(
       row("適用對象",showVendorType("consumerNoteStoreType")),
       row("操作類型",showVal("consumerNoteMode")),
-      row("品牌 / Chain code",showVal("specialVendorList"))
+      row("品牌 / 品牌代碼",showVal("specialVendorList"))
     );
   }
 
   if(currentType==="store_price_label"){
     rows.push(
       row("適用對象",showVendorType("storePriceVendorType")),
-      row("更新門市：code + 店家名稱",showMultilineVal("storePriceVendorList")),
+      row("更新門市：店家代碼 + 完整名稱",showMultilineVal("storePriceVendorList")),
       row("店內價標籤操作",showVal("storePriceAction"))
     );
   }
@@ -3370,7 +3486,7 @@ function renderSummary(){
   if(currentType==="export_menu"){
     rows.push(
       row("適用對象",showVendorType("exportMenuVendorType")),
-      row("店家資訊：code + 店家名稱",showVal("exportMenuVendorInfo"))
+      row("店家資訊：店家代碼 + 完整名稱",showVal("exportMenuVendorInfo"))
     );
   }
 
@@ -3425,7 +3541,7 @@ function renderSummary(){
 
   if(currentType==="preview_menu_fix"){
     rows.push(
-      row("修改校稿版本：code + 店家名稱",showVal("previewMenuFixVendor")),
+      row("修改校稿版本：店家代碼 + 完整名稱",showVal("previewMenuFixVendor")),
       row("是否依照店內菜單更新整份平台菜單",showVal("previewMenuFullUpdate")),
       row("僅需調整金額，不需另外上架餐點",showVal("previewMenuPriceOnly")),
       row("調整金額，同時新增或更改餐點",showVal("previewMenuPriceAndItem")),
@@ -3437,7 +3553,7 @@ function renderSummary(){
   if(currentType==="schedule_menu_sync"){
     rows.push(
       row("承MU CASE",showVal("scheduleMuCase")),
-      row("校稿版菜單：code + 店家名稱",showVal("scheduleMasterMenu")),
+      row("校稿版菜單：店家代碼 + 完整名稱",showVal("scheduleMasterMenu")),
       row("統一塑膠袋金額",showVal("schedulePlasticBagAmount")),
       row("未統一塑膠袋金額之分店",showMultilineVal("schedulePlasticBagException")),
       row("更新日期",showVal("scheduleSyncDate")),
@@ -3700,7 +3816,7 @@ function renderSummary(){
         row("承 Deal w/ MU case",showVal("aaaDealMuCase")),
         row("校稿無誤後更新日期【非假日】",showVal("aaaDealUpdateDate")),
         row("更新時間",showVal("aaaDealUpdateTime")),
-        row("Chain code",showVal("aaaDealChainCode")),
+        row("品牌代碼",showVal("aaaDealChainCode")),
         row("校稿版菜單：店家代碼 + 店家名稱",showVal("aaaDealSyncMasterMenu")),
         row("既有品項供應狀態",showVal("aaaDealSupplyStatus")),
         row("複製前檢查","GM可在此備註需開啟 or 隱藏之類別 or 品項，若活動結束請寫明移除某品項 or 整個類別"),
