@@ -448,12 +448,46 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 .vendor-result-name{font-weight:800;margin-bottom:8px}
 .vendor-result-meta{display:flex;flex-wrap:wrap;gap:8px 14px;color:#64748b;font-size:12px;font-weight:500}
+.vendor-result-preview-menu{
+  flex:1 0 100%;
+  white-space:pre-line;
+  line-height:1.6;
+}
+.vendor-selected-item.preview-menu-item{
+  grid-column:span 3;
+}
+.vendor-selected-item.preview-menu-item b{
+  display:block;
+  white-space:pre-line;
+  line-height:1.6;
+  word-break:break-word;
+}
+@media(max-width:760px){
+  .vendor-selected-item.preview-menu-item{
+    grid-column:auto;
+  }
+}
 .vendor-selected{
   margin-top:16px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:16px;padding:15px
 }
 .vendor-selected-title{font-weight:800;color:#166534;margin-bottom:10px}
-.vendor-selected-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.vendor-selected-grid{
+  display:grid;
+  grid-template-columns:
+    minmax(105px,.75fr)
+    minmax(105px,.75fr)
+    minmax(170px,1.5fr)
+    minmax(115px,.8fr)
+    minmax(95px,.65fr);
+  gap:10px;
+}
 .vendor-selected-item{background:#fff;border:1px solid #dcfce7;border-radius:12px;padding:10px}
+.vendor-selected-item.vendor-name-item{
+  grid-column:span 1;
+}
+.vendor-selected-item.preview-menu-item{
+  grid-column:span 3;
+}
 .vendor-selected-item small{display:block;color:#64748b;margin-bottom:4px}.vendor-selected-item b{font-size:13px}
 .vendor-system-note{margin-top:12px;color:#64748b;font-size:12px;line-height:1.6}
 .vendor-search-row button.is-loading{opacity:.7;cursor:wait}
@@ -567,6 +601,15 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .application-info-item b{
   color:#0f172a;
   font-weight:700;
+}
+.application-info-item[data-info-preview-menu-wrap]{
+  flex:1 0 100%;
+  align-items:flex-start;
+}
+.application-info-item[data-info-preview-menu-wrap] b{
+  white-space:pre-line;
+  word-break:break-word;
+  line-height:1.6;
 }
 .application-info-edit{
   flex:0 0 auto;
@@ -889,9 +932,10 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="vendor-selected-grid">
         <div class="vendor-selected-item"><small>店家代碼</small><b id="selectedVendorCodeText">—</b></div>
         <div class="vendor-selected-item"><small>品牌代碼</small><b id="selectedChainCodeText">—</b></div>
-        <div class="vendor-selected-item"><small>完整名稱</small><b id="selectedVendorNameText">—</b></div>
+        <div class="vendor-selected-item vendor-name-item"><small>完整名稱</small><b id="selectedVendorNameText">—</b></div>
         <div class="vendor-selected-item"><small>負責窗口</small><b id="selectedVendorAmText">—</b></div>
-        <div class="vendor-selected-item"><small>組別</small><b id="selectedVendorGroupText">—</b></div>        
+        <div class="vendor-selected-item"><small>組別</small><b id="selectedVendorGroupText">—</b></div>
+        <div class="vendor-selected-item preview-menu-item"><small>校稿用菜單</small><b id="selectedPreviewMenuText">—</b></div>
       </div>
       <div class="btn-row" style="margin-top:12px;justify-content:flex-end">
         <button type="button" class="btn-outline" onclick="clearSelectedVendor()">清除選擇</button>
@@ -903,6 +947,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <input type="hidden" id="selectedVendorFullName">
     <input type="hidden" id="selectedVendorAm">
     <input type="hidden" id="selectedVendorGroup">
+    <input type="hidden" id="selectedPreviewMenu">
     <div class="vendor-system-note">資料來源：foodpanda 內部資料庫。若無符合結果，請確認查詢條件，或直接填寫品牌資訊。</div>
   </div>
 
@@ -962,6 +1007,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <span class="application-info-item hidden" data-info-vendor-code-wrap>🔢 店家代碼：<b data-info-vendor-code></b></span>
         <span class="application-info-item hidden" data-info-chain-code-wrap>🔗 品牌代碼：<b data-info-chain-code></b></span>
         <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
+        <span class="application-info-item hidden" data-info-preview-menu-wrap>📋 校稿用菜單：<b data-info-preview-menu></b></span>
       </div>
     </div>
     <button type="button" class="application-info-edit" onclick="go(1)">修改基本資料</button>
@@ -996,6 +1042,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <span class="application-info-item hidden" data-info-vendor-code-wrap>🔢 店家代碼：<b data-info-vendor-code></b></span>
         <span class="application-info-item hidden" data-info-chain-code-wrap>🔗 品牌代碼：<b data-info-chain-code></b></span>
         <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
+        <span class="application-info-item hidden" data-info-preview-menu-wrap>📋 校稿用菜單：<b data-info-preview-menu></b></span>
       </div>
     </div>
     <button type="button" class="application-info-edit" onclick="go(1)">修改基本資料</button>
@@ -1140,6 +1187,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <span class="application-info-item hidden" data-info-vendor-code-wrap>🔢 店家代碼：<b data-info-vendor-code></b></span>
         <span class="application-info-item hidden" data-info-chain-code-wrap>🔗 品牌代碼：<b data-info-chain-code></b></span>
         <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
+        <span class="application-info-item hidden" data-info-preview-menu-wrap>📋 校稿用菜單：<b data-info-preview-menu></b></span>
       </div>
     </div>
     <button type="button" class="application-info-edit" onclick="go(1)">修改基本資料</button>
@@ -1166,6 +1214,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <span class="application-info-item hidden" data-info-vendor-code-wrap>🔢 店家代碼：<b data-info-vendor-code></b></span>
         <span class="application-info-item hidden" data-info-chain-code-wrap>🔗 品牌代碼：<b data-info-chain-code></b></span>
         <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
+        <span class="application-info-item hidden" data-info-preview-menu-wrap>📋 校稿用菜單：<b data-info-preview-menu></b></span>
       </div>
     </div>
     <button type="button" class="application-info-edit" onclick="go(1)">修改基本資料</button>
@@ -1606,6 +1655,14 @@ function normalizeVendorItem(item){
       item.team ??
       item["組別"] ??
       ""
+    ).trim(),
+    previewMenu: String(
+      item.previewMenu ??
+      item.preview_menu ??
+      item.masterMenu ??
+      item.master_menu ??
+      item["校稿用菜單"] ??
+      ""
     ).trim()
   };
 }
@@ -1721,6 +1778,7 @@ function renderVendorResults(showAll=false){
         <span>品牌代碼：${escapeVendorHtml(item.chainCode || "—")}</span>
         <span>負責窗口：${escapeVendorHtml(item.am || "—")}</span>
         <span>組別：${escapeVendorHtml(item.group || "—")}</span>
+        <span class="vendor-result-preview-menu">校稿用菜單：${escapeVendorHtml(item.previewMenu || "—")}</span>
       </div>`;
 
     button.addEventListener(
@@ -1778,6 +1836,8 @@ function selectVendor(item,button){
   document.getElementById("selectedVendorCard").classList.remove("hidden");
   document.getElementById("selectedVendorGroup").value=item.group || "";
   document.getElementById("selectedVendorGroupText").textContent=getGroupDisplayName(item.group, "—");
+  document.getElementById("selectedPreviewMenu").value=item.previewMenu || "";
+  document.getElementById("selectedPreviewMenuText").textContent=item.previewMenu || "—";
 
   const brand=document.getElementById("brand");
   if(brand && item.fullName){
@@ -1789,7 +1849,7 @@ function selectVendor(item,button){
 }
 
 function clearSelectedVendor(){
-  ["selectedVendorCode","selectedChainCode","selectedVendorFullName","selectedVendorAm","selectedVendorGroup"].forEach(id=>{
+  ["selectedVendorCode","selectedChainCode","selectedVendorFullName","selectedVendorAm","selectedVendorGroup","selectedPreviewMenu"].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value="";
   });
@@ -2110,6 +2170,7 @@ function updateApplicationInfo(){
   const group = getGroupDisplayName(rawGroup, "尚未查詢");
   const vendorCode = val("selectedVendorCode").trim();
   const chainCode = val("selectedChainCode").trim();
+  const previewMenu = val("selectedPreviewMenu").trim();
 
   document.querySelectorAll("[data-application-info]").forEach(card=>{
     const brandEl = card.querySelector("[data-info-brand]");
@@ -2120,36 +2181,30 @@ function updateApplicationInfo(){
     const vendorCodeWrap = card.querySelector("[data-info-vendor-code-wrap]");
     const chainCodeEl = card.querySelector("[data-info-chain-code]");
     const chainCodeWrap = card.querySelector("[data-info-chain-code-wrap]");
+    const previewMenuEl = card.querySelector("[data-info-preview-menu]");
+    const previewMenuWrap = card.querySelector("[data-info-preview-menu-wrap]");
 
     if(brandEl) brandEl.textContent = brand;
     if(amEl) amEl.textContent = am;
-
     if(groupEl) groupEl.textContent = group;
+
     if(groupWrap){
-      groupWrap.classList.toggle(
-        "application-group-missing",
-        !rawGroup
-      );
+      groupWrap.classList.toggle("application-group-missing", !rawGroup);
     }
 
-    if(vendorCodeEl){
-      vendorCodeEl.textContent = vendorCode;
-    }
+    if(vendorCodeEl) vendorCodeEl.textContent = vendorCode;
     if(vendorCodeWrap){
-      vendorCodeWrap.classList.toggle(
-        "hidden",
-        !vendorCode
-      );
+      vendorCodeWrap.classList.toggle("hidden", !vendorCode);
     }
 
-    if(chainCodeEl){
-      chainCodeEl.textContent = chainCode;
-    }
+    if(chainCodeEl) chainCodeEl.textContent = chainCode;
     if(chainCodeWrap){
-      chainCodeWrap.classList.toggle(
-        "hidden",
-        !chainCode
-      );
+      chainCodeWrap.classList.toggle("hidden", !chainCode);
+    }
+
+    if(previewMenuEl) previewMenuEl.textContent = previewMenu;
+    if(previewMenuWrap){
+      previewMenuWrap.classList.toggle("hidden", !previewMenu);
     }
   });
 }
