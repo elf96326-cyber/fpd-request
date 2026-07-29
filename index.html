@@ -1110,7 +1110,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 <div class="group category-all" data-groups="Green"><div class="category-label">🟢Green</div><div class="request-grid">
 <button class="request" data-type="project_kalh_deal_menu_update" onclick="selectType('project_kalh_deal_menu_update')"><b>📢 活動設定 + 修改菜單</b><p>整合單店 / 多店與校稿用活動菜單修改</p></button>
-<button class="request" data-type="project_kalh_deal_menu_sync" onclick="selectType('project_kalh_deal_menu_sync')"><b>🔄 活動複製菜單</b><p>整合排程、STAT、純上架活動品項</p></button>
+<button class="request" data-type="project_kalh_deal_menu_sync" onclick="selectType('project_kalh_deal_menu_sync')"><b>🔄 活動複製菜單</b><p>整合排程與立即複製</p></button>
 </div></div>
 
 <div class="group category-store" data-groups="Yellow"><div class="category-label">🟡Yellow</div><div class="request-grid">
@@ -2041,7 +2041,7 @@ const typeInfo = {
   project_aaakalh_deal_create:["建立 Deal 活動","🔵Blue / 🟢Green 可申請，🟡Yellow 不適用"],
   project_aaakalh_deal_cancel:["Deal 活動取消","🔵Blue / 🟢Green 單店、多店活動取消"],
   project_kalh_deal_menu_update:["活動設定 + 修改菜單","🟢Green 活動內容建立與菜單修改"],
-  project_kalh_deal_menu_sync:["活動複製菜單","🟢Green 活動菜單複製、排程或純上架活動品項"],
+  project_kalh_deal_menu_sync:["活動複製菜單","🟢Green 活動菜單排程或立即複製"],
   project_store_cancel_deal:["取消活動並恢復店內價菜單","🟡Yellow 活動取消"],
   project_store_join_deal:["新參加 / 更換 活動+修改活動菜單","🟡Yellow 活動設定"],
   project_store_preview_menu:["修改校稿用菜單","🟡Yellow 校稿菜單修改"],
@@ -3252,29 +3252,27 @@ if(!currentType){
   if(currentType==="project_kalh_deal_menu_sync"){
     area.innerHTML = `${subjectInput()}
       <div class="box pink portal-template-box"><h3>🟢Green｜活動複製菜單</h3><p class="muted">請選擇活動複製類型，系統會依類型自動切換模板。</p></div>
-      ${select("kalhSyncType","活動複製類型（必填）",["排程","STAT","純上架活動品項"])}
+      ${select("kalhSyncType","活動複製類型（必填）",["排程",{value:"STAT",label:"立即複製"}])}
       <div id="kalhSyncNotice" class="notice">⚠️ 請先選擇活動複製類型，系統才會產生對應的欄位。</div>
       ${field("kalhSyncOppCase","OPP QC Case Number","text","Voucher 無 OPP 請註記")}
       ${field("kalhSyncMuCase","承 Deal w/ MU Case","text","請填寫 Case 編號；無對應 MU case 請備註")}
       <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 校稿完成，再請協助指定日複製菜單後設定活動。</div>
-      <div class="grid">
-        ${select("kalhSyncVoucher","是否為 Voucher 活動（必填）",["Yes","No"])}
-        ${select("kalhSyncExportMenu","是否需匯出菜單（必填）",["Yes","No"])}
-      </div>
+      ${select("kalhSyncVoucher","是否為 Voucher 活動（必填）",["Yes","No"])}
       <div id="kalhSyncVoucherNotice" class="notice hidden" style="color:#dc2626;font-style:italic;font-weight:700;">⚠️ Voucher 活動請註記：【複製後不可踢 chain】</div>
-      <div class="grid">
-        ${field("kalhSyncUpdateDate","更新日期【非假日】（必填）","date")}
-        ${field("kalhSyncUpdateTime","更新時間","time")}
+      <div id="kalhSyncUpdateScheduleBlock" class="hidden">
+        <div class="grid">
+          ${field("kalhSyncUpdateDate","更新日期【非假日】（必填）","date")}
+          ${field("kalhSyncUpdateTime","更新時間","time")}
+        </div>
+        <div class="notice" style="color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 若需於特殊時段更新，請備註告知原因。</div>
       </div>
-      <div class="notice" style="color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 若需於特殊時段更新，請備註告知原因。</div>
       ${textarea("kalhSyncUpdateNote","更新資訊備註","如需暫下何品項請註記；若無預設為開啟",3)}
       ${field("kalhSyncChainCode","品牌代碼（Chain Code）（必填）","text","請填寫 品牌代碼")}
       ${field("kalhSyncMasterMenu","校稿版菜單：店家代碼 + 完整名稱（必填）","text","請填寫校稿版菜單：店家代碼 + 完整名稱")}
       ${select("kalhSyncSupplyStatus","既有品項供應狀態【擇一】（必填）",["Same as Master Vendor (品項同校稿版狀態)","Keep as Outlet Vendor (品項維持原分店狀態)"])}
       <div id="kalhSyncScheduledBlock" class="box pink hidden"><h3>排程活動資訊</h3>${field("kalhSyncDealType","活動類型","text","請填寫活動類型")}${textarea("kalhSyncDealPeriod","活動走期","請填寫活動走期",3)}${textarea("kalhSyncDealContent","活動內容","請填寫活動品項 + 活動原價 + 折扣後金額",4)}${textarea("kalhSyncDealUpdateDesc","更新內容描述","如品項有客製化需求請詳述；topping 不可設定加價選擇",4)}</div>
       ${field("kalhSyncVendorList","商家名單【link】（必填）","text","請貼上商家名單 link（店家代碼 + 完整名稱 + 菜單版本 + chain 狀態）")}
-      ${select("kalhSyncPhotoNeed","是否有照片相關需求（必填）",["Yes","No"])}
-      <div id="kalhSyncPhotoBlock" class="box pink hidden"><h3>【如有照片相關需求，請同附以下資訊】</h3>${textarea("kalhSyncPhotoStores","照片更新門市 / 校稿用","請填寫 店家代碼 + 完整名稱，可換行填寫多筆",4)}${field("kalhSyncPhotoLink","照片檔案【link】","text","請貼上照片檔案 link")}</div>
+
     `;
   }
 
@@ -3432,9 +3430,9 @@ function renderConditionalBlocks(){
   if(kalhSyncScheduledBlock){
     kalhSyncScheduledBlock.classList.toggle("hidden", val("kalhSyncType") !== "排程");
   }
-  const kalhSyncPhotoBlock = document.getElementById("kalhSyncPhotoBlock");
-  if(kalhSyncPhotoBlock){
-    kalhSyncPhotoBlock.classList.toggle("hidden", val("kalhSyncPhotoNeed") !== "Yes");
+  const kalhSyncUpdateScheduleBlock = document.getElementById("kalhSyncUpdateScheduleBlock");
+  if(kalhSyncUpdateScheduleBlock){
+    kalhSyncUpdateScheduleBlock.classList.toggle("hidden", val("kalhSyncType") !== "排程");
   }
   const kalhSyncVoucherNotice = document.getElementById("kalhSyncVoucherNotice");
   if(kalhSyncVoucherNotice){
@@ -4379,28 +4377,20 @@ function renderSummary(){
       row("OPP QC Case Number",showVal("kalhSyncOppCase")),
       row("承 Deal w/ MU Case",showVal("kalhSyncMuCase")),
       row("是否為 Voucher 活動",showVal("kalhSyncVoucher")),
-      row("更新日期【非假日】",showVal("kalhSyncUpdateDate")),
-      row("更新時間",showVal("kalhSyncUpdateTime")),
       row("更新資訊備註",showMultilineVal("kalhSyncUpdateNote")),
       row("品牌代碼（Chain Code）",showVal("kalhSyncChainCode")),
       row("校稿版菜單",showVal("kalhSyncMasterMenu")),
       row("既有品項供應狀態",showVal("kalhSyncSupplyStatus")),
-      row("商家名單【link】",showVal("kalhSyncVendorList")),
-      row("是否需匯出菜單",showVal("kalhSyncExportMenu")),
-      row("是否有照片需求",showVal("kalhSyncPhotoNeed"))
+      row("商家名單【link】",showVal("kalhSyncVendorList"))
     );
     if(val("kalhSyncType")==="排程"){
       rows.push(
+        row("更新日期【非假日】",showVal("kalhSyncUpdateDate")),
+        row("更新時間",showVal("kalhSyncUpdateTime")),
         row("活動類型",showVal("kalhSyncDealType")),
         row("活動走期",showMultilineVal("kalhSyncDealPeriod")),
         row("活動內容",showMultilineVal("kalhSyncDealContent")),
         row("更新內容描述",showMultilineVal("kalhSyncDealUpdateDesc"))
-      );
-    }
-    if(val("kalhSyncPhotoNeed")==="Yes"){
-      rows.push(
-        row("照片更新門市 / 校稿用",showMultilineVal("kalhSyncPhotoStores")),
-        row("照片檔案 Link",showVal("kalhSyncPhotoLink"))
       );
     }
   }
