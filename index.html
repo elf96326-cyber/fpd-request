@@ -884,6 +884,84 @@ button:disabled{opacity:.45;cursor:not-allowed}
   }
 }
 
+
+/* 品牌驗證碼彈跳視窗 */
+.brand-verification-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:100000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(15,23,42,.38);
+  backdrop-filter:blur(3px);
+}
+.brand-verification-backdrop.show{display:flex}
+.brand-verification-modal{
+  width:min(430px,100%);
+  background:#fff;
+  border:1px solid #fbcfe8;
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 24px 60px rgba(15,23,42,.24);
+  animation:brand-verification-in .16s ease-out;
+}
+@keyframes brand-verification-in{
+  from{opacity:0;transform:translateY(8px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.brand-verification-icon{
+  width:46px;
+  height:46px;
+  display:grid;
+  place-items:center;
+  margin-bottom:14px;
+  border-radius:15px;
+  background:#fff0f6;
+  font-size:22px;
+}
+.brand-verification-title{
+  margin:0 0 7px;
+  color:#0f172a;
+  font-size:18px;
+  font-weight:800;
+}
+.brand-verification-brand{
+  margin-bottom:14px;
+  color:#be185d;
+  font-size:14px;
+  font-weight:800;
+  line-height:1.55;
+}
+.brand-verification-text{
+  margin:0 0 14px;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.7;
+}
+.brand-verification-message{
+  min-height:20px;
+  margin-top:9px;
+  color:#64748b;
+  font-size:12px;
+  line-height:1.6;
+}
+.brand-verification-message.error{color:#dc2626;font-weight:700}
+.brand-verification-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:20px;
+}
+.brand-verification-actions button{min-width:110px}
+.vendor-details-locked{display:none}
+.vendor-selected.is-verified .vendor-details-locked{display:grid}
+@media(max-width:520px){
+  .brand-verification-actions{flex-direction:column-reverse}
+  .brand-verification-actions button{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -945,8 +1023,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div id="vendorSearchResults" class="vendor-results"></div>
 
     <div id="selectedVendorCard" class="vendor-selected hidden">
-      <div class="vendor-selected-title">✅選擇資訊已帶入</div>
-      <div class="vendor-selected-grid">
+      <div class="vendor-selected-title">✅ 選擇資訊已帶入</div>
+
+      <div id="vendorDetailsLocked" class="vendor-selected-grid vendor-details-locked">
         <div class="vendor-selected-item"><small>店家代碼</small><b id="selectedVendorCodeText">—</b></div>
         <div class="vendor-selected-item"><small>品牌代碼</small><b id="selectedChainCodeText">—</b></div>
         <div class="vendor-selected-item vendor-name-item"><small>完整名稱</small><b id="selectedVendorNameText">—</b></div>
@@ -962,6 +1041,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <input type="hidden" id="selectedVendorCode">
     <input type="hidden" id="selectedChainCode">
     <input type="hidden" id="selectedVendorFullName">
+    <input type="hidden" id="selectedBrandName">
     <input type="hidden" id="selectedVendorAm">
     <input type="hidden" id="selectedVendorGroup">
     <input type="hidden" id="selectedPreviewMenu">
@@ -1289,6 +1369,9 @@ let amListLoaded = false;
 
 let isSubmitting = false;
 let currentVendorResults = [];
+let brandVerificationPassed = false;
+let brandVerificationRequired = false;
+let brandVerificationChecking = false;
 let formHasUnsavedChanges = false;
 let formSubmittedSuccessfully = false;
 let pendingLeaveAction = null;
@@ -1599,6 +1682,18 @@ document.addEventListener("click", function(event){
 document.addEventListener("keydown", function(event){
   if(event.key === "Escape"){
     closeUnsavedModal();
+    const brandBackdrop=document.getElementById("brandVerificationBackdrop");
+    if(brandBackdrop && brandBackdrop.classList.contains("show")){
+      closeBrandVerificationModal(true);
+    }
+  }
+});
+
+
+document.addEventListener("click", function(event){
+  const backdrop=document.getElementById("brandVerificationBackdrop");
+  if(backdrop && event.target === backdrop){
+    closeBrandVerificationModal(true);
   }
 });
 
@@ -1792,14 +1887,7 @@ function renderVendorResults(showAll=false){
     button.className="vendor-result-card";
 
     button.innerHTML=`
-      <div class="vendor-result-name">${escapeVendorHtml(item.fullName || "未提供完整名稱")}</div>
-      <div class="vendor-result-meta">
-        <span>店家代碼：${escapeVendorHtml(item.vendorCode || "—")}</span>
-        <span>品牌代碼：${escapeVendorHtml(item.chainCode || "—")}</span>
-        <span>負責窗口：${escapeVendorHtml(item.am || "—")}</span>
-        <span>組別：${escapeVendorHtml(item.group || "—")}</span>
-        <span class="vendor-result-preview-menu">校稿用菜單：${escapeVendorHtml(item.previewMenu || "—")}</span>
-      </div>`;
+      <div class="vendor-result-name">${escapeVendorHtml(item.fullName || "未提供完整名稱")}</div>`;
 
     button.addEventListener(
       "click",
@@ -1841,19 +1929,168 @@ function renderVendorResults(showAll=false){
   }
 }
 
-function selectVendor(item,button){
+function resetBrandVerification(){
+  brandVerificationPassed=false;
+  brandVerificationRequired=false;
+  brandVerificationChecking=false;
+
+  const card=document.getElementById("selectedVendorCard");
+  const input=document.getElementById("brandVerificationCode");
+  const button=document.getElementById("verifyBrandCodeBtn");
+  const message=document.getElementById("brandVerificationMessage");
+
+  if(card) card.classList.remove("is-verified");
+  if(input){ input.value=""; input.disabled=false; }
+  if(button){ button.disabled=false; button.textContent="確認驗證"; }
+  if(message){
+    message.className="brand-verification-message";
+    message.textContent="";
+  }
+}
+
+function openBrandVerificationModal(){
+  const backdrop=document.getElementById("brandVerificationBackdrop");
+  const brandText=document.getElementById("brandVerificationBrand");
+  const input=document.getElementById("brandVerificationCode");
+  const selectedName=val("selectedVendorFullName").trim();
+
+  if(brandText) brandText.textContent=selectedName || "未提供完整名稱";
+  if(backdrop){
+    backdrop.classList.add("show");
+    backdrop.setAttribute("aria-hidden","false");
+  }
+  document.body.style.overflow="hidden";
+  setTimeout(()=>{ if(input) input.focus(); },50);
+}
+
+function closeBrandVerificationModal(cancelSelection=false){
+  const backdrop=document.getElementById("brandVerificationBackdrop");
+  if(backdrop){
+    backdrop.classList.remove("show");
+    backdrop.setAttribute("aria-hidden","true");
+  }
+  document.body.style.overflow="";
+
+  if(cancelSelection){
+    clearSelectedVendor();
+  }
+}
+
+async function getBrandVerificationRequirement(item){
+  const params = new URLSearchParams({
+    action: "getBrandVerificationRequirement",
+    brandName: String(item.brandName || "").trim(),
+    accountName: String(item.previewMenu || "").trim(),
+    vendorCode: String(item.vendorCode || "").trim(),
+    chainCode: String(item.chainCode || "").trim()
+  });
+
+  const response = await fetch(`${GAS_URL}?${params.toString()}`);
+  if(!response.ok){
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const result = await response.json();
+  if(!result || result.success === false){
+    throw new Error(result && result.message ? result.message : "無法確認品牌驗證設定");
+  }
+
+  return Boolean(result.required);
+}
+
+async function verifyBrandCode(){
+  const input=document.getElementById("brandVerificationCode");
+  const message=document.getElementById("brandVerificationMessage");
+  const card=document.getElementById("selectedVendorCard");
+  const button=document.getElementById("verifyBrandCodeBtn");
+  const code=input ? input.value.trim() : "";
+
+  if(!val("selectedVendorFullName").trim() || brandVerificationChecking) return;
+
+  if(!/^\d{4,6}$/.test(code)){
+    if(message){
+      message.className="brand-verification-message error";
+      message.textContent="請輸入 4～6 位數品牌驗證碼。";
+    }
+    if(input){ input.focus(); input.select(); }
+    return;
+  }
+
+  brandVerificationChecking=true;
+  if(button){ button.disabled=true; button.textContent="驗證中…"; }
+  if(input) input.disabled=true;
+  if(message){
+    message.className="brand-verification-message";
+    message.textContent="正在確認品牌驗證碼…";
+  }
+
+  try{
+    const params = new URLSearchParams({
+      action: "verifyBrandCode",
+      brandName: val("selectedBrandName").trim(),
+      accountName: val("selectedPreviewMenu").trim(),
+      vendorCode: val("selectedVendorCode").trim(),
+      chainCode: val("selectedChainCode").trim(),
+      code
+    });
+
+    const response = await fetch(`${GAS_URL}?${params.toString()}`);
+    if(!response.ok){
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const result = await response.json();
+    if(!result || result.success === false || result.verified !== true){
+      brandVerificationPassed=false;
+      if(card) card.classList.remove("is-verified");
+      if(message){
+        message.className="brand-verification-message error";
+        message.textContent=(result && result.message) || "驗證碼不正確，請重新確認後再試。";
+      }
+      if(input){ input.disabled=false; input.focus(); input.select(); }
+      if(button){ button.disabled=false; button.textContent="確認驗證"; }
+      validateBasic();
+      return;
+    }
+
+    brandVerificationPassed=true;
+    if(card){
+      card.classList.add("is-verified");
+      card.classList.remove("hidden");
+    }
+    closeBrandVerificationModal(false);
+    validateBasic();
+    updateApplicationInfo();
+  }catch(error){
+    console.error("品牌驗證失敗：", error);
+    brandVerificationPassed=false;
+    if(message){
+      message.className="brand-verification-message error";
+      message.textContent="目前無法完成驗證，請稍後再試。";
+    }
+    if(input){ input.disabled=false; input.focus(); }
+    if(button){ button.disabled=false; button.textContent="重新驗證"; }
+    validateBasic();
+  }finally{
+    brandVerificationChecking=false;
+  }
+}
+
+async function selectVendor(item,button){
+  resetBrandVerification();
   document.querySelectorAll(".vendor-result-card").forEach(el=>el.classList.remove("selected"));
   if(button) button.classList.add("selected");
 
   document.getElementById("selectedVendorCode").value=item.vendorCode || "";
   document.getElementById("selectedChainCode").value=item.chainCode || "";
   document.getElementById("selectedVendorFullName").value=item.fullName || "";
+  document.getElementById("selectedBrandName").value=item.brandName || "";
   document.getElementById("selectedVendorAm").value=item.am || "";
   document.getElementById("selectedVendorCodeText").textContent=item.vendorCode || "—";
   document.getElementById("selectedChainCodeText").textContent=item.chainCode || "—";
   document.getElementById("selectedVendorNameText").textContent=item.fullName || "—";
   document.getElementById("selectedVendorAmText").textContent=item.am || "—";
-  document.getElementById("selectedVendorCard").classList.remove("hidden");
+  document.getElementById("selectedVendorCard").classList.add("hidden");
   document.getElementById("selectedVendorGroup").value=item.group || "";
   document.getElementById("selectedVendorGroupText").textContent=getGroupDisplayName(item.group, "—");
   document.getElementById("selectedPreviewMenu").value=item.previewMenu || "";
@@ -1867,10 +2104,41 @@ function selectVendor(item,button){
 
   validateBasic();
   updateRequestGroupFilter();
+
+  const hint=document.getElementById("vendorSearchHint");
+  brandVerificationChecking=true;
+  if(hint) hint.textContent="正在確認此品牌是否需要驗證…";
+
+  try{
+    brandVerificationRequired=await getBrandVerificationRequirement(item);
+
+    if(brandVerificationRequired){
+      brandVerificationPassed=false;
+      openBrandVerificationModal();
+      if(hint) hint.textContent="已選擇店家，請完成品牌驗證。";
+    }else{
+      brandVerificationPassed=true;
+      const card=document.getElementById("selectedVendorCard");
+      if(card){
+        card.classList.add("is-verified");
+        card.classList.remove("hidden");
+      }
+      if(hint) hint.textContent="店家資料已選擇。";
+      validateBasic();
+      updateApplicationInfo();
+    }
+  }catch(error){
+    console.error("品牌驗證設定確認失敗：", error);
+    if(hint) hint.textContent="目前無法確認品牌驗證設定，請稍後再試。";
+    clearSelectedVendor();
+  }finally{
+    brandVerificationChecking=false;
+  }
 }
 
 function clearSelectedVendor(){
-  ["selectedVendorCode","selectedChainCode","selectedVendorFullName","selectedVendorAm","selectedVendorGroup","selectedPreviewMenu"].forEach(id=>{
+  resetBrandVerification();
+  ["selectedVendorCode","selectedChainCode","selectedVendorFullName","selectedBrandName","selectedVendorAm","selectedVendorGroup","selectedPreviewMenu"].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value="";
   });
@@ -2098,6 +2366,8 @@ function isBasicValid(){
   */
   if(!vendorCode || !vendorGroup) return false;
 
+  if(!brandVerificationPassed) return false;
+
   if(!brand || !am) return false;
 
   if(amListLoaded && !amEmail) return false;
@@ -2129,6 +2399,8 @@ function validateBasic(){
 
       if(!vendorCode || !vendorGroup){
         notice.textContent = "⚠️ 請先查詢並選擇店家資料，以確認本次申請資訊。";
+      }else if(!brandVerificationPassed){
+        notice.textContent = "⚠️ 請先輸入品牌驗證碼並完成驗證。";
       }else if(!brand){
         notice.textContent = "⚠️ 請確認品牌／門市名稱。";
       }else if(!am || (amListLoaded && !amEmail)){
@@ -4677,6 +4949,21 @@ window.addEventListener("DOMContentLoaded", function(){
 </script>
 
 <!-- v47 check: project_aaa_device_replacement template + subject + summary added -->
+
+<div id="brandVerificationBackdrop" class="brand-verification-backdrop" aria-hidden="true">
+  <div class="brand-verification-modal" role="dialog" aria-modal="true" aria-labelledby="brandVerificationTitle">
+    <div class="brand-verification-icon">🔐</div>
+    <h3 id="brandVerificationTitle" class="brand-verification-title">品牌資料驗證</h3>
+    <div id="brandVerificationBrand" class="brand-verification-brand">—</div>
+    <p class="brand-verification-text">請輸入由 foodpanda 提供的品牌驗證碼。</p>
+    <input id="brandVerificationCode" type="password" inputmode="numeric" pattern="[0-9]*" minlength="4" maxlength="6" placeholder="請輸入 4～6 位數驗證碼" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();verifyBrandCode();}">
+    <div id="brandVerificationMessage" class="brand-verification-message"></div>
+    <div class="brand-verification-actions">
+      <button type="button" class="btn-outline" onclick="closeBrandVerificationModal(true)">取消</button>
+      <button id="verifyBrandCodeBtn" type="button" class="btn-primary" onclick="verifyBrandCode()">確認驗證</button>
+    </div>
+  </div>
+</div>
 
 <div id="unsavedModalBackdrop" class="unsaved-modal-backdrop" aria-hidden="true">
   <div class="unsaved-modal" role="dialog" aria-modal="true" aria-labelledby="unsavedModalTitle">
