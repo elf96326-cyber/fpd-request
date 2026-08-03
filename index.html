@@ -1778,6 +1778,12 @@ function normalizeVendorItem(item){
       item.master_menu ??
       item["校稿用菜單"] ??
       ""
+    ).trim(),
+    brandName: String(
+      item.brandName ??
+      item.brand_name ??
+      item["品牌名稱"] ??
+      ""
     ).trim()
   };
 }
