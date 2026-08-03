@@ -948,6 +948,35 @@ button:disabled{opacity:.45;cursor:not-allowed}
   line-height:1.6;
 }
 .brand-verification-message.error{color:#dc2626;font-weight:700}
+.brand-verification-checking{
+  display:none;
+  align-items:center;
+  gap:10px;
+  margin:14px 0 4px;
+  padding:13px 14px;
+  border-radius:14px;
+  background:#f8fafc;
+  color:#64748b;
+  font-size:13px;
+  font-weight:600;
+  line-height:1.6;
+}
+.brand-verification-checking.show{display:flex}
+.brand-verification-spinner{
+  width:17px;
+  height:17px;
+  flex:0 0 auto;
+  border:2px solid #fbcfe8;
+  border-top-color:var(--pink);
+  border-radius:50%;
+  animation:submit-spin .75s linear infinite;
+}
+.brand-verification-backdrop.is-checking .brand-verification-input-area{
+  display:none;
+}
+.brand-verification-backdrop.is-checking .brand-verification-actions{
+  display:none;
+}
 .brand-verification-actions{
   display:flex;
   justify-content:flex-end;
@@ -1954,25 +1983,48 @@ function resetBrandVerification(){
   }
 }
 
-function openBrandVerificationModal(){
+function openBrandVerificationModal(mode="verify"){
   const backdrop=document.getElementById("brandVerificationBackdrop");
   const brandText=document.getElementById("brandVerificationBrand");
+  const title=document.getElementById("brandVerificationTitle");
+  const checking=document.getElementById("brandVerificationChecking");
+  const inputArea=document.getElementById("brandVerificationInputArea");
   const input=document.getElementById("brandVerificationCode");
+  const message=document.getElementById("brandVerificationMessage");
   const selectedName=val("selectedVendorFullName").trim();
+  const isChecking=mode === "checking";
 
   if(brandText) brandText.textContent=selectedName || "未提供完整名稱";
+  if(title) title.textContent=isChecking ? "正在確認品牌資料" : "品牌資料驗證";
+  if(checking) checking.classList.toggle("show",isChecking);
+  if(inputArea) inputArea.classList.toggle("hidden",isChecking);
+  if(message){
+    message.className="brand-verification-message";
+    message.textContent="";
+  }
+
   if(backdrop){
     backdrop.classList.add("show");
+    backdrop.classList.toggle("is-checking",isChecking);
     backdrop.setAttribute("aria-hidden","false");
   }
+
   document.body.style.overflow="hidden";
-  setTimeout(()=>{ if(input) input.focus(); },50);
+
+  if(!isChecking){
+    setTimeout(()=>{ if(input) input.focus(); },50);
+  }
+}
+
+function switchBrandVerificationModalToInput(){
+  openBrandVerificationModal("verify");
 }
 
 function closeBrandVerificationModal(cancelSelection=false){
   const backdrop=document.getElementById("brandVerificationBackdrop");
   if(backdrop){
     backdrop.classList.remove("show");
+    backdrop.classList.remove("is-checking");
     backdrop.setAttribute("aria-hidden","true");
   }
   document.body.style.overflow="";
@@ -2113,30 +2165,53 @@ async function selectVendor(item,button){
 
   const hint=document.getElementById("vendorSearchHint");
   brandVerificationChecking=true;
-  if(hint) hint.textContent="正在確認此品牌是否需要驗證…";
+
+  // 先以同一個彈窗顯示確認中的狀態。
+  openBrandVerificationModal("checking");
+  if(hint) hint.textContent="正在確認店家資料…";
 
   try{
     brandVerificationRequired=await getBrandVerificationRequirement(item);
 
     if(brandVerificationRequired){
       brandVerificationPassed=false;
-      openBrandVerificationModal();
+      switchBrandVerificationModalToInput();
       if(hint) hint.textContent="已選擇店家，請完成品牌驗證。";
     }else{
       brandVerificationPassed=true;
+
+      // 不需要驗證時，自動關閉確認視窗並顯示完整資料。
+      closeBrandVerificationModal(false);
+
       const card=document.getElementById("selectedVendorCard");
       if(card){
         card.classList.add("is-verified");
         card.classList.remove("hidden");
       }
+
       if(hint) hint.textContent="店家資料已選擇。";
       validateBasic();
       updateApplicationInfo();
     }
   }catch(error){
     console.error("品牌驗證設定確認失敗：", error);
+
+    const checking=document.getElementById("brandVerificationChecking");
+    const message=document.getElementById("brandVerificationMessage");
+    const backdrop=document.getElementById("brandVerificationBackdrop");
+
+    if(checking) checking.classList.remove("show");
+    if(backdrop) backdrop.classList.remove("is-checking");
+    if(message){
+      message.className="brand-verification-message error";
+      message.textContent="目前無法確認品牌驗證設定，請稍後再試。";
+    }
+
     if(hint) hint.textContent="目前無法確認品牌驗證設定，請稍後再試。";
-    clearSelectedVendor();
+
+    setTimeout(()=>{
+      closeBrandVerificationModal(true);
+    },1200);
   }finally{
     brandVerificationChecking=false;
   }
@@ -4961,8 +5036,17 @@ window.addEventListener("DOMContentLoaded", function(){
     <div class="brand-verification-icon">🔐</div>
     <h3 id="brandVerificationTitle" class="brand-verification-title">品牌資料驗證</h3>
     <div id="brandVerificationBrand" class="brand-verification-brand">—</div>
-    <p class="brand-verification-text">請輸入由 foodpanda 提供的品牌驗證碼。</p>
-    <input id="brandVerificationCode" type="password" inputmode="numeric" pattern="[0-9]*" minlength="4" maxlength="6" placeholder="請輸入 4～6 位數驗證碼" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();verifyBrandCode();}">
+
+    <div id="brandVerificationChecking" class="brand-verification-checking">
+      <span class="brand-verification-spinner" aria-hidden="true"></span>
+      <span>正在確認此品牌是否需要驗證…</span>
+    </div>
+
+    <div id="brandVerificationInputArea" class="brand-verification-input-area">
+      <p class="brand-verification-text">請輸入由 foodpanda 提供的品牌驗證碼。</p>
+      <input id="brandVerificationCode" type="password" inputmode="numeric" pattern="[0-9]*" minlength="4" maxlength="6" placeholder="請輸入 4～6 位數驗證碼" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();verifyBrandCode();}">
+    </div>
+
     <div id="brandVerificationMessage" class="brand-verification-message"></div>
     <div class="brand-verification-actions">
       <button type="button" class="btn-outline" onclick="closeBrandVerificationModal(true)">取消</button>
