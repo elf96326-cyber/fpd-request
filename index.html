@@ -4410,44 +4410,114 @@ function buildDetailsText(){
 ========================= */
 
 async function checkDuplicateRequest(){
+
+  const workstreamLabel =
+    currentWorkstream === "menu"
+      ? "🍽️ 菜單"
+      : currentWorkstream === "project"
+        ? "⚙️ 活動 / 營運"
+        : "";
+
+
   const params = new URLSearchParams({
-    action: "checkDuplicateRequest",
-    vendorCode: val("selectedVendorCode").trim(),
-    requestType: currentType ? typeInfo[currentType][0] : "",
-    requestTypeKey: currentType || "",
-    workstream: currentWorkstream || ""
+
+    action:
+      "checkDuplicateRequest",
+
+    vendorCode:
+      val("selectedVendorCode").trim(),
+
+    requestType:
+      currentType
+        ? typeInfo[currentType][0]
+        : "",
+
+    requestTypeKey:
+      currentType || "",
+
+    workstream:
+      workstreamLabel
+
   });
 
-  const response = await fetch(`${GAS_URL}?${params.toString()}`);
+
+  const response =
+    await fetch(
+      `${GAS_URL}?${params.toString()}&t=${Date.now()}`,
+      {
+        method: "GET",
+        cache: "no-store"
+      }
+    );
+
+
   if(!response.ok){
-    throw new Error(`HTTP ${response.status}`);
+
+    throw new Error(
+      `HTTP ${response.status}`
+    );
+
   }
 
-  const result = await response.json();
 
-  // Apps Script 尚未加入查重 action 時，先維持原本送出流程。
-  if(!result || result.unsupported === true){
-    return { duplicate:false, checkAvailable:false };
+  const result =
+    await response.json();
+
+
+  if(!result){
+
+    throw new Error(
+      "查重服務沒有回傳資料"
+    );
+
   }
+
 
   if(result.success === false){
-    const message = String(result.message || "");
-    const unsupportedAction = /action|操作|不支援|unknown/i.test(message);
-    if(unsupportedAction){
-      return { duplicate:false, checkAvailable:false };
-    }
-    throw new Error(message || "無法確認是否已有相同申請");
+
+    throw new Error(
+      result.message ||
+      "無法確認是否已有相同申請"
+    );
+
   }
 
+
   return {
-    duplicate: result.duplicate === true,
-    checkAvailable: true,
-    message: result.message || "",
-    submittedAt: result.submittedAt || result.existingSubmittedAt || "",
-    requestType: result.requestType || (currentType ? typeInfo[currentType][0] : ""),
-    vendorCode: result.vendorCode || val("selectedVendorCode").trim(),
-    vendorName: result.vendorName || val("selectedVendorFullName").trim() || val("brand").trim()
+
+    duplicate:
+      result.duplicate === true,
+
+    checkAvailable:
+      true,
+
+    message:
+      result.message || "",
+
+    submittedAt:
+      result.submittedAt ||
+      result.existingSubmittedAt ||
+      "",
+
+    requestType:
+      result.requestType ||
+      (
+        currentType
+          ? typeInfo[currentType][0]
+          : ""
+      ),
+
+    vendorCode:
+      result.vendorCode ||
+      val("selectedVendorCode").trim(),
+
+    vendorName:
+      result.vendorName ||
+      val("selectedVendorFullName").trim() ||
+      val("brand").trim()
+
   };
+
 }
 
 function showDuplicateRequestModal(result={}){
