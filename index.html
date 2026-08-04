@@ -1111,7 +1111,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div class="btn-row" style="justify-content:flex-end">
       <div class="btn-actions-right">
         <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
-        <button id="nextBasicBtn" class="btn-primary" onclick="go(2)" disabled style="opacity:.45;cursor:not-allowed">下一步 ›</button>
+        <button id="nextBasicBtn" class="btn-primary" onclick="go(2)" disabled>下一步 ›</button>
       </div>
     </div>
   </div>
@@ -1152,7 +1152,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <button class="btn-outline" onclick="go(1)">‹ 上一步</button>
     <div class="btn-actions-right">
       <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
-      <button id="nextWorkstreamBtn" class="btn-primary" onclick="go(3)" disabled style="opacity:.45;cursor:not-allowed">下一步 ›</button>
+      <button id="nextWorkstreamBtn" class="btn-primary" onclick="go(3)" disabled>下一步 ›</button>
     </div>
   </div>
 </section>
@@ -1405,6 +1405,11 @@ let formHasUnsavedChanges = false;
 let formSubmittedSuccessfully = false;
 let pendingLeaveAction = null;
 let allowBrowserLeaveOnce = false;
+let vendorSearchController = null;
+let vendorSelectionRequestId = 0;
+let currentSelectedVendorItem = null;
+let currentSelectedVendorButton = null;
+let currentSubmissionId = "";
 
 
 /* =========================
@@ -1455,7 +1460,7 @@ function updateServiceTimeNotice(){
     17 * 60 + 30;
 
   const isAfterCutoff =
-    currentMinutes > cutoffMinutes;
+    currentMinutes >= cutoffMinutes;
 
   const isAfterHours =
     isWeekend || isAfterCutoff;
@@ -1562,7 +1567,7 @@ function getExpectedProcessInfo(){
     17 * 60 + 30;
 
   const afterCutoff =
-    currentMinutes > cutoffMinutes;
+    currentMinutes >= cutoffMinutes;
 
   if(!isWeekend && !afterCutoff){
     return {
@@ -1844,6 +1849,11 @@ async function searchVendor(){
   }
 
   try{
+    if(vendorSearchController){
+      vendorSearchController.abort();
+    }
+    vendorSearchController = new AbortController();
+
     const url =
       GAS_URL +
       "?action=searchVendor&keyword=" +
@@ -1851,7 +1861,8 @@ async function searchVendor(){
 
     const response=await fetch(url,{
       method:"GET",
-      cache:"no-store"
+      cache:"no-store",
+      signal:vendorSearchController.signal
     });
 
     if(!response.ok){
@@ -1886,8 +1897,9 @@ async function searchVendor(){
       renderVendorResults(false);
     }
   }catch(error){
+    if(error && error.name === "AbortError") return;
     console.error("店家資料查詢失敗：",error);
-    hint.textContent="目前無法查詢店家資料，請稍後再試，或直接填寫需求。";
+    hint.textContent="目前無法查詢店家資料，請稍後重新查詢；如持續發生，請聯繫表單管理人員。";
     hint.style.color="#dc2626";
   }finally{
     if(searchButton){
@@ -1972,11 +1984,13 @@ function resetBrandVerification(){
   const card=document.getElementById("selectedVendorCard");
   const input=document.getElementById("brandVerificationCode");
   const button=document.getElementById("verifyBrandCodeBtn");
+  const retryButton=document.getElementById("retryBrandVerificationBtn");
   const message=document.getElementById("brandVerificationMessage");
 
   if(card) card.classList.remove("is-verified");
   if(input){ input.value=""; input.disabled=false; }
-  if(button){ button.disabled=false; button.textContent="確認驗證"; }
+  if(button){ button.disabled=false; button.textContent="確認驗證"; button.classList.remove("hidden"); }
+  if(retryButton) retryButton.classList.add("hidden");
   if(message){
     message.className="brand-verification-message";
     message.textContent="";
@@ -2134,7 +2148,31 @@ async function verifyBrandCode(){
   }
 }
 
-async function selectVendor(item,button){
+function syncSelectedVendorAM(){
+  const amInput=document.getElementById("am");
+  const selectedVendorAm=val("selectedVendorAm").trim();
+
+  if(!amInput || !selectedVendorAm || !amListLoaded || amInput.value.trim()) return;
+
+  const matched=AM_LIST.find(am =>
+    am.name.toLowerCase() === selectedVendorAm.toLowerCase()
+  );
+
+  if(matched){
+    selectAM(matched.name,matched.email);
+  }
+}
+
+async function retryBrandVerificationRequirement(){
+  if(!currentSelectedVendorItem || brandVerificationChecking) return;
+  await selectVendor(currentSelectedVendorItem,currentSelectedVendorButton,true);
+}
+
+async function selectVendor(item,button,isRetry=false){
+  const requestId=++vendorSelectionRequestId;
+  currentSelectedVendorItem=item;
+  currentSelectedVendorButton=button || currentSelectedVendorButton;
+
   resetBrandVerification();
   document.querySelectorAll(".vendor-result-card").forEach(el=>el.classList.remove("selected"));
   if(button) button.classList.add("selected");
@@ -2160,6 +2198,7 @@ async function selectVendor(item,button){
     brand.dispatchEvent(new Event("input",{bubbles:true}));
   }
 
+  syncSelectedVendorAM();
   validateBasic();
   updateRequestGroupFilter();
 
@@ -2172,6 +2211,8 @@ async function selectVendor(item,button){
 
   try{
     brandVerificationRequired=await getBrandVerificationRequirement(item);
+
+    if(requestId !== vendorSelectionRequestId) return;
 
     if(brandVerificationRequired){
       brandVerificationPassed=false;
@@ -2194,30 +2235,39 @@ async function selectVendor(item,button){
       updateApplicationInfo();
     }
   }catch(error){
+    if(requestId !== vendorSelectionRequestId) return;
     console.error("品牌驗證設定確認失敗：", error);
 
     const checking=document.getElementById("brandVerificationChecking");
+    const inputArea=document.getElementById("brandVerificationInputArea");
     const message=document.getElementById("brandVerificationMessage");
     const backdrop=document.getElementById("brandVerificationBackdrop");
+    const retryButton=document.getElementById("retryBrandVerificationBtn");
+    const verifyButton=document.getElementById("verifyBrandCodeBtn");
 
     if(checking) checking.classList.remove("show");
+    if(inputArea) inputArea.classList.add("hidden");
     if(backdrop) backdrop.classList.remove("is-checking");
+    if(retryButton) retryButton.classList.remove("hidden");
+    if(verifyButton) verifyButton.classList.add("hidden");
     if(message){
       message.className="brand-verification-message error";
-      message.textContent="目前無法確認品牌驗證設定，請稍後再試。";
+      message.textContent="目前無法確認品牌驗證設定。請重新確認，或取消後稍後再試。";
     }
 
-    if(hint) hint.textContent="目前無法確認品牌驗證設定，請稍後再試。";
-
-    setTimeout(()=>{
-      closeBrandVerificationModal(true);
-    },1200);
+    if(hint){
+      hint.textContent="目前無法確認品牌驗證設定，請在視窗中重新確認。";
+      hint.style.color="#dc2626";
+    }
   }finally{
     brandVerificationChecking=false;
   }
 }
 
 function clearSelectedVendor(){
+  vendorSelectionRequestId++;
+  currentSelectedVendorItem=null;
+  currentSelectedVendorButton=null;
   resetBrandVerification();
   ["selectedVendorCode","selectedChainCode","selectedVendorFullName","selectedBrandName","selectedVendorAm","selectedVendorGroup","selectedPreviewMenu"].forEach(id=>{
     const el=document.getElementById(id);
@@ -2253,10 +2303,18 @@ async function loadAMList(){
     });
 
     amListLoaded = true;
+    syncSelectedVendorAM();
     handleAmSelect();
     validateBasic();
   }catch(err){
     console.error("AM_List 載入失敗：", err);
+    amListLoaded = true;
+    const hint=document.getElementById("amEmailHint");
+    if(hint){
+      hint.textContent="目前無法載入負責窗口名單，請重新整理頁面後再試。";
+      hint.style.color="#dc2626";
+    }
+    validateBasic();
   }
 }
 
@@ -2468,8 +2526,6 @@ function validateBasic(){
 
   if(btn){
     btn.disabled = !valid;
-    btn.style.opacity = valid ? "1" : ".45";
-    btn.style.cursor = valid ? "pointer" : "not-allowed";
   }
 
   if(notice){
@@ -4273,6 +4329,22 @@ async function confirmSubmit(){
   // 防止使用者連續點擊造成同一筆需求重複送出。
   if(isSubmitting) return;
 
+  if(!isBasicValid()){
+    go(1);
+    validateBasic();
+    return;
+  }
+
+  if(!currentType || !typeInfo[currentType]){
+    go(3);
+    return;
+  }
+
+  if(!validateRequiredVisible(true)){
+    go(4);
+    return;
+  }
+
   const submitButton = document.getElementById("confirmSubmitBtn");
   const backButton = document.getElementById("backToEditBtn");
   const submitStatusNote = document.getElementById("submitStatusNote");
@@ -4289,7 +4361,15 @@ async function confirmSubmit(){
   if(submitStatusNote) submitStatusNote.classList.add("show");
   if(statusText) statusText.textContent = "送出中";
 
+  if(!currentSubmissionId){
+    currentSubmissionId = (window.crypto && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : `req-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  }
+
   const payload = {
+    submissionId: currentSubmissionId,
+    submittedAt: new Date().toISOString(),
     brand: val("brand"),
     selectedVendorCode: val("selectedVendorCode"),
     selectedChainCode: val("selectedChainCode"),
@@ -4960,6 +5040,7 @@ function renderSummary(){
 }
 function resetPreview(){
   isSubmitting=false;
+  currentSubmissionId="";
 
   const submitButton=document.getElementById("confirmSubmitBtn");
   const backButton=document.getElementById("backToEditBtn");
@@ -5050,6 +5131,7 @@ window.addEventListener("DOMContentLoaded", function(){
     <div id="brandVerificationMessage" class="brand-verification-message"></div>
     <div class="brand-verification-actions">
       <button type="button" class="btn-outline" onclick="closeBrandVerificationModal(true)">取消</button>
+      <button id="retryBrandVerificationBtn" type="button" class="btn-primary hidden" onclick="retryBrandVerificationRequirement()">重新確認</button>
       <button id="verifyBrandCodeBtn" type="button" class="btn-primary" onclick="verifyBrandCode()">確認驗證</button>
     </div>
   </div>
