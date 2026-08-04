@@ -991,6 +991,85 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .brand-verification-actions button{width:100%}
 }
 
+
+/* 重複申請阻擋視窗 */
+.duplicate-request-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:100001;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(15,23,42,.40);
+  backdrop-filter:blur(3px);
+}
+.duplicate-request-backdrop.show{display:flex}
+.duplicate-request-modal{
+  width:min(460px,100%);
+  background:#fff;
+  border:1px solid #fed7aa;
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 24px 60px rgba(15,23,42,.24);
+  animation:duplicate-request-in .16s ease-out;
+}
+@keyframes duplicate-request-in{
+  from{opacity:0;transform:translateY(8px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.duplicate-request-icon{
+  width:46px;
+  height:46px;
+  display:grid;
+  place-items:center;
+  margin-bottom:14px;
+  border-radius:15px;
+  background:#fff7ed;
+  font-size:22px;
+}
+.duplicate-request-title{
+  margin:0 0 8px;
+  color:#9a3412;
+  font-size:18px;
+  font-weight:800;
+}
+.duplicate-request-text{
+  margin:0;
+  color:#64748b;
+  font-size:14px;
+  line-height:1.75;
+}
+.duplicate-request-info{
+  display:grid;
+  gap:8px;
+  margin-top:16px;
+  padding:14px 15px;
+  border:1px solid #ffedd5;
+  border-radius:15px;
+  background:#fffaf5;
+}
+.duplicate-request-info-row{
+  display:grid;
+  grid-template-columns:92px 1fr;
+  gap:10px;
+  font-size:13px;
+  line-height:1.55;
+}
+.duplicate-request-info-row span{color:#94a3b8}
+.duplicate-request-info-row b{color:#334155;word-break:break-word}
+.duplicate-request-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:22px;
+}
+.duplicate-request-actions button{min-width:120px}
+@media(max-width:520px){
+  .duplicate-request-info-row{grid-template-columns:1fr;gap:3px}
+  .duplicate-request-actions button{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -1479,7 +1558,7 @@ status.textContent = "目前為非服務日";
   }
 
   if(isAfterCutoff){
-status.textContent = "已超過今日服務時間";
+status.textContent = "目前已超過今日服務時間";
     text.innerHTML =
       `目前送出的需求，將於下一個工作日安排處理。<br>
        <strong>平日服務截止時間：17:30（台灣時間）</strong>`;
@@ -4325,6 +4404,111 @@ function buildDetailsText(){
   return blocks.join("\n");
 }
 
+
+/* =========================
+   同日重複申請檢查
+========================= */
+
+async function checkDuplicateRequest(){
+  const params = new URLSearchParams({
+    action: "checkDuplicateRequest",
+    vendorCode: val("selectedVendorCode").trim(),
+    requestType: currentType ? typeInfo[currentType][0] : "",
+    requestTypeKey: currentType || "",
+    workstream: currentWorkstream || ""
+  });
+
+  const response = await fetch(`${GAS_URL}?${params.toString()}`);
+  if(!response.ok){
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const result = await response.json();
+
+  // Apps Script 尚未加入查重 action 時，先維持原本送出流程。
+  if(!result || result.unsupported === true){
+    return { duplicate:false, checkAvailable:false };
+  }
+
+  if(result.success === false){
+    const message = String(result.message || "");
+    const unsupportedAction = /action|操作|不支援|unknown/i.test(message);
+    if(unsupportedAction){
+      return { duplicate:false, checkAvailable:false };
+    }
+    throw new Error(message || "無法確認是否已有相同申請");
+  }
+
+  return {
+    duplicate: result.duplicate === true,
+    checkAvailable: true,
+    message: result.message || "",
+    submittedAt: result.submittedAt || result.existingSubmittedAt || "",
+    requestType: result.requestType || (currentType ? typeInfo[currentType][0] : ""),
+    vendorCode: result.vendorCode || val("selectedVendorCode").trim(),
+    vendorName: result.vendorName || val("selectedVendorFullName").trim() || val("brand").trim()
+  };
+}
+
+function showDuplicateRequestModal(result={}){
+  const backdrop = document.getElementById("duplicateRequestBackdrop");
+  const message = document.getElementById("duplicateRequestMessage");
+  const vendor = document.getElementById("duplicateRequestVendor");
+  const type = document.getElementById("duplicateRequestType");
+  const timeWrap = document.getElementById("duplicateRequestTimeWrap");
+  const time = document.getElementById("duplicateRequestTime");
+
+  if(message){
+    message.textContent = result.message ||
+      "今日已送出相同需求。為避免案件重複，目前無法再次送出；如需補充內容，請直接聯繫負責窗口或回覆原申請通知信。";
+  }
+  if(vendor){
+    const vendorName = result.vendorName || val("selectedVendorFullName").trim() || val("brand").trim();
+    const vendorCode = result.vendorCode || val("selectedVendorCode").trim();
+    vendor.textContent = [vendorName, vendorCode ? `（${vendorCode}）` : ""].join("");
+  }
+  if(type){
+    type.textContent = result.requestType || (currentType ? typeInfo[currentType][0] : "—");
+  }
+  if(timeWrap && time){
+    const submittedAt = String(result.submittedAt || "").trim();
+    timeWrap.classList.toggle("hidden", !submittedAt);
+    time.textContent = submittedAt || "—";
+  }
+
+  if(backdrop){
+    backdrop.classList.add("show");
+    backdrop.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+}
+
+function closeDuplicateRequestModal(){
+  const backdrop = document.getElementById("duplicateRequestBackdrop");
+  if(backdrop){
+    backdrop.classList.remove("show");
+    backdrop.setAttribute("aria-hidden", "true");
+  }
+  document.body.style.overflow = "";
+}
+
+function restoreSubmitControls(){
+  const submitButton = document.getElementById("confirmSubmitBtn");
+  const backButton = document.getElementById("backToEditBtn");
+  const submitStatusNote = document.getElementById("submitStatusNote");
+  const statusText = document.getElementById("statusText");
+
+  isSubmitting = false;
+  if(submitButton){
+    submitButton.disabled = false;
+    submitButton.textContent = "確認並送出";
+    submitButton.removeAttribute("aria-busy");
+  }
+  if(backButton) backButton.disabled = false;
+  if(submitStatusNote) submitStatusNote.classList.remove("show");
+  if(statusText) statusText.textContent = "送出前確認";
+}
+
 async function confirmSubmit(){
   // 防止使用者連續點擊造成同一筆需求重複送出。
   if(isSubmitting) return;
@@ -4354,11 +4538,34 @@ async function confirmSubmit(){
 
   if(submitButton){
     submitButton.disabled = true;
-    submitButton.textContent = "送出中…";
+    submitButton.textContent = "確認中…";
     submitButton.setAttribute("aria-busy", "true");
   }
   if(backButton) backButton.disabled = true;
-  if(submitStatusNote) submitStatusNote.classList.add("show");
+  if(submitStatusNote){
+    submitStatusNote.classList.add("show");
+    const noteText = submitStatusNote.querySelector("span:last-child");
+    if(noteText) noteText.textContent = "正在確認今日是否已有相同申請…";
+  }
+  if(statusText) statusText.textContent = "確認中";
+
+  try{
+    const duplicateResult = await checkDuplicateRequest();
+    if(duplicateResult.duplicate){
+      restoreSubmitControls();
+      showDuplicateRequestModal(duplicateResult);
+      return;
+    }
+  }catch(checkError){
+    // 查重服務暫時異常時不讓整份表單故障，正式送出後端仍需再次查重。
+    console.warn("重複申請檢查暫時無法使用：", checkError);
+  }
+
+  if(submitButton) submitButton.textContent = "送出中…";
+  if(submitStatusNote){
+    const noteText = submitStatusNote.querySelector("span:last-child");
+    if(noteText) noteText.textContent = "資料送出中，請勿關閉頁面或重複點擊。";
+  }
   if(statusText) statusText.textContent = "送出中";
 
   if(!currentSubmissionId){
@@ -4407,16 +4614,7 @@ async function confirmSubmit(){
     alert("送出失敗，請稍後再試。");
 
     // 僅在送出失敗時解除鎖定，讓使用者可以再次嘗試。
-    isSubmitting = false;
-
-    if(submitButton){
-      submitButton.disabled = false;
-      submitButton.textContent = "確認並送出";
-      submitButton.removeAttribute("aria-busy");
-    }
-    if(backButton) backButton.disabled = false;
-    if(submitStatusNote) submitStatusNote.classList.remove("show");
-    if(statusText) statusText.textContent = "送出前確認";
+    restoreSubmitControls();
   }
 }
 
@@ -5147,6 +5345,36 @@ window.addEventListener("DOMContentLoaded", function(){
     <div class="unsaved-modal-actions">
       <button type="button" class="btn-outline" onclick="closeUnsavedModal()">繼續填寫</button>
       <button type="button" class="unsaved-leave-btn" onclick="confirmUnsavedLeave()">確定離開</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="duplicateRequestBackdrop" class="duplicate-request-backdrop" aria-hidden="true">
+  <div class="duplicate-request-modal" role="dialog" aria-modal="true" aria-labelledby="duplicateRequestTitle">
+    <div class="duplicate-request-icon">⚠️</div>
+    <h3 id="duplicateRequestTitle" class="duplicate-request-title">今日已有相同申請</h3>
+    <p id="duplicateRequestMessage" class="duplicate-request-text">
+      今日已送出相同需求，為避免案件重複，目前無法再次送出。
+    </p>
+
+    <div class="duplicate-request-info">
+      <div class="duplicate-request-info-row">
+        <span>申請店家</span>
+        <b id="duplicateRequestVendor">—</b>
+      </div>
+      <div class="duplicate-request-info-row">
+        <span>需求項目</span>
+        <b id="duplicateRequestType">—</b>
+      </div>
+      <div id="duplicateRequestTimeWrap" class="duplicate-request-info-row hidden">
+        <span>原送出時間</span>
+        <b id="duplicateRequestTime">—</b>
+      </div>
+    </div>
+
+    <div class="duplicate-request-actions">
+      <button type="button" class="btn-primary" onclick="closeDuplicateRequestModal()">返回確認</button>
     </div>
   </div>
 </div>
