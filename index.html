@@ -4514,7 +4514,12 @@ async function checkDuplicateRequest(){
     vendorName:
       result.vendorName ||
       val("selectedVendorFullName").trim() ||
-      val("brand").trim()
+      val("brand").trim(),
+
+    emailSubject:
+      result.emailSubject ||
+      result.subject ||
+      ""
 
   };
 
@@ -4525,6 +4530,8 @@ function showDuplicateRequestModal(result={}){
   const message = document.getElementById("duplicateRequestMessage");
   const vendor = document.getElementById("duplicateRequestVendor");
   const type = document.getElementById("duplicateRequestType");
+  const subjectWrap = document.getElementById("duplicateRequestSubjectWrap");
+  const subject = document.getElementById("duplicateRequestSubject");
   const timeWrap = document.getElementById("duplicateRequestTimeWrap");
   const time = document.getElementById("duplicateRequestTime");
 
@@ -4539,6 +4546,11 @@ function showDuplicateRequestModal(result={}){
   }
   if(type){
     type.textContent = result.requestType || (currentType ? typeInfo[currentType][0] : "—");
+  }
+  if(subjectWrap && subject){
+    const emailSubject = String(result.emailSubject || "").trim();
+    subjectWrap.classList.toggle("hidden", !emailSubject);
+    subject.textContent = emailSubject || "—";
   }
   if(timeWrap && time){
     const submittedAt = String(result.submittedAt || "").trim();
@@ -4659,6 +4671,7 @@ async function confirmSubmit(){
     ccEmail: getCcEmails().join(", "),
     workstream: currentWorkstream === "menu" ? "🍽️ 菜單" : "⚙️ 活動 / 營運",
     requestType: currentType ? typeInfo[currentType][0] : "",
+    requestTypeKey: currentType || "",
     caseSubject: computeSubject() || "",
     details: buildDetailsText()
   };
@@ -5436,6 +5449,10 @@ window.addEventListener("DOMContentLoaded", function(){
       <div class="duplicate-request-info-row">
         <span>需求項目</span>
         <b id="duplicateRequestType">—</b>
+      </div>
+      <div id="duplicateRequestSubjectWrap" class="duplicate-request-info-row hidden">
+        <span>信件主旨</span>
+        <b id="duplicateRequestSubject">—</b>
       </div>
       <div id="duplicateRequestTimeWrap" class="duplicate-request-info-row hidden">
         <span>原送出時間</span>
