@@ -4519,6 +4519,10 @@ async function checkDuplicateRequest(){
     emailSubject:
       result.emailSubject ||
       result.subject ||
+      "",
+
+    currentStatus:
+      result.currentStatus ||
       ""
 
   };
@@ -4532,12 +4536,14 @@ function showDuplicateRequestModal(result={}){
   const type = document.getElementById("duplicateRequestType");
   const subjectWrap = document.getElementById("duplicateRequestSubjectWrap");
   const subject = document.getElementById("duplicateRequestSubject");
+  const statusWrap = document.getElementById("duplicateRequestStatusWrap");
+  const status = document.getElementById("duplicateRequestStatus");
   const timeWrap = document.getElementById("duplicateRequestTimeWrap");
   const time = document.getElementById("duplicateRequestTime");
 
   if(message){
     message.textContent = result.message ||
-      "今日已送出相同需求。為避免案件重複，目前無法再次送出；如需補充內容，請直接聯繫負責窗口或回覆原申請通知信。";
+      "已有相同需求尚未完成。為避免案件重複，目前無法再次送出；如需補充內容，請直接回覆原申請通知信或聯繫負責窗口。";
   }
   if(vendor){
     const vendorName = result.vendorName || val("selectedVendorFullName").trim() || val("brand").trim();
@@ -4551,6 +4557,11 @@ function showDuplicateRequestModal(result={}){
     const emailSubject = String(result.emailSubject || "").trim();
     subjectWrap.classList.toggle("hidden", !emailSubject);
     subject.textContent = emailSubject || "—";
+  }
+  if(statusWrap && status){
+    const currentStatus = String(result.currentStatus || "").trim();
+    statusWrap.classList.toggle("hidden", !currentStatus);
+    status.textContent = currentStatus || "—";
   }
   if(timeWrap && time){
     const submittedAt = String(result.submittedAt || "").trim();
@@ -4627,7 +4638,7 @@ async function confirmSubmit(){
   if(submitStatusNote){
     submitStatusNote.classList.add("show");
     const noteText = submitStatusNote.querySelector("span:last-child");
-    if(noteText) noteText.textContent = "正在確認今日是否已有相同申請…";
+    if(noteText) noteText.textContent = "正在確認是否已有尚未完成的相同申請…";
   }
   if(statusText) statusText.textContent = "確認中";
 
@@ -5436,9 +5447,9 @@ window.addEventListener("DOMContentLoaded", function(){
 <div id="duplicateRequestBackdrop" class="duplicate-request-backdrop" aria-hidden="true">
   <div class="duplicate-request-modal" role="dialog" aria-modal="true" aria-labelledby="duplicateRequestTitle">
     <div class="duplicate-request-icon">⚠️</div>
-    <h3 id="duplicateRequestTitle" class="duplicate-request-title">今日已有相同申請</h3>
+    <h3 id="duplicateRequestTitle" class="duplicate-request-title">已有相同需求尚未完成</h3>
     <p id="duplicateRequestMessage" class="duplicate-request-text">
-      今日已送出相同需求，為避免案件重複，目前無法再次送出。
+      已有相同需求尚未完成，為避免案件重複，目前無法再次送出。
     </p>
 
     <div class="duplicate-request-info">
@@ -5453,6 +5464,10 @@ window.addEventListener("DOMContentLoaded", function(){
       <div id="duplicateRequestSubjectWrap" class="duplicate-request-info-row hidden">
         <span>信件主旨</span>
         <b id="duplicateRequestSubject">—</b>
+      </div>
+      <div id="duplicateRequestStatusWrap" class="duplicate-request-info-row hidden">
+        <span>目前狀態</span>
+        <b id="duplicateRequestStatus">—</b>
       </div>
       <div id="duplicateRequestTimeWrap" class="duplicate-request-info-row hidden">
         <span>原送出時間</span>
