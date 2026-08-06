@@ -2491,9 +2491,19 @@ async function selectVendor(item,button,isRetry=false){
   if(codeLabel) codeLabel.textContent=selectedTargetType === "preview" ? "校稿用代碼" : "店家代碼";
   if(nameLabel) nameLabel.textContent=selectedTargetType === "preview" ? "校稿用完整名稱" : "完整名稱";
 
+  /*
+    單店門市：基本資訊帶入完整門市名稱。
+    校稿用平台：基本資訊優先帶入純品牌名稱；
+    若純品牌名稱為空，才以完整名稱作為備援。
+  */
+  const basicBrandName=
+    selectedTargetType === "preview"
+      ? (item.brandName || item.fullName || "")
+      : (item.fullName || "");
+
   const brand=document.getElementById("brand");
-  if(brand && item.fullName){
-    brand.value=item.fullName;
+  if(brand){
+    brand.value=basicBrandName;
     brand.dispatchEvent(new Event("input",{bubbles:true}));
   }
 
