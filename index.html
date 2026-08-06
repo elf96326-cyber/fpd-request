@@ -411,6 +411,100 @@ button:disabled{opacity:.45;cursor:not-allowed}
   }
 }
 
+/* 案件建立位置選擇 */
+.request-target-selector{
+  margin-bottom:18px;
+  padding:16px;
+  border:1px solid #fbcfe8;
+  border-radius:18px;
+  background:#fff;
+}
+.request-target-label{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+  color:#334155;
+  font-size:14px;
+  font-weight:800;
+}
+.request-target-options{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.request-target-option{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  padding:15px 16px;
+  text-align:left;
+  background:#fff;
+  color:#334155;
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+  transition:.15s;
+}
+.request-target-option:hover{
+  border-color:#f9a8d4;
+  background:#fff7fa;
+  transform:translateY(-1px);
+}
+.request-target-option.selected{
+  border:2px solid var(--pink);
+  background:#fff0f6;
+  color:#be185d;
+  box-shadow:0 8px 20px rgba(255,43,133,.10);
+}
+.request-target-icon{
+  display:grid;
+  place-items:center;
+  width:40px;
+  height:40px;
+  flex:0 0 auto;
+  border-radius:13px;
+  background:#f8fafc;
+  font-size:20px;
+}
+.request-target-option.selected .request-target-icon{
+  background:#fce7f3;
+}
+.request-target-copy{
+  min-width:0;
+}
+.request-target-copy b{
+  display:block;
+  margin-bottom:3px;
+  font-size:14px;
+}
+.request-target-copy small{
+  display:block;
+  color:#94a3b8;
+  font-size:12px;
+  font-weight:500;
+  line-height:1.5;
+}
+.request-target-option.selected .request-target-copy small{
+  color:#be185d;
+}
+.vendor-result-source{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  margin-bottom:7px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#f1f5f9;
+  color:#64748b;
+  font-size:11px;
+  font-weight:800;
+}
+@media(max-width:760px){
+  .request-target-options{grid-template-columns:1fr}
+}
+
 /* 店家資料查詢 */
 .vendor-lookup{
   border:1px solid #fbcfe8;
@@ -1111,32 +1205,55 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 <main class="card">
 <section class="page active" id="page1">
-  <div class="title-row"><div><h2>第一頁｜基本資料</h2><div class="sub">請先查詢並選擇店家資料，以確認本次申請資訊。</div></div></div>
+  <div class="title-row"><div><h2>第一頁｜基本資料</h2><div class="sub">請先選擇案件建立位置，並查詢選擇正確資料，以確認本次申請資訊。</div></div></div>
 
   <div class="vendor-lookup">
     <div class="vendor-lookup-head">
       <div>
-        <div class="vendor-lookup-title">🔎 品牌商家資料查詢</div>
-        <div class="sub">請輸入<strong>店家代碼</strong>、<strong>品牌代碼</strong> 或<strong>品牌門市關鍵字</strong>查詢，並從結果中選擇正確店家；系統將自動帶入組別與相關資訊。</div>
+        <div class="vendor-lookup-title">🔎 案件建立資料查詢</div>
+        <div class="sub">請先選擇本次案件要建立於<strong>單店</strong>或<strong>校稿用</strong>，系統將依選擇搜尋對應資料清單。</div>
       </div>
       <span class="pill">必填</span>
     </div>
 
-    <div class="vendor-search-row">
-      <input id="vendorSearchKeyword" placeholder="例如：cf4ah、mcos、星巴克" onkeydown="if(event.key==='Enter'){event.preventDefault();searchVendor();}">
-      <button type="button" class="btn-primary" onclick="searchVendor()">查詢</button>
+    <div class="request-target-selector">
+      <div class="request-target-label">
+        <span>本次案件建立位置</span>
+        <span class="pill">請先選擇</span>
+      </div>
+      <div class="request-target-options">
+        <button type="button" class="request-target-option" data-search-target="vendor" onclick="selectSearchTarget('vendor')">
+          <span class="request-target-icon">🏪</span>
+          <span class="request-target-copy">
+            <b>建立於單店</b>
+            <small>搜尋 Vendor_List 中的正式門市資料</small>
+          </span>
+        </button>
+        <button type="button" class="request-target-option" data-search-target="preview" onclick="selectSearchTarget('preview')">
+          <span class="request-target-icon">📋</span>
+          <span class="request-target-copy">
+            <b>建立於校稿用</b>
+            <small>搜尋 Preview_Menu_List 中的校稿用資料</small>
+          </span>
+        </button>
+      </div>
     </div>
 
-    <div id="vendorSearchHint" class="sub" style="margin-top:10px">請輸入至少 2 個字元進行查詢。</div>
+    <div class="vendor-search-row">
+      <input id="vendorSearchKeyword" placeholder="請先選擇案件建立位置" disabled onkeydown="if(event.key==='Enter'){event.preventDefault();searchVendor();}">
+      <button id="vendorSearchButton" type="button" class="btn-primary" onclick="searchVendor()" disabled>查詢</button>
+    </div>
+
+    <div id="vendorSearchHint" class="sub" style="margin-top:10px">請先選擇要建立於單店或校稿用。</div>
     <div id="vendorSearchResults" class="vendor-results"></div>
 
     <div id="selectedVendorCard" class="vendor-selected hidden">
-      <div class="vendor-selected-title">✅ 選擇資訊已帶入</div>
+      <div id="selectedVendorCardTitle" class="vendor-selected-title">✅ 選擇資訊已帶入</div>
 
       <div id="vendorDetailsLocked" class="vendor-selected-grid vendor-details-locked">
-        <div class="vendor-selected-item"><small>店家代碼</small><b id="selectedVendorCodeText">—</b></div>
+        <div class="vendor-selected-item"><small id="selectedVendorCodeLabel">店家代碼</small><b id="selectedVendorCodeText">—</b></div>
         <div class="vendor-selected-item"><small>品牌代碼</small><b id="selectedChainCodeText">—</b></div>
-        <div class="vendor-selected-item vendor-name-item"><small>完整名稱</small><b id="selectedVendorNameText">—</b></div>
+        <div class="vendor-selected-item vendor-name-item"><small id="selectedVendorNameLabel">完整名稱</small><b id="selectedVendorNameText">—</b></div>
         <div class="vendor-selected-item"><small>負責窗口</small><b id="selectedVendorAmText">—</b></div>
         <div class="vendor-selected-item"><small>組別</small><b id="selectedVendorGroupText">—</b></div>
         <div class="vendor-selected-item preview-menu-item"><small>校稿用菜單</small><b id="selectedPreviewMenuText">—</b></div>
@@ -1146,6 +1263,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       </div>
     </div>
 
+    <input type="hidden" id="selectedTargetType">
     <input type="hidden" id="selectedVendorCode">
     <input type="hidden" id="selectedChainCode">
     <input type="hidden" id="selectedVendorFullName">
@@ -1153,7 +1271,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <input type="hidden" id="selectedVendorAm">
     <input type="hidden" id="selectedVendorGroup">
     <input type="hidden" id="selectedPreviewMenu">
-    <div class="vendor-system-note">資料來源：foodpanda 內部資料庫。請先查詢並選擇正確店家後再繼續填寫。</div>
+    <div class="vendor-system-note">資料來源：foodpanda 內部資料庫。請先選擇建立位置，再查詢並選擇正確資料後繼續填寫。</div>
   </div>
 
   <div class="basic-info-box">
@@ -1185,7 +1303,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       </div>
     </div>
 
-    <div id="basicNotice" class="notice">⚠️ 請先查詢並選擇店家資料，以確認本次申請資訊。</div>
+    <div id="basicNotice" class="notice">⚠️ 請先選擇案件建立位置，並查詢選擇正確資料，以確認本次申請資訊。</div>
 
     <div class="btn-row" style="justify-content:flex-end">
       <div class="btn-actions-right">
@@ -1209,6 +1327,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="application-info-title">目前申請資訊</div>
       <div class="application-info-items">
         <span class="application-info-item">🏷️ 完整名稱： <b data-info-brand>未填寫</b></span>
+        <span class="application-info-item hidden" data-info-target-type-wrap>📌 建立位置：<b data-info-target-type></b></span>
         <span class="application-info-item hidden" data-info-vendor-code-wrap>🔢 店家代碼：<b data-info-vendor-code></b></span>
         <span class="application-info-item hidden" data-info-chain-code-wrap>🔗 品牌代碼：<b data-info-chain-code></b></span>
         <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
@@ -1244,6 +1363,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="application-info-title">目前申請資訊</div>
       <div class="application-info-items">
         <span class="application-info-item">🏷️ 完整名稱： <b data-info-brand>未填寫</b></span>
+        <span class="application-info-item hidden" data-info-target-type-wrap>📌 建立位置：<b data-info-target-type></b></span>
         <span class="application-info-item hidden" data-info-vendor-code-wrap>🔢 店家代碼：<b data-info-vendor-code></b></span>
         <span class="application-info-item hidden" data-info-chain-code-wrap>🔗 品牌代碼：<b data-info-chain-code></b></span>
         <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
@@ -1397,6 +1517,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="application-info-title">目前申請資訊</div>
       <div class="application-info-items">
         <span class="application-info-item">🏷️ 完整名稱： <b data-info-brand>未填寫</b></span>
+        <span class="application-info-item hidden" data-info-target-type-wrap>📌 建立位置：<b data-info-target-type></b></span>
         <span class="application-info-item hidden" data-info-vendor-code-wrap>🔢 店家代碼：<b data-info-vendor-code></b></span>
         <span class="application-info-item hidden" data-info-chain-code-wrap>🔗 品牌代碼：<b data-info-chain-code></b></span>
         <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
@@ -1424,6 +1545,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="application-info-title">目前申請資訊</div>
       <div class="application-info-items">
         <span class="application-info-item">🏷️ 完整名稱： <b data-info-brand>未填寫</b></span>
+        <span class="application-info-item hidden" data-info-target-type-wrap>📌 建立位置：<b data-info-target-type></b></span>
         <span class="application-info-item hidden" data-info-vendor-code-wrap>🔢 店家代碼：<b data-info-vendor-code></b></span>
         <span class="application-info-item hidden" data-info-chain-code-wrap>🔗 品牌代碼：<b data-info-chain-code></b></span>
         <span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span>
@@ -1477,6 +1599,7 @@ let amListLoaded = false;
 
 let isSubmitting = false;
 let currentVendorResults = [];
+let currentSearchTarget = "";
 let brandVerificationPassed = false;
 let brandVerificationRequired = false;
 let brandVerificationChecking = false;
@@ -1897,20 +2020,99 @@ function normalizeVendorItem(item){
       item.brand_name ??
       item["品牌名稱"] ??
       ""
+    ).trim(),
+    sourceType: String(
+      item.sourceType ??
+      item.source_type ??
+      ""
     ).trim()
   };
+}
+
+function getSearchTargetConfig(targetType=currentSearchTarget){
+  if(targetType === "preview"){
+    return {
+      action: "searchPreviewMenu",
+      label: "校稿用",
+      icon: "📋",
+      placeholder: "例如：校稿用代碼、品牌代碼、星巴克",
+      emptyMessage: "找不到符合的校稿用資料，請確認代碼、品牌代碼或完整名稱。"
+    };
+  }
+
+  return {
+    action: "searchVendor",
+    label: "單店",
+    icon: "🏪",
+    placeholder: "例如：cf4ah、mcos、星巴克",
+    emptyMessage: "找不到符合的單店資料，請確認店家代碼、品牌代碼或完整名稱。"
+  };
+}
+
+function selectSearchTarget(targetType){
+  if(!["vendor","preview"].includes(targetType)) return;
+
+  const changed = currentSearchTarget !== targetType;
+  currentSearchTarget = targetType;
+
+  const hidden=document.getElementById("selectedTargetType");
+  const input=document.getElementById("vendorSearchKeyword");
+  const button=document.getElementById("vendorSearchButton");
+  const hint=document.getElementById("vendorSearchHint");
+  const results=document.getElementById("vendorSearchResults");
+  const config=getSearchTargetConfig(targetType);
+
+  if(hidden) hidden.value=targetType;
+
+  document.querySelectorAll("[data-search-target]").forEach(el=>{
+    el.classList.toggle("selected",el.dataset.searchTarget === targetType);
+  });
+
+  if(changed){
+    if(vendorSearchController){
+      vendorSearchController.abort();
+      vendorSearchController=null;
+    }
+    currentVendorResults=[];
+    if(results) results.innerHTML="";
+    if(input) input.value="";
+    clearSelectedVendor(false);
+  }
+
+  if(input){
+    input.disabled=false;
+    input.placeholder=config.placeholder;
+    input.focus();
+  }
+
+  if(button) button.disabled=false;
+
+  if(hint){
+    hint.style.color="#64748b";
+    hint.textContent=`已選擇${config.icon} ${config.label}，請輸入至少 2 個字元進行查詢。`;
+  }
+
+  validateBasic();
 }
 
 async function searchVendor(){
   const input=document.getElementById("vendorSearchKeyword");
   const results=document.getElementById("vendorSearchResults");
   const hint=document.getElementById("vendorSearchHint");
-  const searchButton=document.querySelector(".vendor-search-row .btn-primary");
+  const searchButton=document.getElementById("vendorSearchButton");
   if(!input || !results || !hint) return;
 
   const keyword=input.value.trim();
   results.innerHTML="";
   currentVendorResults=[];
+
+  if(!currentSearchTarget){
+    hint.textContent="請先選擇要建立於單店或校稿用。";
+    hint.style.color="#dc2626";
+    return;
+  }
+
+  const searchConfig=getSearchTargetConfig();
 
   if(keyword.length < 2){
     hint.textContent="請至少輸入 2 個字元再查詢。";
@@ -1935,7 +2137,9 @@ async function searchVendor(){
 
     const url =
       GAS_URL +
-      "?action=searchVendor&keyword=" +
+      "?action=" +
+      encodeURIComponent(searchConfig.action) +
+      "&keyword=" +
       encodeURIComponent(keyword);
 
     const response=await fetch(url,{
@@ -1970,15 +2174,15 @@ async function searchVendor(){
     hint.style.color="#64748b";
 
     if(!matched.length){
-      hint.textContent="找不到符合資料，請確認店家代碼、品牌代碼 或完整名稱。";
+      hint.textContent=searchConfig.emptyMessage;
       results.innerHTML="";
     }else{
       renderVendorResults(false);
     }
   }catch(error){
     if(error && error.name === "AbortError") return;
-    console.error("店家資料查詢失敗：",error);
-    hint.textContent="目前無法查詢店家資料，請稍後重新查詢；如持續發生，請聯繫表單管理人員。";
+    console.error("資料查詢失敗：",error);
+    hint.textContent=`目前無法查詢${searchConfig.label}資料，請稍後重新查詢；如持續發生，請聯繫表單管理人員。`;
     hint.style.color="#dc2626";
   }finally{
     if(searchButton){
@@ -2012,7 +2216,11 @@ function renderVendorResults(showAll=false){
     button.type="button";
     button.className="vendor-result-card";
 
+    const sourceType=item.sourceType || currentSearchTarget;
+    const sourceConfig=getSearchTargetConfig(sourceType);
+
     button.innerHTML=`
+      <div class="vendor-result-source">${sourceConfig.icon} ${escapeVendorHtml(sourceConfig.label)}</div>
       <div class="vendor-result-name">${escapeVendorHtml(item.fullName || "未提供完整名稱")}</div>`;
 
     button.addEventListener(
@@ -2256,6 +2464,13 @@ async function selectVendor(item,button,isRetry=false){
   document.querySelectorAll(".vendor-result-card").forEach(el=>el.classList.remove("selected"));
   if(button) button.classList.add("selected");
 
+  const selectedTargetType=item.sourceType || currentSearchTarget || "vendor";
+  const selectedTargetConfig=getSearchTargetConfig(selectedTargetType);
+  currentSearchTarget=selectedTargetType;
+
+  const targetHidden=document.getElementById("selectedTargetType");
+  if(targetHidden) targetHidden.value=selectedTargetType;
+
   document.getElementById("selectedVendorCode").value=item.vendorCode || "";
   document.getElementById("selectedChainCode").value=item.chainCode || "";
   document.getElementById("selectedVendorFullName").value=item.fullName || "";
@@ -2270,6 +2485,13 @@ async function selectVendor(item,button,isRetry=false){
   document.getElementById("selectedVendorGroupText").textContent=getGroupDisplayName(item.group, "—");
   document.getElementById("selectedPreviewMenu").value=item.previewMenu || "";
   document.getElementById("selectedPreviewMenuText").textContent=item.previewMenu || "—";
+
+  const cardTitle=document.getElementById("selectedVendorCardTitle");
+  const codeLabel=document.getElementById("selectedVendorCodeLabel");
+  const nameLabel=document.getElementById("selectedVendorNameLabel");
+  if(cardTitle) cardTitle.textContent=`✅ 已選擇${selectedTargetConfig.icon} ${selectedTargetConfig.label}資料`;
+  if(codeLabel) codeLabel.textContent=selectedTargetType === "preview" ? "校稿用代碼" : "店家代碼";
+  if(nameLabel) nameLabel.textContent=selectedTargetType === "preview" ? "校稿用完整名稱" : "完整名稱";
 
   const brand=document.getElementById("brand");
   if(brand && item.fullName){
@@ -2286,7 +2508,7 @@ async function selectVendor(item,button,isRetry=false){
 
   // 先以同一個彈窗顯示確認中的狀態。
   openBrandVerificationModal("checking");
-  if(hint) hint.textContent="正在確認店家資料…";
+  if(hint) hint.textContent=`正在確認${selectedTargetConfig.label}資料…`;
 
   try{
     brandVerificationRequired=await getBrandVerificationRequirement(item);
@@ -2296,7 +2518,7 @@ async function selectVendor(item,button,isRetry=false){
     if(brandVerificationRequired){
       brandVerificationPassed=false;
       switchBrandVerificationModalToInput();
-      if(hint) hint.textContent="已選擇店家，請完成品牌驗證。";
+      if(hint) hint.textContent=`已選擇${selectedTargetConfig.label}資料，請完成品牌驗證。`;
     }else{
       brandVerificationPassed=true;
 
@@ -2309,7 +2531,7 @@ async function selectVendor(item,button,isRetry=false){
         card.classList.remove("hidden");
       }
 
-      if(hint) hint.textContent="店家資料已選擇。";
+      if(hint) hint.textContent=`${selectedTargetConfig.label}資料已選擇。`;
       validateBasic();
       updateApplicationInfo();
     }
@@ -2343,7 +2565,7 @@ async function selectVendor(item,button,isRetry=false){
   }
 }
 
-function clearSelectedVendor(){
+function clearSelectedVendor(clearTarget=false){
   vendorSelectionRequestId++;
   currentSelectedVendorItem=null;
   currentSelectedVendorButton=null;
@@ -2355,6 +2577,26 @@ function clearSelectedVendor(){
 
   const card=document.getElementById("selectedVendorCard");
   if(card) card.classList.add("hidden");
+
+  if(clearTarget){
+    currentSearchTarget="";
+    const targetHidden=document.getElementById("selectedTargetType");
+    const input=document.getElementById("vendorSearchKeyword");
+    const button=document.getElementById("vendorSearchButton");
+    const hint=document.getElementById("vendorSearchHint");
+    if(targetHidden) targetHidden.value="";
+    if(input){
+      input.value="";
+      input.disabled=true;
+      input.placeholder="請先選擇案件建立位置";
+    }
+    if(button) button.disabled=true;
+    if(hint){
+      hint.textContent="請先選擇要建立於單店或校稿用。";
+      hint.style.color="#64748b";
+    }
+    document.querySelectorAll("[data-search-target]").forEach(el=>el.classList.remove("selected"));
+  }
 
   document.querySelectorAll(".vendor-result-card").forEach(el=>el.classList.remove("selected"));
   updateApplicationInfo();
@@ -2574,15 +2816,16 @@ function isBasicValid(){
     ? document.getElementById("amEmail").value.trim()
     : "";
 
+  const targetType = val("selectedTargetType").trim();
   const vendorCode = val("selectedVendorCode").trim();
   const vendorGroup = val("selectedVendorGroup").trim();
 
   /*
-    店家查詢改為必填：
+    資料查詢改為必填：
     必須真的從查詢結果選擇店家，
     並成功取得店家代碼與組別，才能往下一步。
   */
-  if(!vendorCode || !vendorGroup) return false;
+  if(!targetType || !vendorCode || !vendorGroup) return false;
 
   if(!brandVerificationPassed) return false;
 
@@ -2597,6 +2840,7 @@ function validateBasic(){
   const btn = document.getElementById("nextBasicBtn");
   const notice = document.getElementById("basicNotice");
 
+  const targetType = val("selectedTargetType").trim();
   const vendorCode = val("selectedVendorCode").trim();
   const vendorGroup = val("selectedVendorGroup").trim();
   const brand = val("brand").trim();
@@ -2613,8 +2857,11 @@ function validateBasic(){
     }else{
       notice.classList.remove("hidden");
 
-      if(!vendorCode || !vendorGroup){
-        notice.textContent = "⚠️ 請先查詢並選擇店家資料，以確認本次申請資訊。";
+      if(!targetType){
+        notice.textContent = "⚠️ 請先選擇案件要建立於單店或校稿用。";
+      }else if(!vendorCode || !vendorGroup){
+        const targetLabel = targetType === "preview" ? "校稿用" : "單店";
+        notice.textContent = `⚠️ 請查詢並選擇正確的${targetLabel}資料，以確認本次申請資訊。`;
       }else if(!brandVerificationPassed){
         notice.textContent = "⚠️ 請先輸入品牌驗證碼並完成驗證。";
       }else if(!brand){
@@ -2715,6 +2962,8 @@ function getGroupDisplayName(group, emptyText="尚未查詢"){
 function updateApplicationInfo(){
   const brand = val("brand") || "未填寫";
   const am = val("am") || "未填寫";
+  const targetType = val("selectedTargetType").trim();
+  const targetConfig = targetType ? getSearchTargetConfig(targetType) : null;
   const rawGroup = val("selectedVendorGroup");
   const group = getGroupDisplayName(rawGroup, "尚未查詢");
   const vendorCode = val("selectedVendorCode").trim();
@@ -2723,6 +2972,8 @@ function updateApplicationInfo(){
 
   document.querySelectorAll("[data-application-info]").forEach(card=>{
     const brandEl = card.querySelector("[data-info-brand]");
+    const targetTypeEl = card.querySelector("[data-info-target-type]");
+    const targetTypeWrap = card.querySelector("[data-info-target-type-wrap]");
     const amEl = card.querySelector("[data-info-am]");
     const groupEl = card.querySelector("[data-info-group]");
     const groupWrap = card.querySelector("[data-info-group-wrap]");
@@ -2734,6 +2985,8 @@ function updateApplicationInfo(){
     const previewMenuWrap = card.querySelector("[data-info-preview-menu-wrap]");
 
     if(brandEl) brandEl.textContent = brand;
+    if(targetTypeEl) targetTypeEl.textContent = targetConfig ? `${targetConfig.icon} ${targetConfig.label}` : "";
+    if(targetTypeWrap) targetTypeWrap.classList.toggle("hidden", !targetConfig);
     if(amEl) amEl.textContent = am;
     if(groupEl) groupEl.textContent = group;
 
@@ -4671,6 +4924,7 @@ async function confirmSubmit(){
     submissionId: currentSubmissionId,
     submittedAt: new Date().toISOString(),
     brand: val("brand"),
+    selectedTargetType: val("selectedTargetType"),
     selectedVendorCode: val("selectedVendorCode"),
     selectedChainCode: val("selectedChainCode"),
     selectedVendorFullName: val("selectedVendorFullName"),
@@ -4714,10 +4968,16 @@ async function confirmSubmit(){
 
 function row(label,value){ return `<div class="summary-row"><b>${label}</b><span>${value || "未填寫"}</span></div>`; }
 function renderSummary(){
+  const selectedTargetType = val("selectedTargetType").trim();
+  const selectedTargetConfig = selectedTargetType
+    ? getSearchTargetConfig(selectedTargetType)
+    : null;
+
   const selectedVendorRows = val("selectedVendorFullName") ? [
-    row("查詢到的店家代碼",showVal("selectedVendorCode")),
-    row("查詢到的品牌代碼",showVal("selectedChainCode")),
-    row("查詢到的完整名稱",showVal("selectedVendorFullName"))
+    row("案件建立位置",selectedTargetConfig ? `${selectedTargetConfig.icon} ${selectedTargetConfig.label}` : "未填寫"),
+    row(selectedTargetType === "preview" ? "校稿用代碼" : "店家代碼",showVal("selectedVendorCode")),
+    row("品牌代碼",showVal("selectedChainCode")),
+    row(selectedTargetType === "preview" ? "校稿用完整名稱" : "完整名稱",showVal("selectedVendorFullName"))
   ] : [];
 
   document.getElementById("summaryBasic").innerHTML = [
@@ -5359,7 +5619,8 @@ function resetPreview(){
   if(vendorResults) vendorResults.innerHTML="";
   if(vendorKeyword) vendorKeyword.value="";
   if(vendorHint){ vendorHint.textContent="輸入至少 2 個字元後查詢。"; vendorHint.style.color="#64748b"; }
-  clearSelectedVendor();
+  clearSelectedVendor(true);
+  currentVendorResults=[];
   updateWorkstreamUI();
   document.getElementById("statusText").textContent="填寫中";
   go(1);
@@ -5371,6 +5632,7 @@ function resetPreview(){
 validateBasic();
 updateWorkstreamUI();
 window.addEventListener("DOMContentLoaded", function(){
+  clearSelectedVendor(true);
   validateBasic();
   loadAMList();
 
