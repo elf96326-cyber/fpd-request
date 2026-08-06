@@ -1225,15 +1225,13 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <button type="button" class="request-target-option" data-search-target="vendor" onclick="selectSearchTarget('vendor')">
           <span class="request-target-icon">🏪</span>
           <span class="request-target-copy">
-            <b>建立於單店</b>
-            <small>搜尋 Vendor_List 中的正式門市資料</small>
+            <b>單店門市</b>
           </span>
         </button>
         <button type="button" class="request-target-option" data-search-target="preview" onclick="selectSearchTarget('preview')">
           <span class="request-target-icon">📋</span>
           <span class="request-target-copy">
-            <b>建立於校稿用</b>
-            <small>搜尋 Preview_Menu_List 中的校稿用資料</small>
+            <b>校稿用平台</b>
           </span>
         </button>
       </div>
@@ -2035,7 +2033,7 @@ function getSearchTargetConfig(targetType=currentSearchTarget){
       action: "searchPreviewMenu",
       label: "校稿用",
       icon: "📋",
-      placeholder: "例如：校稿用代碼、品牌代碼、星巴克",
+      placeholder: "例如：cf4ah、mcos、星巴克",
       emptyMessage: "找不到符合的校稿用資料，請確認代碼、品牌代碼或完整名稱。"
     };
   }
