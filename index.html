@@ -6821,7 +6821,7 @@ function createTrackingTimeline(item, statusInfo, createdAt, sentAt, emailStatus
   return `
     <div class="tracking-timeline-panel">
       <div class="tracking-panel-title">
-        <span class="tracking-panel-title-icon">◷</span>
+        <span class="tracking-panel-title-icon">🕐</span>
         <span>案件流程</span>
       </div>
       <div class="tracking-timeline">
@@ -6955,7 +6955,7 @@ function createTrackingCaseCard(item, index){
 
         <div class="tracking-case-meta">
           <span>🏷️ ${escapeTrackingHtml(vendorName)}</span>
-          <span>📨 Email：${escapeTrackingHtml(sentAt)}</span>
+          <span>📨 ${escapeTrackingHtml(sentAt)}</span>
           <span>👤 ${escapeTrackingHtml(assignee)}</span>
         </div>
 
@@ -6978,10 +6978,10 @@ function createTrackingCaseCard(item, index){
               </div>
               <div class="tracking-info-list">
                 ${createTrackingInfoRow("📁", "需求分類", workstream)}
-                ${createTrackingInfoRow("👤", "負責窗口", amName)}
+                ${createTrackingInfoRow("⭐", "負責窗口", amName)}
                 ${createTrackingInfoRow("🏷️", "品牌名稱", vendorName)}
                 ${createTrackingInfoRow("📅", "建立時間", createdAt)}
-                ${createTrackingInfoRow("ⓘ", "目前狀態", statusInfo.text, "tracking-info-status " + statusInfo.className)}
+                ${createTrackingInfoRow("🔥", "目前狀態", statusInfo.text, "tracking-info-status " + statusInfo.className)}
               </div>
             </div>
             ${createTrackingEmailCard(emailSubject, emailStatus, sentAt)}
