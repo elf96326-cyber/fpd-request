@@ -1386,6 +1386,14 @@ button:disabled{opacity:.45;cursor:not-allowed}
   background:#2563eb;
   color:#fff;
 }
+
+.tracking-filter-btn:active{
+  transform:scale(.98);
+}
+
+.tracking-case-list{
+  min-height:48px;
+}
 .tracking-case-list{
   display:grid;
   gap:12px;
@@ -1441,12 +1449,39 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 .tracking-case-sheet{
   flex:0 0 auto;
-  padding:5px 9px;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:6px 10px;
   border-radius:999px;
-  background:#f8fafc;
-  color:#64748b;
   font-size:11px;
-  font-weight:700;
+  font-weight:800;
+  line-height:1.3;
+  border:1px solid transparent;
+}
+
+.tracking-case-sheet.menu{
+  background:#fff0f6;
+  border-color:#fbcfe8;
+  color:#be185d;
+}
+
+.tracking-case-sheet.project{
+  background:#eff6ff;
+  border-color:#bfdbfe;
+  color:#1d4ed8;
+}
+
+.tracking-case-sheet.others{
+  background:#f0fdf4;
+  border-color:#bbf7d0;
+  color:#166534;
+}
+
+.tracking-case-sheet.neutral{
+  background:#f8fafc;
+  border-color:#e2e8f0;
+  color:#64748b;
 }
 .tracking-case-title{
   margin:12px 0 6px;
@@ -1533,6 +1568,333 @@ button:disabled{opacity:.45;cursor:not-allowed}
   white-space:pre-line;
   word-break:break-word;
 }
+
+
+/* 案件詳細資料：左側資訊＋右側案件時間軸 */
+.tracking-detail-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(280px,.85fr);
+  gap:14px;
+  align-items:stretch;
+}
+
+.tracking-detail-left{
+  min-width:0;
+  display:grid;
+  gap:12px;
+}
+
+.tracking-info-panel,
+.tracking-timeline-panel{
+  min-width:0;
+  border:1px solid #dbeafe;
+  border-radius:16px;
+  background:#fff;
+}
+
+.tracking-info-panel{
+  padding:14px 16px 12px;
+}
+
+.tracking-panel-title{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding-bottom:11px;
+  margin-bottom:2px;
+  border-bottom:1px solid #e2e8f0;
+  color:#0f172a;
+  font-size:13px;
+  font-weight:800;
+}
+
+.tracking-panel-title-icon{
+  display:grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  flex:0 0 auto;
+  border-radius:9px;
+  background:#f5f3ff;
+  color:#7c3aed;
+  font-size:14px;
+}
+
+.tracking-info-list{
+  display:grid;
+}
+
+.tracking-info-row{
+  display:grid;
+  grid-template-columns:minmax(105px,.8fr) minmax(0,1.45fr);
+  gap:14px;
+  align-items:center;
+  padding:11px 2px;
+  border-bottom:1px solid #f1f5f9;
+}
+
+.tracking-info-row:last-child{border-bottom:0}
+
+.tracking-info-label{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:#64748b;
+  font-size:12px;
+  font-weight:600;
+}
+
+.tracking-info-value{
+  min-width:0;
+  color:#0f172a;
+  font-size:13px;
+  font-weight:700;
+  line-height:1.55;
+  word-break:break-word;
+}
+
+.tracking-info-status{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  max-width:100%;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+  line-height:1.35;
+}
+.tracking-info-status.open{background:#fef3c7;color:#92400e}
+.tracking-info-status.processing{background:#dbeafe;color:#1d4ed8}
+.tracking-info-status.closed{background:#dcfce7;color:#166534}
+.tracking-info-status.neutral{background:#f1f5f9;color:#475569}
+
+.tracking-timeline-panel{
+  padding:14px 16px 16px;
+}
+
+.tracking-timeline-panel .tracking-panel-title{
+  margin-bottom:14px;
+}
+
+.tracking-timeline{
+  position:relative;
+  display:grid;
+  gap:0;
+  padding-left:2px;
+}
+
+.tracking-timeline-item{
+  position:relative;
+  display:grid;
+  grid-template-columns:28px minmax(0,1fr);
+  gap:10px;
+  min-height:72px;
+}
+
+.tracking-timeline-item:last-child{min-height:auto}
+
+.tracking-timeline-marker{
+  position:relative;
+  display:flex;
+  justify-content:center;
+  z-index:1;
+}
+
+.tracking-timeline-marker::after{
+  content:"";
+  position:absolute;
+  top:25px;
+  bottom:-8px;
+  left:50%;
+  width:2px;
+  transform:translateX(-50%);
+  background:#e2e8f0;
+}
+
+.tracking-timeline-item:last-child .tracking-timeline-marker::after{display:none}
+
+.tracking-timeline-dot{
+  display:grid;
+  place-items:center;
+  width:22px;
+  height:22px;
+  border:2px solid #cbd5e1;
+  border-radius:50%;
+  background:#fff;
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+}
+
+.tracking-timeline-item.done .tracking-timeline-dot{
+  border-color:#ec4899;
+  background:#ec4899;
+}
+
+.tracking-timeline-item.done .tracking-timeline-marker::after{
+  background:#f9a8d4;
+}
+
+.tracking-timeline-item.current .tracking-timeline-dot{
+  border:3px solid #ec4899;
+  box-shadow:0 0 0 4px #fce7f3;
+}
+
+.tracking-timeline-item.error .tracking-timeline-dot{
+  border-color:#ef4444;
+  background:#ef4444;
+}
+
+.tracking-timeline-copy{
+  min-width:0;
+  padding:1px 0 14px;
+}
+
+.tracking-timeline-title{
+  color:#334155;
+  font-size:13px;
+  font-weight:800;
+  line-height:1.45;
+}
+
+.tracking-timeline-item.current .tracking-timeline-title{
+  color:#be185d;
+}
+
+.tracking-timeline-time{
+  margin-top:3px;
+  color:#64748b;
+  font-size:11px;
+  font-weight:600;
+  line-height:1.45;
+}
+
+.tracking-timeline-text{
+  margin-top:3px;
+  color:#94a3b8;
+  font-size:11px;
+  line-height:1.55;
+}
+
+.tracking-timeline-item.current .tracking-timeline-text{
+  color:#ec4899;
+  font-weight:600;
+}
+
+@media(max-width:760px){
+  .tracking-detail-layout{grid-template-columns:1fr}
+  .tracking-info-row{grid-template-columns:1fr;gap:4px}
+  .tracking-timeline-item{min-height:66px}
+}
+
+/* 案件詳細資料：Email 資訊卡 */
+.tracking-email-card{
+  grid-column:1/-1;
+  overflow:hidden;
+  border:1px solid #dbeafe;
+  border-radius:16px;
+  background:#fff;
+}
+
+.tracking-email-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:11px 14px;
+  border-bottom:1px solid #e2e8f0;
+  background:#f8fafc;
+}
+
+.tracking-email-card-title{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:#334155;
+  font-size:12px;
+  font-weight:800;
+}
+
+.tracking-email-status-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#f1f5f9;
+  color:#64748b;
+  font-size:11px;
+  font-weight:800;
+  line-height:1.3;
+}
+
+.tracking-email-status-badge::before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#94a3b8;
+}
+
+.tracking-email-status-badge.sent{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.tracking-email-status-badge.sent::before{
+  background:#22c55e;
+}
+
+.tracking-email-status-badge.failed{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+
+.tracking-email-status-badge.failed::before{
+  background:#ef4444;
+}
+
+.tracking-email-subject{
+  padding:15px 16px 14px;
+  color:#0f172a;
+  font-size:13px;
+  font-weight:700;
+  line-height:1.7;
+  word-break:break-word;
+}
+
+.tracking-email-card-footer{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-top:1px solid #f1f5f9;
+  color:#94a3b8;
+  font-size:11px;
+  font-weight:600;
+  line-height:1.5;
+}
+
+.tracking-email-card-footer b{
+  color:#64748b;
+  font-size:11px;
+  font-weight:700;
+}
+
+@media(max-width:520px){
+  .tracking-email-card-head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .tracking-email-card-footer{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:3px;
+  }
+}
+
 .tracking-empty{
   padding:30px 20px;
   border:1px dashed #cbd5e1;
@@ -6192,6 +6554,7 @@ function backToPortalHome(){
 
 let trackingCurrentFilter = "open";
 let trackingLastKeyword = "";
+let trackingAllItems = [];
 let trackingLastCounts = {
   open: 0,
   closed: 0,
@@ -6207,6 +6570,8 @@ function clearTrackingResult(){
   if(result) result.classList.remove("show");
   if(list) list.innerHTML = "";
   if(summary) summary.textContent = "";
+
+  trackingAllItems = [];
 
   if(message){
     message.className = "tracking-message";
@@ -6237,6 +6602,27 @@ function escapeTrackingHtml(value){
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function getTrackingSheetAppearance(sheetName){
+  const normalized = String(sheetName || "").trim().toLowerCase();
+
+  if(normalized === "menu"){
+    return { className: "menu", label: "🩷 Menu" };
+  }
+
+  if(normalized === "project"){
+    return { className: "project", label: "🟦 Project" };
+  }
+
+  if(normalized === "others"){
+    return { className: "others", label: "🟩 Others" };
+  }
+
+  return {
+    className: "neutral",
+    label: String(sheetName || "案件")
+  };
 }
 
 function getTrackingStatusStyle(item){
@@ -6330,6 +6716,135 @@ function createTrackingDetailItem(label, value, full){
   `;
 }
 
+function createTrackingEmailCard(emailSubject, emailStatus, sentAt){
+  const normalizedStatus = String(emailStatus || "").trim().toUpperCase();
+
+  let statusClass = "";
+  let statusText = emailStatus || "—";
+  let cardTitle = "Email 寄送資訊";
+
+  if(normalizedStatus === "SENT" || normalizedStatus.includes("SUCCESS") || normalizedStatus.includes("已寄出")){
+    statusClass = "sent";
+    statusText = "已寄出";
+    cardTitle = "已寄出 Email";
+  }else if(normalizedStatus.includes("FAIL") || normalizedStatus.includes("ERROR") || normalizedStatus.includes("失敗")){
+    statusClass = "failed";
+    statusText = "寄送失敗";
+  }
+
+  return `
+    <div class="tracking-email-card">
+      <div class="tracking-email-card-head">
+        <div class="tracking-email-card-title">✉️ ${escapeTrackingHtml(cardTitle)}</div>
+        <span class="tracking-email-status-badge ${statusClass}">${escapeTrackingHtml(statusText)}</span>
+      </div>
+
+      <div class="tracking-email-subject">
+        ${escapeTrackingHtml(emailSubject || "—")}
+      </div>
+
+      <div class="tracking-email-card-footer">
+        <span>Email 發送時間</span>
+        <b>${escapeTrackingHtml(sentAt || "—")}</b>
+      </div>
+    </div>
+  `;
+}
+
+
+function createTrackingInfoRow(icon, label, value, extraClass){
+  const valueHtml = extraClass
+    ? `<span class="${extraClass}">${escapeTrackingHtml(value || "—")}</span>`
+    : escapeTrackingHtml(value || "—");
+
+  return `
+    <div class="tracking-info-row">
+      <div class="tracking-info-label"><span>${icon}</span>${escapeTrackingHtml(label)}</div>
+      <div class="tracking-info-value">${valueHtml}</div>
+    </div>
+  `;
+}
+
+function createTrackingTimeline(item, statusInfo, createdAt, sentAt, emailStatus, assignee){
+  const normalizedEmail = String(emailStatus || "").trim().toUpperCase();
+  const normalizedAssignee = String(assignee || "").trim();
+  const emailSent =
+    normalizedEmail === "SENT" ||
+    normalizedEmail.includes("SUCCESS") ||
+    normalizedEmail.includes("已寄出") ||
+    (sentAt && sentAt !== "—");
+  const emailFailed =
+    normalizedEmail.includes("FAIL") ||
+    normalizedEmail.includes("ERROR") ||
+    normalizedEmail.includes("失敗");
+  const isAssigned =
+    normalizedAssignee &&
+    normalizedAssignee !== "—" &&
+    !normalizedAssignee.includes("尚未分派") &&
+    !normalizedAssignee.includes("未分派");
+  const isClosed = statusInfo.className === "closed" || (item && item.isClosed === true);
+  const isProcessing = statusInfo.className === "processing" || (isAssigned && !isClosed);
+
+  const steps = [
+    {
+      title:"建立案件",
+      time:createdAt,
+      text:"系統已建立申請案件",
+      state:"done"
+    },
+    {
+      title:emailFailed ? "Email 寄送異常" : "Email 已寄出",
+      time:emailSent ? sentAt : "—",
+      text:emailFailed ? "請確認信件寄送狀態" : (emailSent ? "已將案件內容寄送給相關窗口" : "等待系統寄送案件通知"),
+      state:emailFailed ? "error" : (emailSent ? "done" : "pending")
+    },
+    {
+      title:isAssigned ? "已分派" : "尚未分派",
+      time:"",
+      text:isAssigned ? `負責人員：${normalizedAssignee}` : "等待分派負責人員處理",
+      state:isAssigned ? "done" : ((!emailFailed && emailSent && !isClosed) ? "current" : "pending")
+    },
+    {
+      title:"處理中",
+      time:"",
+      text:isProcessing ? "負責人員處理案件中" : "等待案件進入處理階段",
+      state:isClosed ? "done" : (isProcessing ? "current" : "pending")
+    },
+    {
+      title:"已完成",
+      time:"",
+      text:isClosed ? "案件已完成並關閉" : "完成後將於此更新狀態",
+      state:isClosed ? "done" : "pending"
+    }
+  ];
+
+  return `
+    <div class="tracking-timeline-panel">
+      <div class="tracking-panel-title">
+        <span class="tracking-panel-title-icon">◷</span>
+        <span>案件流程</span>
+      </div>
+      <div class="tracking-timeline">
+        ${steps.map(function(step){
+          const dotText = step.state === "done" ? "✓" : (step.state === "error" ? "!" : "");
+          return `
+            <div class="tracking-timeline-item ${step.state}">
+              <div class="tracking-timeline-marker">
+                <span class="tracking-timeline-dot">${dotText}</span>
+              </div>
+              <div class="tracking-timeline-copy">
+                <div class="tracking-timeline-title">${escapeTrackingHtml(step.title)}</div>
+                ${step.time ? `<div class="tracking-timeline-time">${escapeTrackingHtml(step.time)}</div>` : ""}
+                <div class="tracking-timeline-text">${escapeTrackingHtml(step.text)}</div>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    </div>
+  `;
+}
+
 function createTrackingCaseCard(item, index){
   const statusInfo = getTrackingStatusStyle(item);
 
@@ -6345,15 +6860,31 @@ function createTrackingCaseCard(item, index){
     "—"
   );
 
-  const submittedAt = getTrackingValue(
+  const createdAt = getTrackingValue(
     item,
-    ["submittedAt","submitTime","createdAt","送出時間"],
+    [
+      "submittedAt",
+      "createdAt",
+      "submitTime",
+      "送出時間",
+      "提交時間",
+      "Submitted At"
+    ],
     "—"
   );
 
   const assignee = getTrackingValue(
     item,
-    ["assignee","owner","handler","處理人員"],
+    [
+      "assignee",
+      "👤 處理人員",
+      "👤處理人員",
+      "處理人員",
+      "負責處理人員",
+      "負責人員",
+      "owner",
+      "handler"
+    ],
     "尚未分派"
   );
 
@@ -6369,15 +6900,14 @@ function createTrackingCaseCard(item, index){
     "案件"
   );
 
+  const sheetAppearance =
+    getTrackingSheetAppearance(
+      sheetName
+    );
+
   const workstream = getTrackingValue(
     item,
     ["workstream","需求分類","需求類別"],
-    "—"
-  );
-
-  const caseSubject = getTrackingValue(
-    item,
-    ["caseSubject","Case Subject","案件主旨"],
     "—"
   );
 
@@ -6395,7 +6925,16 @@ function createTrackingCaseCard(item, index){
 
   const sentAt = getTrackingValue(
     item,
-    ["sentAt","發送時間","Email 發送時間"],
+    [
+      "sentAt",
+      "emailSentAt",
+      "emailSentTime",
+      "發送時間",
+      "Email 發送時間",
+      "信件發送時間",
+      "Sent At",
+      "Email Sent Time"
+    ],
     "—"
   );
 
@@ -6408,7 +6947,7 @@ function createTrackingCaseCard(item, index){
           <span class="tracking-case-status ${statusInfo.className}">
             ${escapeTrackingHtml(statusInfo.text)}
           </span>
-          <span class="tracking-case-sheet">${escapeTrackingHtml(sheetName)}</span>
+          <span class="tracking-case-sheet ${escapeTrackingHtml(sheetAppearance.className)}">${escapeTrackingHtml(sheetAppearance.label)}</span>
         </div>
 
         <div class="tracking-case-title">${escapeTrackingHtml(requestType)}</div>
@@ -6416,7 +6955,7 @@ function createTrackingCaseCard(item, index){
 
         <div class="tracking-case-meta">
           <span>🏷️ ${escapeTrackingHtml(vendorName)}</span>
-          <span>🕒 ${escapeTrackingHtml(submittedAt)}</span>
+          <span>📨 Email：${escapeTrackingHtml(sentAt)}</span>
           <span>👤 ${escapeTrackingHtml(assignee)}</span>
         </div>
 
@@ -6430,13 +6969,25 @@ function createTrackingCaseCard(item, index){
       </div>
 
       <div class="tracking-case-details">
-        <div class="tracking-detail-grid">
-          ${createTrackingDetailItem("需求分類", workstream)}
-          ${createTrackingDetailItem("負責窗口", amName)}
-          ${createTrackingDetailItem("Case Subject", caseSubject, true)}
-          ${createTrackingDetailItem("Email Status", emailStatus)}
-          ${createTrackingDetailItem("發送時間", sentAt)}
-          ${createTrackingDetailItem("Email Subject", emailSubject, true)}
+        <div class="tracking-detail-layout">
+          <div class="tracking-detail-left">
+            <div class="tracking-info-panel">
+              <div class="tracking-panel-title">
+                <span class="tracking-panel-title-icon">▤</span>
+                <span>案件資訊</span>
+              </div>
+              <div class="tracking-info-list">
+                ${createTrackingInfoRow("📁", "需求分類", workstream)}
+                ${createTrackingInfoRow("👤", "負責窗口", amName)}
+                ${createTrackingInfoRow("🏷️", "品牌名稱", vendorName)}
+                ${createTrackingInfoRow("📅", "建立時間", createdAt)}
+                ${createTrackingInfoRow("ⓘ", "目前狀態", statusInfo.text, "tracking-info-status " + statusInfo.className)}
+              </div>
+            </div>
+            ${createTrackingEmailCard(emailSubject, emailStatus, sentAt)}
+          </div>
+
+          ${createTrackingTimeline(item, statusInfo, createdAt, sentAt, emailStatus, assignee)}
         </div>
       </div>
     </article>
@@ -6521,7 +7072,23 @@ function toggleTrackingCaseDetails(cardId, button){
   }
 }
 
-async function changeTrackingFilter(filter){
+function getTrackingFilteredItems(filter){
+  if(filter === "closed"){
+    return trackingAllItems.filter(function(item){
+      return item && item.isClosed === true;
+    });
+  }
+
+  if(filter === "all"){
+    return trackingAllItems.slice();
+  }
+
+  return trackingAllItems.filter(function(item){
+    return !(item && item.isClosed === true);
+  });
+}
+
+function changeTrackingFilter(filter){
   trackingCurrentFilter =
     ["open","closed","all"].includes(filter)
       ? filter
@@ -6529,16 +7096,18 @@ async function changeTrackingFilter(filter){
 
   updateTrackingFilterButtons(trackingCurrentFilter);
 
-  const input = document.getElementById("trackingKeyword");
-  const keyword =
-    trackingLastKeyword ||
-    (input ? input.value.trim() : "");
+  const filteredItems =
+    getTrackingFilteredItems(
+      trackingCurrentFilter
+    );
 
-  if(keyword.length >= 2){
-    await searchCaseProgress({
-      preserveResult: true
-    });
-  }
+  renderTrackingResult(
+    filteredItems,
+    {
+      counts: trackingLastCounts,
+      totalMatched: filteredItems.length
+    }
+  );
 }
 
 async function searchCaseProgress(options){
@@ -6571,8 +7140,7 @@ async function searchCaseProgress(options){
     const url = GAS_URL +
       "?action=searchCaseProgress&keyword=" +
       encodeURIComponent(keyword) +
-      "&statusFilter=" +
-      encodeURIComponent(trackingCurrentFilter) +
+      "&statusFilter=all" +
       "&t=" + Date.now();
 
     const response = await fetch(url);
@@ -6597,7 +7165,34 @@ async function searchCaseProgress(options){
                 )
           );
 
-    renderTrackingResult(data, result || {});
+    trackingAllItems = data.slice();
+
+    updateTrackingCounts(
+      result && result.counts
+        ? result.counts
+        : {
+            open: trackingAllItems.filter(function(item){
+              return !(item && item.isClosed === true);
+            }).length,
+            closed: trackingAllItems.filter(function(item){
+              return item && item.isClosed === true;
+            }).length,
+            all: trackingAllItems.length
+          }
+    );
+
+    const filteredItems =
+      getTrackingFilteredItems(
+        trackingCurrentFilter
+      );
+
+    renderTrackingResult(
+      filteredItems,
+      {
+        counts: trackingLastCounts,
+        totalMatched: filteredItems.length
+      }
+    );
   }catch(error){
     console.error("案件進度查詢失敗：", error);
     showTrackingMessage(
