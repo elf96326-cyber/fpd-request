@@ -1164,16 +1164,443 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .duplicate-request-actions button{width:100%}
 }
 
+
+/* =========================
+   入口首頁／案件進度查詢
+========================= */
+.portal-home{
+  max-width:1080px;
+  margin:0 auto;
+  padding:32px 18px 56px;
+}
+.portal-home-hero{
+  background:#fff;
+  border:1px solid #fce7f3;
+  border-radius:30px;
+  padding:38px;
+  box-shadow:0 8px 28px rgba(15,23,42,.07);
+}
+.portal-home-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 12px;
+  border-radius:999px;
+  background:#f1f5f9;
+  color:#475569;
+  font-size:12px;
+  font-weight:700;
+}
+.portal-home-title{
+  margin:18px 0 10px;
+  font-size:34px;
+  font-weight:800;
+  letter-spacing:-.02em;
+}
+.portal-home-desc{
+  margin:0;
+  color:#64748b;
+  font-size:14px;
+  line-height:1.8;
+}
+.portal-action-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+  margin-top:30px;
+}
+.portal-action-card{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  width:100%;
+  min-height:150px;
+  padding:24px;
+  text-align:left;
+  background:#fff;
+  color:#0f172a;
+  border:2px solid #e2e8f0;
+  border-radius:24px;
+  transition:.18s ease;
+}
+.portal-action-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 14px 30px rgba(15,23,42,.10);
+}
+.portal-action-card.create{
+  border-color:#f9a8d4;
+  background:linear-gradient(135deg,#fff0f6 0%,#fff 100%);
+}
+.portal-action-card.create:hover{border-color:#ff2b85}
+.portal-action-card.tracking{
+  border-color:#bfdbfe;
+  background:linear-gradient(135deg,#eff6ff 0%,#fff 100%);
+}
+.portal-action-card.tracking:hover{border-color:#3b82f6}
+.portal-action-icon{
+  display:grid;
+  place-items:center;
+  width:58px;
+  height:58px;
+  flex:0 0 auto;
+  border-radius:18px;
+  background:#fff;
+  font-size:28px;
+  box-shadow:0 6px 18px rgba(15,23,42,.08);
+}
+.portal-action-copy b{
+  display:block;
+  margin-bottom:7px;
+  font-size:20px;
+  font-weight:800;
+}
+.portal-action-copy span{
+  display:block;
+  color:#64748b;
+  font-size:13px;
+  font-weight:500;
+  line-height:1.7;
+}
+.portal-back-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:10px 14px;
+  background:#fff;
+  color:#64748b;
+  border:1px solid #e2e8f0;
+  white-space:nowrap;
+}
+.portal-back-btn:hover{
+  color:#ff2b85;
+  border-color:#f9a8d4;
+  background:#fff7fa;
+}
+.tracking-portal{
+  max-width:1080px;
+  margin:0 auto;
+  padding:32px 18px 56px;
+}
+.tracking-card{
+  background:#fff;
+  border:1px solid #dbeafe;
+  border-radius:28px;
+  padding:30px;
+  box-shadow:0 8px 28px rgba(15,23,42,.07);
+}
+.tracking-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:24px;
+}
+.tracking-title{
+  margin:18px 0 10px;
+  font-size:34px;
+  font-weight:800;
+  letter-spacing:-.02em;
+}
+.tracking-search-box{
+  padding:20px;
+  border:1px solid #bfdbfe;
+  border-radius:20px;
+  background:linear-gradient(135deg,#eff6ff 0%,#fff 100%);
+}
+.tracking-search-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+}
+.tracking-search-row button{min-width:110px}
+.tracking-hint{
+  margin-top:10px;
+  color:#64748b;
+  font-size:12px;
+  line-height:1.65;
+}
+.tracking-message{
+  display:none;
+  margin-top:16px;
+  padding:14px 16px;
+  border-radius:15px;
+  font-size:13px;
+  line-height:1.7;
+}
+.tracking-message.show{display:block}
+.tracking-message.info{
+  color:#1e40af;
+  border:1px solid #bfdbfe;
+  background:#eff6ff;
+}
+.tracking-message.error{
+  color:#b91c1c;
+  border:1px solid #fecaca;
+  background:#fff1f2;
+}
+.tracking-result{
+  display:none;
+  margin-top:18px;
+}
+.tracking-result.show{display:block}
+.tracking-result-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px;
+}
+.tracking-result-title{
+  color:#0f172a;
+  font-size:16px;
+  font-weight:800;
+}
+.tracking-result-summary{
+  color:#64748b;
+  font-size:13px;
+  font-weight:600;
+}
+.tracking-filter-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:14px;
+}
+.tracking-filter-btn{
+  padding:9px 13px;
+  border:1px solid #dbeafe;
+  border-radius:999px;
+  background:#fff;
+  color:#475569;
+  font-size:13px;
+  font-weight:700;
+}
+.tracking-filter-btn:hover{
+  border-color:#93c5fd;
+  background:#eff6ff;
+  color:#1d4ed8;
+}
+.tracking-filter-btn.active{
+  border-color:#2563eb;
+  background:#2563eb;
+  color:#fff;
+}
+.tracking-case-list{
+  display:grid;
+  gap:12px;
+}
+.tracking-case-card{
+  overflow:hidden;
+  border:1px solid #e2e8f0;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 5px 16px rgba(15,23,42,.05);
+  transition:.16s ease;
+}
+.tracking-case-card:hover{
+  border-color:#bfdbfe;
+  box-shadow:0 10px 24px rgba(15,23,42,.08);
+  transform:translateY(-1px);
+}
+.tracking-case-main{
+  padding:17px 18px;
+}
+.tracking-case-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+}
+.tracking-case-status{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  max-width:100%;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.4;
+}
+.tracking-case-status.open{
+  background:#fef3c7;
+  color:#92400e;
+}
+.tracking-case-status.processing{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+.tracking-case-status.closed{
+  background:#dcfce7;
+  color:#166534;
+}
+.tracking-case-status.neutral{
+  background:#f1f5f9;
+  color:#475569;
+}
+.tracking-case-sheet{
+  flex:0 0 auto;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#f8fafc;
+  color:#64748b;
+  font-size:11px;
+  font-weight:700;
+}
+.tracking-case-title{
+  margin:12px 0 6px;
+  color:#0f172a;
+  font-size:17px;
+  font-weight:800;
+  line-height:1.5;
+  word-break:break-word;
+}
+.tracking-case-subject{
+  color:#475569;
+  font-size:13px;
+  line-height:1.65;
+  word-break:break-word;
+}
+.tracking-case-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 16px;
+  margin-top:13px;
+  color:#64748b;
+  font-size:12px;
+  line-height:1.6;
+}
+.tracking-case-meta span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.tracking-case-actions{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:13px;
+}
+.tracking-detail-btn{
+  padding:8px 11px;
+  border:1px solid #dbeafe;
+  border-radius:11px;
+  background:#fff;
+  color:#2563eb;
+  font-size:12px;
+  font-weight:700;
+}
+.tracking-detail-btn:hover{
+  background:#eff6ff;
+}
+.tracking-case-details{
+  display:none;
+  padding:15px 18px 17px;
+  border-top:1px solid #e2e8f0;
+  background:#f8fafc;
+}
+.tracking-case-card.expanded .tracking-case-details{
+  display:block;
+}
+.tracking-detail-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.tracking-detail-item{
+  min-width:0;
+  padding:11px 12px;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  background:#fff;
+}
+.tracking-detail-item.full{
+  grid-column:1/-1;
+}
+.tracking-detail-item small{
+  display:block;
+  margin-bottom:4px;
+  color:#94a3b8;
+  font-size:11px;
+  font-weight:700;
+}
+.tracking-detail-item b{
+  display:block;
+  color:#334155;
+  font-size:13px;
+  font-weight:600;
+  line-height:1.6;
+  white-space:pre-line;
+  word-break:break-word;
+}
+.tracking-empty{
+  padding:30px 20px;
+  border:1px dashed #cbd5e1;
+  border-radius:18px;
+  background:#f8fafc;
+  text-align:center;
+}
+.tracking-empty-icon{
+  margin-bottom:8px;
+  font-size:28px;
+}
+.tracking-empty-title{
+  color:#334155;
+  font-size:15px;
+  font-weight:800;
+}
+.tracking-empty-text{
+  margin-top:5px;
+  color:#94a3b8;
+  font-size:12px;
+  line-height:1.65;
+}
+@media(max-width:760px){
+  .portal-home-hero{padding:26px 22px}
+  .portal-home-title{font-size:28px}
+  .portal-action-grid,.tracking-detail-grid{grid-template-columns:1fr}
+  .portal-action-card{min-height:128px}
+  .tracking-head{flex-direction:column}
+  .tracking-search-row{grid-template-columns:1fr}
+  .tracking-search-row button,.portal-back-btn{width:100%}
+}
+
 </style>
 </head>
 <body>
-<div class="container">
+<section id="portalHome" class="portal-home">
+  <div class="portal-home-hero">
+    <div class="portal-home-badge">📋 Menu Request Portal</div>
+    <h1 class="portal-home-title">【foodpanda】需求入口網站</h1>
+    <p class="portal-home-desc">請選擇本次要進行的操作。您可以建立新的需求案件，或查詢既有案件的處理進度。</p>
+
+    <div class="portal-action-grid">
+      <button type="button" class="portal-action-card create" onclick="openRequestPortal()">
+        <span class="portal-action-icon">📝</span>
+        <span class="portal-action-copy">
+          <b>建立新案件</b>
+          <span>提出菜單、活動或營運相關需求，並依步驟完成申請。</span>
+        </span>
+      </button>
+
+      <button type="button" class="portal-action-card tracking" onclick="openTrackingPortal()">
+        <span class="portal-action-icon">🔎</span>
+        <span class="portal-action-copy">
+          <b>查詢案件進度</b>
+          <span>輸入案件查詢資訊，查看目前的處理狀態與案件內容。</span>
+        </span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<div id="requestPortal" class="container hidden">
 <header class="header">
   <div class="header-row">
     <div>
       <div class="badge">📋 Menu Request Portal</div>
-      <h1>【foodpanda】需求表單</h1>
-      <p class="desc">請確認品牌資訊並選擇需求項目，系統將依申請內容提供對應填寫欄位。</p>
+      <h1>【foodpanda】建立新案件</h1>
+      <p class="desc">請依步驟確認品牌資訊並填寫需求內容，完成後即可建立新案件。</p>
     </div>
     <div class="status"><small>目前狀態</small><b id="statusText">填寫中</b></div>
   </div>
@@ -1305,7 +1732,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
     <div class="btn-row" style="justify-content:flex-end">
       <div class="btn-actions-right">
-        <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
+        <button type="button" class="portal-back-btn" onclick="requestInternalLeave(()=>backToPortalHome())">‹ 返回入口首頁</button>
+      <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
         <button id="nextBasicBtn" class="btn-primary" onclick="go(2)" disabled>下一步 ›</button>
       </div>
     </div>
@@ -1347,6 +1775,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <div class="btn-row">
     <button class="btn-outline" onclick="go(1)">‹ 上一步</button>
     <div class="btn-actions-right">
+      <button type="button" class="portal-back-btn" onclick="requestInternalLeave(()=>backToPortalHome())">‹ 返回入口首頁</button>
       <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
       <button id="nextWorkstreamBtn" class="btn-primary" onclick="go(3)" disabled>下一步 ›</button>
     </div>
@@ -1498,7 +1927,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
 <div class="btn-row">
   <button class="btn-outline" onclick="go(2)">‹ 上一步</button>
   <div class="btn-actions-right">
-    <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
+    <button type="button" class="portal-back-btn" onclick="requestInternalLeave(()=>backToPortalHome())">‹ 返回入口首頁</button>
+      <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
     <button class="btn-primary" onclick="go(4)">下一步 ›</button>
   </div>
 </div>
@@ -1529,6 +1959,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <div class="btn-row">
     <button class="btn-outline" onclick="go(3)">‹ 上一步</button>
     <div class="btn-actions-right">
+      <button type="button" class="portal-back-btn" onclick="requestInternalLeave(()=>backToPortalHome())">‹ 返回入口首頁</button>
       <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
       <button class="btn-primary" onclick="submitPreview()">送出表單</button>
     </div>
@@ -1564,7 +1995,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <div class="summary"><h3>申請摘要</h3><div class="summary-grid" id="summaryBasic"></div><div style="border-top:1px solid #f9a8d4;margin:18px 0"></div><h3>填寫內容</h3><div id="summaryDetails"></div></div>
   <div class="btn-row" style="justify-content:center">
     <button id="backToEditBtn" type="button" class="btn-outline" onclick="go(4)">返回編輯</button>
-    <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
+    <button type="button" class="portal-back-btn" onclick="requestInternalLeave(()=>backToPortalHome())">‹ 返回入口首頁</button>
+      <button type="button" class="btn-clear-form" onclick="requestInternalLeave(()=>location.href=location.pathname)">清除填寫內容</button>
     <button id="confirmSubmitBtn" type="button" class="btn-primary" onclick="confirmSubmit()">確認並送出</button>
   </div>
   <div id="submitStatusNote" class="submit-status-note" role="status" aria-live="polite">
@@ -1583,6 +2015,56 @@ button:disabled{opacity:.45;cursor:not-allowed}
 </section>
 </main>
 </div>
+
+<section id="trackingPortal" class="tracking-portal hidden">
+  <div class="tracking-card">
+    <div class="tracking-head">
+      <div>
+        <div class="portal-home-badge">🔎 Case Tracking</div>
+        <h1 class="tracking-title" style="margin-top:16px">【foodpanda】查詢案件進度</h1>
+        <p class="portal-home-desc" style="margin-top:8px">請輸入品牌或門市名稱，查看目前所有需求與處理進度。</p>
+      </div>
+      <button type="button" class="portal-back-btn" onclick="backToPortalHome()">‹ 返回入口首頁</button>
+    </div>
+
+    <div class="tracking-search-box">
+      <label for="trackingKeyword">品牌／門市名稱</label>
+      <div class="tracking-search-row">
+        <input
+          id="trackingKeyword"
+          type="text"
+          autocomplete="off"
+          placeholder="例如：肯德基、麥當勞"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();searchCaseProgress();}"
+        >
+        <button id="trackingSearchButton" type="button" class="btn-primary" onclick="searchCaseProgress()">查詢進度</button>
+      </div>
+      <div class="tracking-hint">可搜尋品牌、門市名稱、Case Subject 或信件主旨。</div>
+      <div id="trackingMessage" class="tracking-message" role="status" aria-live="polite"></div>
+    </div>
+
+    <div id="trackingResult" class="tracking-result">
+      <div class="tracking-result-head">
+        <div class="tracking-result-title">案件查詢結果</div>
+        <div id="trackingResultSummary" class="tracking-result-summary"></div>
+      </div>
+
+      <div class="tracking-filter-tabs" aria-label="案件狀態篩選">
+        <button type="button" class="tracking-filter-btn active" data-tracking-filter="open" onclick="changeTrackingFilter('open')">
+          進行中 <span id="trackingOpenCount">0</span>
+        </button>
+        <button type="button" class="tracking-filter-btn" data-tracking-filter="closed" onclick="changeTrackingFilter('closed')">
+          已完成 <span id="trackingClosedCount">0</span>
+        </button>
+        <button type="button" class="tracking-filter-btn" data-tracking-filter="all" onclick="changeTrackingFilter('all')">
+          全部 <span id="trackingAllCount">0</span>
+        </button>
+      </div>
+
+      <div id="trackingCaseList" class="tracking-case-list"></div>
+    </div>
+  </div>
+</section>
 
 <script>
       const GAS_URL = "https://script.google.com/macros/s/AKfycbysd5ib7s-YVku7BLJiSYYkRMpOnxEUO95kuKRA29nEPtGdY0OFPSz3tWVb74Y8hFlh/exec";
@@ -5668,6 +6150,472 @@ window.addEventListener("DOMContentLoaded", function(){
       dropdown.style.display = "none";
     }
   });
+});
+
+
+/* =========================
+   入口首頁／案件進度查詢
+========================= */
+function showPortalSection(sectionId){
+  ["portalHome","requestPortal","trackingPortal"].forEach(function(id){
+    const section = document.getElementById(id);
+    if(!section) return;
+    section.classList.toggle("hidden", id !== sectionId);
+  });
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function openRequestPortal(){
+  showPortalSection("requestPortal");
+  if(typeof updateServiceTimeNotice === "function") updateServiceTimeNotice();
+}
+
+function openTrackingPortal(){
+  showPortalSection("trackingPortal");
+  clearTrackingResult();
+  setTimeout(function(){
+    const input = document.getElementById("trackingKeyword");
+    if(input) input.focus();
+  }, 80);
+}
+
+function backToPortalHome(){
+  const requestPortal = document.getElementById("requestPortal");
+  if(requestPortal && !requestPortal.classList.contains("hidden")){
+    requestInternalLeave(function(){
+      showPortalSection("portalHome");
+    });
+    return;
+  }
+  showPortalSection("portalHome");
+}
+
+let trackingCurrentFilter = "open";
+let trackingLastKeyword = "";
+let trackingLastCounts = {
+  open: 0,
+  closed: 0,
+  all: 0
+};
+
+function clearTrackingResult(){
+  const result = document.getElementById("trackingResult");
+  const message = document.getElementById("trackingMessage");
+  const list = document.getElementById("trackingCaseList");
+  const summary = document.getElementById("trackingResultSummary");
+
+  if(result) result.classList.remove("show");
+  if(list) list.innerHTML = "";
+  if(summary) summary.textContent = "";
+
+  if(message){
+    message.className = "tracking-message";
+    message.textContent = "";
+  }
+}
+
+function showTrackingMessage(text, type){
+  const message = document.getElementById("trackingMessage");
+  if(!message) return;
+  message.textContent = text;
+  message.className = "tracking-message show " + (type || "info");
+}
+
+function getTrackingValue(data, keys, fallback){
+  for(const key of keys){
+    if(data && data[key] !== undefined && data[key] !== null && String(data[key]).trim() !== ""){
+      return String(data[key]).trim();
+    }
+  }
+  return fallback || "—";
+}
+
+function escapeTrackingHtml(value){
+  return String(value == null ? "" : value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function getTrackingStatusStyle(item){
+  const status = getTrackingValue(
+    item,
+    ["currentStatus","status","processStatus","處理狀態"],
+    "尚未設定處理狀態"
+  );
+
+  const normalized = status.replace(/\s+/g, "").toLowerCase();
+
+  if(item && item.isClosed === true){
+    return {
+      className: "closed",
+      text: status
+    };
+  }
+
+  if(
+    normalized.includes("處理中") ||
+    normalized.includes("進行中") ||
+    normalized.includes("校稿中") ||
+    normalized.includes("待補")
+  ){
+    return {
+      className: "processing",
+      text: status
+    };
+  }
+
+  if(
+    normalized.includes("完成") ||
+    normalized.includes("關閉") ||
+    normalized.includes("退件") ||
+    normalized.includes("取消")
+  ){
+    return {
+      className: "closed",
+      text: status
+    };
+  }
+
+  if(
+    normalized.includes("待處理") ||
+    normalized.includes("尚未") ||
+    normalized.includes("未分派")
+  ){
+    return {
+      className: "open",
+      text: status
+    };
+  }
+
+  return {
+    className: "neutral",
+    text: status
+  };
+}
+
+function updateTrackingFilterButtons(filter){
+  document.querySelectorAll("[data-tracking-filter]").forEach(function(button){
+    button.classList.toggle(
+      "active",
+      button.dataset.trackingFilter === filter
+    );
+  });
+}
+
+function updateTrackingCounts(counts){
+  trackingLastCounts = {
+    open: Number(counts && counts.open) || 0,
+    closed: Number(counts && counts.closed) || 0,
+    all: Number(counts && counts.all) || 0
+  };
+
+  const openCount = document.getElementById("trackingOpenCount");
+  const closedCount = document.getElementById("trackingClosedCount");
+  const allCount = document.getElementById("trackingAllCount");
+
+  if(openCount) openCount.textContent = trackingLastCounts.open;
+  if(closedCount) closedCount.textContent = trackingLastCounts.closed;
+  if(allCount) allCount.textContent = trackingLastCounts.all;
+}
+
+function createTrackingDetailItem(label, value, full){
+  return `
+    <div class="tracking-detail-item${full ? " full" : ""}">
+      <small>${escapeTrackingHtml(label)}</small>
+      <b>${escapeTrackingHtml(value || "—")}</b>
+    </div>
+  `;
+}
+
+function createTrackingCaseCard(item, index){
+  const statusInfo = getTrackingStatusStyle(item);
+
+  const requestType = getTrackingValue(
+    item,
+    ["requestType","requestItem","需求項目"],
+    "未命名需求"
+  );
+
+  const vendorName = getTrackingValue(
+    item,
+    ["vendorName","brand","brandName","品牌","品牌／門市"],
+    "—"
+  );
+
+  const submittedAt = getTrackingValue(
+    item,
+    ["submittedAt","submitTime","createdAt","送出時間"],
+    "—"
+  );
+
+  const assignee = getTrackingValue(
+    item,
+    ["assignee","owner","handler","處理人員"],
+    "尚未分派"
+  );
+
+  const emailSubject = getTrackingValue(
+    item,
+    ["emailSubject","信件主旨","Email Subject"],
+    "—"
+  );
+
+  const sheetName = getTrackingValue(
+    item,
+    ["sheetName","targetSheetName","來源分頁"],
+    "案件"
+  );
+
+  const workstream = getTrackingValue(
+    item,
+    ["workstream","需求分類","需求類別"],
+    "—"
+  );
+
+  const caseSubject = getTrackingValue(
+    item,
+    ["caseSubject","Case Subject","案件主旨"],
+    "—"
+  );
+
+  const amName = getTrackingValue(
+    item,
+    ["amName","am","負責窗口"],
+    "—"
+  );
+
+  const emailStatus = getTrackingValue(
+    item,
+    ["emailStatus","Email Status","信件狀態"],
+    "—"
+  );
+
+  const sentAt = getTrackingValue(
+    item,
+    ["sentAt","發送時間","Email 發送時間"],
+    "—"
+  );
+
+  const cardId = "trackingCaseCard_" + index;
+
+  return `
+    <article id="${cardId}" class="tracking-case-card">
+      <div class="tracking-case-main">
+        <div class="tracking-case-top">
+          <span class="tracking-case-status ${statusInfo.className}">
+            ${escapeTrackingHtml(statusInfo.text)}
+          </span>
+          <span class="tracking-case-sheet">${escapeTrackingHtml(sheetName)}</span>
+        </div>
+
+        <div class="tracking-case-title">${escapeTrackingHtml(requestType)}</div>
+        <div class="tracking-case-subject">${escapeTrackingHtml(emailSubject)}</div>
+
+        <div class="tracking-case-meta">
+          <span>🏷️ ${escapeTrackingHtml(vendorName)}</span>
+          <span>🕒 ${escapeTrackingHtml(submittedAt)}</span>
+          <span>👤 ${escapeTrackingHtml(assignee)}</span>
+        </div>
+
+        <div class="tracking-case-actions">
+          <button
+            type="button"
+            class="tracking-detail-btn"
+            onclick="toggleTrackingCaseDetails('${cardId}', this)"
+          >查看詳細資料⌄</button>
+        </div>
+      </div>
+
+      <div class="tracking-case-details">
+        <div class="tracking-detail-grid">
+          ${createTrackingDetailItem("需求分類", workstream)}
+          ${createTrackingDetailItem("負責窗口", amName)}
+          ${createTrackingDetailItem("Case Subject", caseSubject, true)}
+          ${createTrackingDetailItem("Email Status", emailStatus)}
+          ${createTrackingDetailItem("發送時間", sentAt)}
+          ${createTrackingDetailItem("Email Subject", emailSubject, true)}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderTrackingResult(data, resultMeta){
+  const list = document.getElementById("trackingCaseList");
+  const result = document.getElementById("trackingResult");
+  const summary = document.getElementById("trackingResultSummary");
+
+  if(!list || !result) return;
+
+  const items = Array.isArray(data)
+    ? data
+    : (data ? [data] : []);
+
+  updateTrackingCounts(
+    resultMeta && resultMeta.counts
+      ? resultMeta.counts
+      : {
+          open: trackingCurrentFilter === "open" ? items.length : 0,
+          closed: trackingCurrentFilter === "closed" ? items.length : 0,
+          all: items.length
+        }
+  );
+
+  updateTrackingFilterButtons(trackingCurrentFilter);
+
+  const totalMatched =
+    Number(resultMeta && resultMeta.totalMatched);
+
+  const visibleCount =
+    Number.isFinite(totalMatched)
+      ? totalMatched
+      : items.length;
+
+  if(summary){
+    summary.textContent =
+      "目前顯示 " +
+      visibleCount +
+      " 筆";
+  }
+
+  if(items.length === 0){
+    list.innerHTML = `
+      <div class="tracking-empty">
+        <div class="tracking-empty-icon">📭</div>
+        <div class="tracking-empty-title">此分類目前沒有案件</div>
+        <div class="tracking-empty-text">可切換其他狀態分類查看。</div>
+      </div>
+    `;
+  }else{
+    list.innerHTML =
+      items
+        .map(function(item, index){
+          return createTrackingCaseCard(item, index);
+        })
+        .join("");
+  }
+
+  result.classList.add("show");
+
+  const message = document.getElementById("trackingMessage");
+  if(message){
+    message.className = "tracking-message";
+    message.textContent = "";
+  }
+}
+
+function toggleTrackingCaseDetails(cardId, button){
+  const card = document.getElementById(cardId);
+  if(!card) return;
+
+  const expanded = card.classList.toggle("expanded");
+
+  if(button){
+    button.textContent =
+      expanded
+        ? "收起詳細資料⌃"
+        : "查看詳細資料⌄";
+  }
+}
+
+async function changeTrackingFilter(filter){
+  trackingCurrentFilter =
+    ["open","closed","all"].includes(filter)
+      ? filter
+      : "open";
+
+  updateTrackingFilterButtons(trackingCurrentFilter);
+
+  const input = document.getElementById("trackingKeyword");
+  const keyword =
+    trackingLastKeyword ||
+    (input ? input.value.trim() : "");
+
+  if(keyword.length >= 2){
+    await searchCaseProgress({
+      preserveResult: true
+    });
+  }
+}
+
+async function searchCaseProgress(options){
+  options = options || {};
+
+  const input = document.getElementById("trackingKeyword");
+  const button = document.getElementById("trackingSearchButton");
+  const keyword = input ? input.value.trim() : "";
+
+  if(!options.preserveResult){
+    clearTrackingResult();
+  }
+
+  if(keyword.length < 2){
+    showTrackingMessage("請至少輸入 2 個字元的品牌或門市名稱。", "error");
+    if(input) input.focus();
+    return;
+  }
+
+  trackingLastKeyword = keyword;
+
+  if(button){
+    button.disabled = true;
+    button.textContent = "查詢中…";
+  }
+
+  showTrackingMessage("正在查詢案件資料，請稍候。", "info");
+
+  try{
+    const url = GAS_URL +
+      "?action=searchCaseProgress&keyword=" +
+      encodeURIComponent(keyword) +
+      "&statusFilter=" +
+      encodeURIComponent(trackingCurrentFilter) +
+      "&t=" + Date.now();
+
+    const response = await fetch(url);
+    if(!response.ok) throw new Error("HTTP " + response.status);
+
+    const result = await response.json();
+
+    if(result && result.success === false){
+      throw new Error(result.message || "查詢失敗");
+    }
+
+    const data =
+      result && Array.isArray(result.data)
+        ? result.data
+        : (
+            Array.isArray(result)
+              ? result
+              : (
+                  result && result.data
+                    ? [result.data]
+                    : []
+                )
+          );
+
+    renderTrackingResult(data, result || {});
+  }catch(error){
+    console.error("案件進度查詢失敗：", error);
+    showTrackingMessage(
+      error && error.message
+        ? error.message
+        : "目前無法取得案件進度，請稍後再試。",
+      "error"
+    );
+  }finally{
+    if(button){
+      button.disabled = false;
+      button.textContent = "查詢進度";
+    }
+  }
+}
+
+window.addEventListener("DOMContentLoaded", function(){
+  showPortalSection("portalHome");
 });
 
 </script>
