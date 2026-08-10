@@ -7509,7 +7509,6 @@ try{
 
     onValue(connectedRef, async (snapshot) => {
       if(snapshot.val() !== true){
-        setOnlineWidgetState("loading", "正在連線即時在線人數…");
         return;
       }
 
