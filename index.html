@@ -2134,6 +2134,127 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .header-live-summary{justify-content:flex-start}
 }
 
+
+/* =========================
+   系統公告彈跳視窗
+========================= */
+.announcement-modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:100002;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(15,23,42,.38);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+.announcement-modal-backdrop.show{display:flex}
+
+.announcement-modal{
+  width:min(460px,100%);
+  overflow:hidden;
+  background:#fff;
+  border:1px solid #dbeafe;
+  border-radius:24px;
+  box-shadow:0 24px 60px rgba(15,23,42,.24);
+  animation:announcement-modal-in .18s ease-out;
+}
+@keyframes announcement-modal-in{
+  from{opacity:0;transform:translateY(9px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.announcement-modal-head{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:20px 22px 16px;
+  background:#eff6ff;
+  border-bottom:1px solid #dbeafe;
+}
+.announcement-modal-icon{
+  display:grid;
+  place-items:center;
+  width:42px;
+  height:42px;
+  flex:0 0 auto;
+  border-radius:14px;
+  background:#fff;
+  font-size:20px;
+  box-shadow:0 4px 12px rgba(15,23,42,.06);
+}
+.announcement-modal-title{
+  margin:0;
+  color:#1e40af;
+  font-size:18px;
+  font-weight:900;
+  line-height:1.45;
+}
+.announcement-modal-body{
+  padding:20px 22px 22px;
+}
+.announcement-modal-message{
+  margin:0;
+  color:#475569;
+  font-size:14px;
+  line-height:1.8;
+  white-space:pre-line;
+}
+.announcement-modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:20px;
+}
+.announcement-modal-confirm{
+  min-width:120px;
+  background:#2563eb;
+  color:#fff;
+}
+.announcement-modal-confirm:hover{background:#1d4ed8}
+
+/* warning */
+.announcement-modal-backdrop.warning .announcement-modal{
+  border-color:#fed7aa;
+}
+.announcement-modal-backdrop.warning .announcement-modal-head{
+  background:#fff7ed;
+  border-bottom-color:#fed7aa;
+}
+.announcement-modal-backdrop.warning .announcement-modal-title{
+  color:#c2410c;
+}
+.announcement-modal-backdrop.warning .announcement-modal-confirm{
+  background:#ea580c;
+}
+.announcement-modal-backdrop.warning .announcement-modal-confirm:hover{
+  background:#c2410c;
+}
+
+/* maintenance */
+.announcement-modal-backdrop.maintenance .announcement-modal{
+  border-color:#fbcfe8;
+}
+.announcement-modal-backdrop.maintenance .announcement-modal-head{
+  background:#fff0f6;
+  border-bottom-color:#fbcfe8;
+}
+.announcement-modal-backdrop.maintenance .announcement-modal-title{
+  color:#be185d;
+}
+.announcement-modal-backdrop.maintenance .announcement-modal-confirm{
+  background:#ff2b85;
+}
+.announcement-modal-backdrop.maintenance .announcement-modal-confirm:hover{
+  background:#e01970;
+}
+
+@media(max-width:520px){
+  .announcement-modal-head{padding:18px 18px 14px}
+  .announcement-modal-body{padding:18px}
+  .announcement-modal-actions button{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -7536,6 +7657,33 @@ window.addEventListener("DOMContentLoaded", function(){
   </div>
 </div>
 
+
+<div id="announcementModalBackdrop"
+     class="announcement-modal-backdrop"
+     aria-hidden="true">
+  <div class="announcement-modal"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="announcementModalTitle">
+    <div class="announcement-modal-head">
+      <div id="announcementModalIcon" class="announcement-modal-icon">📢</div>
+      <h3 id="announcementModalTitle" class="announcement-modal-title">系統公告</h3>
+    </div>
+
+    <div class="announcement-modal-body">
+      <p id="announcementModalMessage" class="announcement-modal-message"></p>
+
+      <div class="announcement-modal-actions">
+        <button id="announcementModalConfirmBtn"
+                type="button"
+                class="announcement-modal-confirm">
+          我知道了
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="unsavedModalBackdrop" class="unsaved-modal-backdrop" aria-hidden="true">
   <div class="unsaved-modal" role="dialog" aria-modal="true" aria-labelledby="unsavedModalTitle">
     <div class="unsaved-modal-icon">⚠️</div>
@@ -7756,6 +7904,130 @@ try{
     );
   }
 
+  function getAnnouncementKey(data){
+    if(!data) return "";
+
+    const explicitId = String(data.id || data.version || "").trim();
+    if(explicitId){
+      return `id:${explicitId}`;
+    }
+
+    // 未設定 id 時，自動依公告內容產生版本。
+    // 只要標題／內容／類型有變，就會視為新的公告再跳一次。
+    const source = [
+      String(data.title || ""),
+      String(data.message || ""),
+      String(data.type || "info")
+    ].join("|");
+
+    let hash = 0;
+    for(let i = 0; i < source.length; i += 1){
+      hash = ((hash << 5) - hash) + source.charCodeAt(i);
+      hash |= 0;
+    }
+
+    return `auto:${Math.abs(hash)}`;
+  }
+
+  function getSeenAnnouncementKey(){
+    try{
+      return localStorage.getItem("fpPortalSeenAnnouncementKey") || "";
+    }catch(error){
+      return "";
+    }
+  }
+
+  function saveSeenAnnouncementKey(key){
+    if(!key) return;
+    try{
+      localStorage.setItem("fpPortalSeenAnnouncementKey", key);
+    }catch(error){}
+  }
+
+  function closeAnnouncementModal(markAsSeen = true){
+    const backdrop = document.getElementById("announcementModalBackdrop");
+    if(!backdrop) return;
+
+    if(markAsSeen && backdrop.dataset.announcementKey){
+      saveSeenAnnouncementKey(backdrop.dataset.announcementKey);
+    }
+
+    backdrop.classList.remove("show", "warning", "maintenance");
+    backdrop.setAttribute("aria-hidden", "true");
+  }
+
+  function showAnnouncementModal(data){
+    const backdrop = document.getElementById("announcementModalBackdrop");
+    const icon = document.getElementById("announcementModalIcon");
+    const title = document.getElementById("announcementModalTitle");
+    const message = document.getElementById("announcementModalMessage");
+
+    if(!backdrop || !icon || !title || !message) return;
+
+    const enabled = !!(data && data.enabled);
+    const text = data && data.message ? String(data.message).trim() : "";
+    if(!enabled || !text){
+      closeAnnouncementModal(false);
+      return;
+    }
+
+    const announcementKey = getAnnouncementKey(data);
+    if(!announcementKey || getSeenAnnouncementKey() === announcementKey){
+      return;
+    }
+
+    const type = ["warning","maintenance"].includes(String(data.type || "").toLowerCase())
+      ? String(data.type).toLowerCase()
+      : "info";
+
+    backdrop.dataset.announcementKey = announcementKey;
+    backdrop.classList.remove("warning", "maintenance");
+    if(type !== "info") backdrop.classList.add(type);
+
+    icon.textContent =
+      type === "warning"
+        ? "⚠️"
+        : type === "maintenance"
+          ? "🛠️"
+          : "📢";
+
+    title.textContent = data.title ? String(data.title) : "系統公告";
+    message.textContent = text;
+
+    backdrop.classList.add("show");
+    backdrop.setAttribute("aria-hidden", "false");
+
+    const confirmBtn = document.getElementById("announcementModalConfirmBtn");
+    if(confirmBtn){
+      setTimeout(() => confirmBtn.focus(), 0);
+    }
+  }
+
+  const announcementConfirmBtn = document.getElementById("announcementModalConfirmBtn");
+  if(announcementConfirmBtn){
+    announcementConfirmBtn.addEventListener("click", () => {
+      closeAnnouncementModal(true);
+    });
+  }
+
+  const announcementBackdrop = document.getElementById("announcementModalBackdrop");
+  if(announcementBackdrop){
+    announcementBackdrop.addEventListener("click", (event) => {
+      if(event.target === announcementBackdrop){
+        closeAnnouncementModal(true);
+      }
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if(event.key === "Escape"){
+      const backdrop = document.getElementById("announcementModalBackdrop");
+      if(backdrop && backdrop.classList.contains("show")){
+        closeAnnouncementModal(true);
+      }
+    }
+  });
+
   function renderAnnouncement(data){
     const box = document.getElementById("portalAnnouncement");
     const icon = document.getElementById("portalAnnouncementIcon");
@@ -7780,6 +8052,9 @@ try{
     title.textContent = data.title ? String(data.title) : "系統公告";
     message.textContent = text;
     icon.textContent = type === "warning" ? "⚠️" : type === "maintenance" ? "🛠️" : "📢";
+
+    // 首次看到這則公告時跳出視窗；首頁 Banner 仍會保留。
+    showAnnouncementModal(data);
   }
 
   function startAnnouncementListener(){
