@@ -2135,6 +2135,14 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 
 
+
+.portal-announcements{
+  display:grid;
+  gap:10px;
+  margin-top:16px;
+}
+.portal-announcements:empty{display:none}
+
 /* =========================
    系統公告彈跳視窗
 ========================= */
@@ -2307,13 +2315,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       </div>
     </div>
 
-    <div id="portalAnnouncement" class="portal-announcement" role="status" aria-live="polite">
-      <div id="portalAnnouncementIcon" class="portal-announcement-icon">📢</div>
-      <div class="portal-announcement-main">
-        <div id="portalAnnouncementTitle" class="portal-announcement-title">系統公告</div>
-        <div id="portalAnnouncementMessage" class="portal-announcement-message"></div>
-      </div>
-    </div>
+    <div id="portalAnnouncements" class="portal-announcements" aria-live="polite"></div>
 
     <div class="portal-action-grid">
       <button type="button" class="portal-action-card create" onclick="openRequestPortal()">
@@ -7904,20 +7906,39 @@ try{
     );
   }
 
+  const ANNOUNCEMENT_TYPES = ["maintenance", "warning", "info"];
+  let announcementQueue = [];
+  let announcementModalOpen = false;
+
+  function normalizeAnnouncement(type, data){
+    const source = data && typeof data === "object" ? data : {};
+    return {
+      type,
+      enabled: source.enabled === true,
+      title: String(
+        source.title ||
+        (type === "maintenance"
+          ? "系統維護通知"
+          : type === "warning"
+            ? "重要提醒"
+            : "系統公告")
+      ),
+      message: String(source.message || "").trim(),
+      id: String(source.id || source.version || "").trim()
+    };
+  }
+
   function getAnnouncementKey(data){
     if(!data) return "";
 
-    const explicitId = String(data.id || data.version || "").trim();
-    if(explicitId){
-      return `id:${explicitId}`;
+    if(data.id){
+      return `${data.type}:id:${data.id}`;
     }
 
-    // 未設定 id 時，自動依公告內容產生版本。
-    // 只要標題／內容／類型有變，就會視為新的公告再跳一次。
     const source = [
+      String(data.type || "info"),
       String(data.title || ""),
-      String(data.message || ""),
-      String(data.type || "info")
+      String(data.message || "")
     ].join("|");
 
     let hash = 0;
@@ -7926,21 +7947,21 @@ try{
       hash |= 0;
     }
 
-    return `auto:${Math.abs(hash)}`;
+    return `${data.type}:auto:${Math.abs(hash)}`;
   }
 
-  function getSeenAnnouncementKey(){
+  function getSeenAnnouncementKey(type){
     try{
-      return localStorage.getItem("fpPortalSeenAnnouncementKey") || "";
+      return localStorage.getItem(`fpPortalSeenAnnouncementKey:${type}`) || "";
     }catch(error){
       return "";
     }
   }
 
-  function saveSeenAnnouncementKey(key){
-    if(!key) return;
+  function saveSeenAnnouncementKey(type, key){
+    if(!type || !key) return;
     try{
-      localStorage.setItem("fpPortalSeenAnnouncementKey", key);
+      localStorage.setItem(`fpPortalSeenAnnouncementKey:${type}`, key);
     }catch(error){}
   }
 
@@ -7948,12 +7969,20 @@ try{
     const backdrop = document.getElementById("announcementModalBackdrop");
     if(!backdrop) return;
 
-    if(markAsSeen && backdrop.dataset.announcementKey){
-      saveSeenAnnouncementKey(backdrop.dataset.announcementKey);
+    const type = backdrop.dataset.announcementType || "";
+    const key = backdrop.dataset.announcementKey || "";
+
+    if(markAsSeen && type && key){
+      saveSeenAnnouncementKey(type, key);
     }
 
     backdrop.classList.remove("show", "warning", "maintenance");
     backdrop.setAttribute("aria-hidden", "true");
+    announcementModalOpen = false;
+
+    setTimeout(() => {
+      showNextAnnouncementModal();
+    }, 80);
   }
 
   function showAnnouncementModal(data){
@@ -7963,37 +7992,28 @@ try{
     const message = document.getElementById("announcementModalMessage");
 
     if(!backdrop || !icon || !title || !message) return;
-
-    const enabled = !!(data && data.enabled);
-    const text = data && data.message ? String(data.message).trim() : "";
-    if(!enabled || !text){
-      closeAnnouncementModal(false);
-      return;
-    }
+    if(!data || !data.enabled || !data.message) return;
 
     const announcementKey = getAnnouncementKey(data);
-    if(!announcementKey || getSeenAnnouncementKey() === announcementKey){
-      return;
-    }
+    if(!announcementKey) return;
+    if(getSeenAnnouncementKey(data.type) === announcementKey) return;
 
-    const type = ["warning","maintenance"].includes(String(data.type || "").toLowerCase())
-      ? String(data.type).toLowerCase()
-      : "info";
-
+    backdrop.dataset.announcementType = data.type;
     backdrop.dataset.announcementKey = announcementKey;
     backdrop.classList.remove("warning", "maintenance");
-    if(type !== "info") backdrop.classList.add(type);
+    if(data.type !== "info") backdrop.classList.add(data.type);
 
     icon.textContent =
-      type === "warning"
+      data.type === "warning"
         ? "⚠️"
-        : type === "maintenance"
+        : data.type === "maintenance"
           ? "🛠️"
           : "📢";
 
-    title.textContent = data.title ? String(data.title) : "系統公告";
-    message.textContent = text;
+    title.textContent = data.title;
+    message.textContent = data.message;
 
+    announcementModalOpen = true;
     backdrop.classList.add("show");
     backdrop.setAttribute("aria-hidden", "false");
 
@@ -8001,6 +8021,63 @@ try{
     if(confirmBtn){
       setTimeout(() => confirmBtn.focus(), 0);
     }
+  }
+
+  function showNextAnnouncementModal(){
+    if(announcementModalOpen) return;
+
+    while(announcementQueue.length){
+      const next = announcementQueue.shift();
+      const key = getAnnouncementKey(next);
+      if(!key) continue;
+      if(getSeenAnnouncementKey(next.type) === key) continue;
+
+      showAnnouncementModal(next);
+      break;
+    }
+  }
+
+  function renderAnnouncementBanner(data){
+    const type = data.type;
+    const wrapper = document.createElement("div");
+    wrapper.className =
+      "portal-announcement show" +
+      (type === "info" ? "" : ` ${type}`);
+
+    const icon = type === "warning" ? "⚠️" : type === "maintenance" ? "🛠️" : "📢";
+
+    wrapper.innerHTML = `
+      <div class="portal-announcement-icon">${icon}</div>
+      <div class="portal-announcement-main">
+        <div class="portal-announcement-title">${escapeHtml(data.title)}</div>
+        <div class="portal-announcement-message">${escapeHtml(data.message)}</div>
+      </div>
+    `;
+
+    return wrapper;
+  }
+
+  function renderAnnouncements(allData){
+    const container = document.getElementById("portalAnnouncements");
+    if(!container) return;
+
+    container.innerHTML = "";
+    announcementQueue = [];
+
+    const active = ANNOUNCEMENT_TYPES
+      .map((type) => normalizeAnnouncement(type, allData ? allData[type] : null))
+      .filter((item) => item.enabled && item.message);
+
+    active.forEach((item) => {
+      container.appendChild(renderAnnouncementBanner(item));
+
+      const key = getAnnouncementKey(item);
+      if(key && getSeenAnnouncementKey(item.type) !== key){
+        announcementQueue.push(item);
+      }
+    });
+
+    showNextAnnouncementModal();
   }
 
   const announcementConfirmBtn = document.getElementById("announcementModalConfirmBtn");
@@ -8028,49 +8105,19 @@ try{
     }
   });
 
-  function renderAnnouncement(data){
-    const box = document.getElementById("portalAnnouncement");
-    const icon = document.getElementById("portalAnnouncementIcon");
-    const title = document.getElementById("portalAnnouncementTitle");
-    const message = document.getElementById("portalAnnouncementMessage");
-    if(!box || !title || !message || !icon) return;
-
-    const enabled = !!(data && data.enabled);
-    const text = data && data.message ? String(data.message).trim() : "";
-
-    if(!enabled || !text){
-      box.className = "portal-announcement";
-      message.textContent = "";
-      return;
-    }
-
-    const type = ["warning","maintenance"].includes(String(data.type || "").toLowerCase())
-      ? String(data.type).toLowerCase()
-      : "info";
-
-    box.className = "portal-announcement show" + (type === "info" ? "" : ` ${type}`);
-    title.textContent = data.title ? String(data.title) : "系統公告";
-    message.textContent = text;
-    icon.textContent = type === "warning" ? "⚠️" : type === "maintenance" ? "🛠️" : "📢";
-
-    // 首次看到這則公告時跳出視窗；首頁 Banner 仍會保留。
-    showAnnouncementModal(data);
-  }
-
   function startAnnouncementListener(){
     if(announcementListenerStarted) return;
     announcementListenerStarted = true;
 
     onValue(
-      ref(db, "announcement"),
+      ref(db, "announcements"),
       (snapshot) => {
-        renderAnnouncement(snapshot.val());
+        renderAnnouncements(snapshot.val() || {});
       },
       (error) => {
-        // 尚未開放 announcement Rules 時，公告區維持隱藏。
         console.warn("Firebase 即時公告讀取失敗：", error);
         announcementListenerStarted = false;
-        renderAnnouncement(null);
+        renderAnnouncements({});
       }
     );
   }
