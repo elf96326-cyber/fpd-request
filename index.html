@@ -7484,7 +7484,7 @@ try{
     onValue(
       presenceRootRef,
       (snapshot) => {
-        const count = snapshot.numChildren();
+        const count = snapshot.size;
         setOnlineWidgetState("online", `目前 ${count} 人在線`);
       },
       (error) => {
