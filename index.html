@@ -7950,19 +7950,18 @@ try{
     return `${data.type}:auto:${Math.abs(hash)}`;
   }
 
+  // 只記錄「這次開啟網站」已看過的公告。
+  // 重新整理或關閉後再次開啟網站，會重新提醒一次；
+  // 但同一頁面內切換首頁／建立案件／案件查詢不會重複跳出。
+  const seenAnnouncementKeysThisVisit = new Map();
+
   function getSeenAnnouncementKey(type){
-    try{
-      return localStorage.getItem(`fpPortalSeenAnnouncementKey:${type}`) || "";
-    }catch(error){
-      return "";
-    }
+    return seenAnnouncementKeysThisVisit.get(type) || "";
   }
 
   function saveSeenAnnouncementKey(type, key){
     if(!type || !key) return;
-    try{
-      localStorage.setItem(`fpPortalSeenAnnouncementKey:${type}`, key);
-    }catch(error){}
+    seenAnnouncementKeysThisVisit.set(type, key);
   }
 
   function closeAnnouncementModal(markAsSeen = true){
