@@ -1927,9 +1927,78 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .tracking-search-row button,.portal-back-btn{width:100%}
 }
 
+
+/* =========================
+   Firebase 即時在線人數
+========================= */
+.online-users-widget{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:9998;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:10px 14px;
+  border:1px solid #bbf7d0;
+  border-radius:999px;
+  background:rgba(255,255,255,.94);
+  color:#166534;
+  box-shadow:0 8px 24px rgba(15,23,42,.12);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  font-size:12px;
+  font-weight:800;
+  line-height:1;
+  pointer-events:none;
+  transition:.18s ease;
+}
+.online-users-dot{
+  width:8px;
+  height:8px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.12);
+}
+.online-users-widget.is-loading{
+  border-color:#e2e8f0;
+  color:#64748b;
+}
+.online-users-widget.is-loading .online-users-dot{
+  background:#94a3b8;
+  box-shadow:0 0 0 4px rgba(148,163,184,.12);
+}
+.online-users-widget.is-error{
+  border-color:#fed7aa;
+  color:#c2410c;
+}
+.online-users-widget.is-error .online-users-dot{
+  background:#fb923c;
+  box-shadow:0 0 0 4px rgba(251,146,60,.12);
+}
+@media(max-width:760px){
+  .online-users-widget{
+    right:12px;
+    bottom:12px;
+    padding:9px 12px;
+    font-size:11px;
+  }
+}
+
 </style>
 </head>
 <body>
+
+<div id="onlineUsersWidget"
+     class="online-users-widget is-loading"
+     role="status"
+     aria-live="polite"
+     aria-label="目前在線人數">
+  <span class="online-users-dot" aria-hidden="true"></span>
+  <span id="onlineUsersText">在線人數連線中…</span>
+</div>
+
 <section id="portalHome" class="portal-home">
   <div class="portal-home-hero">
     <div class="portal-home-badge">📋 Menu Request Portal</div>
@@ -7293,6 +7362,135 @@ window.addEventListener("DOMContentLoaded", function(){
     </div>
   </div>
 </div>
+
+
+<script type="module">
+/* =========================
+   Firebase Realtime Database
+   即時在線人數（獨立於原 Apps Script）
+========================= */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInAnonymously
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  push,
+  set,
+  onDisconnect,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDAQ9v10sURO8ddqMI62v61oKzspTCg_T4",
+  authDomain: "fp-request.firebaseapp.com",
+  databaseURL: "https://fp-request-default-rtdb.firebaseio.com",
+  projectId: "fp-request",
+  storageBucket: "fp-request.firebasestorage.app",
+  messagingSenderId: "283833150635",
+  appId: "1:283833150635:web:97c3bf7797b126e0a19bee",
+  measurementId: "G-RQ7KRM5PEJ"
+};
+
+const onlineWidget = document.getElementById("onlineUsersWidget");
+const onlineText = document.getElementById("onlineUsersText");
+
+function setOnlineWidgetState(type, text){
+  if(!onlineWidget || !onlineText) return;
+
+  onlineWidget.classList.remove("is-loading", "is-error");
+
+  if(type === "loading"){
+    onlineWidget.classList.add("is-loading");
+  }else if(type === "error"){
+    onlineWidget.classList.add("is-error");
+  }
+
+  onlineText.textContent = text;
+}
+
+try{
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  let presenceStartedForUid = "";
+  let connectionRef = null;
+
+  // 監聽整體 presence；以 uid 數量作為「目前在線人數」。
+  // 每個 uid 底下可同時保留多個分頁/裝置連線，避免關掉其中一個分頁就被誤判離線。
+  const presenceRootRef = ref(db, "presence");
+
+  onValue(
+    presenceRootRef,
+    (snapshot) => {
+      const count = snapshot.numChildren();
+      setOnlineWidgetState("online", `目前 ${count} 人在線`);
+    },
+    (error) => {
+      console.warn("Firebase 在線人數讀取失敗：", error);
+      setOnlineWidgetState("error", "在線人數暫時無法取得");
+    }
+  );
+
+  async function startPresence(user){
+    if(!user || !user.uid) return;
+    if(presenceStartedForUid === user.uid) return;
+
+    presenceStartedForUid = user.uid;
+
+    const connectedRef = ref(db, ".info/connected");
+    const userConnectionsRef = ref(db, `presence/${user.uid}/connections`);
+
+    // 每個瀏覽器分頁建立獨立 connection id。
+    connectionRef = push(userConnectionsRef);
+
+    onValue(connectedRef, async (snapshot) => {
+      if(snapshot.val() !== true){
+        setOnlineWidgetState("loading", "在線人數重新連線中…");
+        return;
+      }
+
+      try{
+        // Firebase 官方建議：先註冊 onDisconnect，再標記為在線，
+        // 避免連線瞬斷造成殘留的在線紀錄。
+        await onDisconnect(connectionRef).remove();
+
+        await set(connectionRef, {
+          online: true,
+          connectedAt: serverTimestamp()
+        });
+      }catch(error){
+        console.warn("Firebase presence 設定失敗：", error);
+        setOnlineWidgetState("error", "在線人數暫時無法取得");
+      }
+    });
+  }
+
+  onAuthStateChanged(auth, (user) => {
+    if(user){
+      startPresence(user);
+      return;
+    }
+
+    setOnlineWidgetState("loading", "在線人數連線中…");
+
+    signInAnonymously(auth).catch((error) => {
+      console.warn("Firebase 匿名登入失敗：", error);
+      setOnlineWidgetState("error", "在線人數暫時無法取得");
+    });
+  });
+
+}catch(error){
+  console.warn("Firebase 初始化失敗：", error);
+  setOnlineWidgetState("error", "在線人數暫時無法取得");
+}
+</script>
 
 </body>
 </html>
