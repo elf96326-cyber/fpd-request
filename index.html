@@ -1929,29 +1929,23 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 
 /* =========================
-   Firebase 即時在線人數
+   Firebase 即時在線人數－整合版
 ========================= */
-.online-users-widget{
-  position:fixed;
-  right:20px;
-  bottom:20px;
-  z-index:9998;
-  display:flex;
+.online-users-badge{
+  display:inline-flex;
   align-items:center;
   gap:9px;
-  padding:10px 14px;
+  width:max-content;
+  max-width:100%;
+  padding:9px 13px;
   border:1px solid #bbf7d0;
   border-radius:999px;
-  background:rgba(255,255,255,.94);
+  background:#f0fdf4;
   color:#166534;
-  box-shadow:0 8px 24px rgba(15,23,42,.12);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
   font-size:12px;
   font-weight:800;
-  line-height:1;
-  pointer-events:none;
-  transition:.18s ease;
+  line-height:1.2;
+  white-space:nowrap;
 }
 .online-users-dot{
   width:8px;
@@ -1961,28 +1955,62 @@ button:disabled{opacity:.45;cursor:not-allowed}
   background:#22c55e;
   box-shadow:0 0 0 4px rgba(34,197,94,.12);
 }
-.online-users-widget.is-loading{
+.online-users-badge.is-loading{
   border-color:#e2e8f0;
+  background:#f8fafc;
   color:#64748b;
 }
-.online-users-widget.is-loading .online-users-dot{
+.online-users-badge.is-loading .online-users-dot{
   background:#94a3b8;
   box-shadow:0 0 0 4px rgba(148,163,184,.12);
 }
-.online-users-widget.is-error{
+.online-users-badge.is-error{
   border-color:#fed7aa;
+  background:#fff7ed;
   color:#c2410c;
 }
-.online-users-widget.is-error .online-users-dot{
+.online-users-badge.is-error .online-users-dot{
   background:#fb923c;
   box-shadow:0 0 0 4px rgba(251,146,60,.12);
 }
+
+.portal-home-hero-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:20px;
+}
+.portal-home-hero-copy{
+  min-width:0;
+  flex:1;
+}
+.portal-home-online{
+  flex:0 0 auto;
+  margin-top:2px;
+  padding:11px 16px;
+  font-size:13px;
+  box-shadow:0 6px 18px rgba(22,101,52,.08);
+}
+.header-online-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  margin-top:12px;
+}
+.header-online-wrap .online-users-badge{
+  padding:8px 12px;
+  font-size:11px;
+}
+
 @media(max-width:760px){
-  .online-users-widget{
-    right:12px;
-    bottom:12px;
-    padding:9px 12px;
-    font-size:11px;
+  .portal-home-hero-top{
+    flex-direction:column;
+  }
+  .portal-home-online{
+    margin-top:0;
+  }
+  .header-online-wrap{
+    justify-content:flex-start;
   }
 }
 
@@ -1990,20 +2018,24 @@ button:disabled{opacity:.45;cursor:not-allowed}
 </head>
 <body>
 
-<div id="onlineUsersWidget"
-     class="online-users-widget is-loading"
-     role="status"
-     aria-live="polite"
-     aria-label="目前在線人數">
-  <span class="online-users-dot" aria-hidden="true"></span>
-  <span id="onlineUsersText">在線人數連線中…</span>
-</div>
 
 <section id="portalHome" class="portal-home">
   <div class="portal-home-hero">
-    <div class="portal-home-badge">📋 Menu Request Portal</div>
-    <h1 class="portal-home-title">【foodpanda】需求入口網站</h1>
-    <p class="portal-home-desc">請選擇本次要進行的操作。您可以建立新的需求案件，或查詢既有案件的處理進度。</p>
+    <div class="portal-home-hero-top">
+      <div class="portal-home-hero-copy">
+        <div class="portal-home-badge">📋 Menu Request Portal</div>
+        <h1 class="portal-home-title">【foodpanda】需求入口網站</h1>
+        <p class="portal-home-desc">請選擇本次要進行的操作。您可以建立新的需求案件，或查詢既有案件的處理進度。</p>
+      </div>
+
+      <div class="online-users-badge portal-home-online is-loading"
+           data-online-users-badge
+           role="status"
+           aria-live="polite">
+        <span class="online-users-dot" aria-hidden="true"></span>
+        <span data-online-users-text>在線人數連線中…</span>
+      </div>
+    </div>
 
     <div class="portal-action-grid">
       <button type="button" class="portal-action-card create" onclick="openRequestPortal()">
@@ -2034,6 +2066,16 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <p class="desc">請依步驟確認品牌資訊並填寫需求內容，完成後即可建立新案件。</p>
     </div>
     <div class="status"><small>目前狀態</small><b id="statusText">填寫中</b></div>
+  </div>
+
+  <div class="header-online-wrap">
+    <div class="online-users-badge is-loading"
+         data-online-users-badge
+         role="status"
+         aria-live="polite">
+      <span class="online-users-dot" aria-hidden="true"></span>
+      <span data-online-users-text>在線人數連線中…</span>
+    </div>
   </div>
 </header>
 
@@ -7397,21 +7439,23 @@ const firebaseConfig = {
   measurementId: "G-RQ7KRM5PEJ"
 };
 
-const onlineWidget = document.getElementById("onlineUsersWidget");
-const onlineText = document.getElementById("onlineUsersText");
-
 function setOnlineWidgetState(type, text){
-  if(!onlineWidget || !onlineText) return;
+  const widgets = document.querySelectorAll("[data-online-users-badge]");
 
-  onlineWidget.classList.remove("is-loading", "is-error");
+  widgets.forEach((widget) => {
+    const textEl = widget.querySelector("[data-online-users-text]");
+    if(!textEl) return;
 
-  if(type === "loading"){
-    onlineWidget.classList.add("is-loading");
-  }else if(type === "error"){
-    onlineWidget.classList.add("is-error");
-  }
+    widget.classList.remove("is-loading", "is-error");
 
-  onlineText.textContent = text;
+    if(type === "loading"){
+      widget.classList.add("is-loading");
+    }else if(type === "error"){
+      widget.classList.add("is-error");
+    }
+
+    textEl.textContent = text;
+  });
 }
 
 try{
