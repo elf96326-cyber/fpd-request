@@ -7425,7 +7425,8 @@ import {
   push,
   set,
   onDisconnect,
-  serverTimestamp
+  serverTimestamp,
+  forceLongPolling
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -7461,6 +7462,11 @@ function setOnlineWidgetState(type, text){
 try{
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+
+  // 公司網路／Proxy 有時會阻擋 WebSocket。
+  // Realtime Database 改用 long polling，可提升在企業網路環境下的連線相容性。
+  forceLongPolling();
+
   const db = getDatabase(app);
 
   let presenceStartedForUid = "";
@@ -7503,7 +7509,7 @@ try{
 
     onValue(connectedRef, async (snapshot) => {
       if(snapshot.val() !== true){
-        setOnlineWidgetState("loading", "在線人數重新連線中…");
+        setOnlineWidgetState("loading", "正在連線即時在線人數…");
         return;
       }
 
