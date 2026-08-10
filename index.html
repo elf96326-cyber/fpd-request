@@ -8044,15 +8044,33 @@ try{
       "portal-announcement show" +
       (type === "info" ? "" : ` ${type}`);
 
-    const icon = type === "warning" ? "⚠️" : type === "maintenance" ? "🛠️" : "📢";
+    const iconText =
+      type === "warning"
+        ? "⚠️"
+        : type === "maintenance"
+          ? "🛠️"
+          : "📢";
 
-    wrapper.innerHTML = `
-      <div class="portal-announcement-icon">${icon}</div>
-      <div class="portal-announcement-main">
-        <div class="portal-announcement-title">${escapeHtml(data.title)}</div>
-        <div class="portal-announcement-message">${escapeHtml(data.message)}</div>
-      </div>
-    `;
+    // 不使用 innerHTML / escapeHtml，避免未定義函式造成公告整段中斷。
+    const icon = document.createElement("div");
+    icon.className = "portal-announcement-icon";
+    icon.textContent = iconText;
+
+    const main = document.createElement("div");
+    main.className = "portal-announcement-main";
+
+    const title = document.createElement("div");
+    title.className = "portal-announcement-title";
+    title.textContent = data.title;
+
+    const message = document.createElement("div");
+    message.className = "portal-announcement-message";
+    message.textContent = data.message;
+
+    main.appendChild(title);
+    main.appendChild(message);
+    wrapper.appendChild(icon);
+    wrapper.appendChild(main);
 
     return wrapper;
   }
