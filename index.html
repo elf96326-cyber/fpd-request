@@ -7466,21 +7466,28 @@ try{
   let presenceStartedForUid = "";
   let connectionRef = null;
 
-  // 監聽整體 presence；以 uid 數量作為「目前在線人數」。
-  // 每個 uid 底下可同時保留多個分頁/裝置連線，避免關掉其中一個分頁就被誤判離線。
+  // presence 必須等 Firebase 匿名登入完成後才能讀取。
+  // Realtime Database Rules 設定為 auth != null，因此不能在登入前先監聽。
   const presenceRootRef = ref(db, "presence");
+  let presenceCountListenerStarted = false;
 
-  onValue(
-    presenceRootRef,
-    (snapshot) => {
-      const count = snapshot.numChildren();
-      setOnlineWidgetState("online", `目前 ${count} 人在線`);
-    },
-    (error) => {
-      console.warn("Firebase 在線人數讀取失敗：", error);
-      setOnlineWidgetState("error", "在線人數暫時無法取得");
-    }
-  );
+  function startPresenceCountListener(){
+    if(presenceCountListenerStarted) return;
+    presenceCountListenerStarted = true;
+
+    onValue(
+      presenceRootRef,
+      (snapshot) => {
+        const count = snapshot.numChildren();
+        setOnlineWidgetState("online", `目前 ${count} 人在線`);
+      },
+      (error) => {
+        console.warn("Firebase 在線人數讀取失敗：", error);
+        presenceCountListenerStarted = false;
+        setOnlineWidgetState("error", "在線人數暫時無法取得");
+      }
+    );
+  }
 
   async function startPresence(user){
     if(!user || !user.uid) return;
@@ -7518,6 +7525,8 @@ try{
 
   onAuthStateChanged(auth, (user) => {
     if(user){
+      // 登入成功後，才開始讀取 presence 與建立自己的在線紀錄。
+      startPresenceCountListener();
       startPresence(user);
       return;
     }
