@@ -2465,7 +2465,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     </div>
 
     <div class="grid">
-      <div class="field"><label>品牌／門市名稱（必填）</label><input id="brand" placeholder="範例：星巴克、Mister Donut、迷克夏" oninput="validateBasic()"></div>
+      <div class="field"><label>品牌校稿用／單店門市名稱（必填）</label><input id="brand" placeholder="範例：星巴克、Mister Donut、迷克夏" oninput="validateBasic()"></div>
       <div class="field">
         <label>負責窗口（必填）</label>
         <div class="am-search-wrapper">
@@ -3257,6 +3257,14 @@ function normalizeVendorItem(item){
       item["品牌名稱"] ??
       ""
     ).trim(),
+    verificationRequired:
+      item.verificationRequired === true ||
+      String(item.verificationRequired || "").toLowerCase() === "true",
+    verificationReady:
+      !(
+        item.verificationReady === false ||
+        String(item.verificationReady || "").toLowerCase() === "false"
+      ),
     sourceType: String(
       item.sourceType ??
       item.source_type ??
@@ -3688,7 +3696,46 @@ function syncSelectedVendorAM(){
 
 async function retryBrandVerificationRequirement(){
   if(!currentSelectedVendorItem || brandVerificationChecking) return;
-  await selectVendor(currentSelectedVendorItem,currentSelectedVendorButton,true);
+
+  /*
+    正常情況搜尋結果已直接帶 verificationRequired，
+    因此不需要再次呼叫後端。
+    此按鈕僅保留給舊快取／相容性 fallback。
+  */
+  try{
+    brandVerificationChecking=true;
+    openBrandVerificationModal("checking");
+
+    const required=await getBrandVerificationRequirement(currentSelectedVendorItem);
+    currentSelectedVendorItem.verificationRequired=required;
+    currentSelectedVendorItem.verificationReady=true;
+
+    if(required){
+      brandVerificationRequired=true;
+      brandVerificationPassed=false;
+      switchBrandVerificationModalToInput();
+    }else{
+      brandVerificationRequired=false;
+      brandVerificationPassed=true;
+      closeBrandVerificationModal(false);
+      const card=document.getElementById("selectedVendorCard");
+      if(card){
+        card.classList.add("is-verified");
+        card.classList.remove("hidden");
+      }
+      validateBasic();
+      updateApplicationInfo();
+    }
+  }catch(error){
+    console.error("品牌驗證設定重新確認失敗：",error);
+    const message=document.getElementById("brandVerificationMessage");
+    if(message){
+      message.className="brand-verification-message error";
+      message.textContent="目前無法確認品牌驗證設定，請稍後再試。";
+    }
+  }finally{
+    brandVerificationChecking=false;
+  }
 }
 
 async function selectVendor(item,button,isRetry=false){
@@ -3729,11 +3776,6 @@ async function selectVendor(item,button,isRetry=false){
   if(codeLabel) codeLabel.textContent=selectedTargetType === "preview" ? "校稿用代碼" : "店家代碼";
   if(nameLabel) nameLabel.textContent=selectedTargetType === "preview" ? "校稿用完整名稱" : "完整名稱";
 
-  /*
-    單店門市：基本資訊帶入完整門市名稱。
-    校稿用平台：基本資訊優先帶入純品牌名稱；
-    若純品牌名稱為空，才以完整名稱作為備援。
-  */
   const basicBrandName=
     selectedTargetType === "preview"
       ? (item.brandName || item.fullName || "")
@@ -3750,9 +3792,70 @@ async function selectVendor(item,button,isRetry=false){
   updateRequestGroupFilter();
 
   const hint=document.getElementById("vendorSearchHint");
-  brandVerificationChecking=true;
 
-  // 先以同一個彈窗顯示確認中的狀態。
+  /*
+    新版搜尋 API 已經直接回傳是否需要品牌驗證，
+    點選結果後不再額外呼叫 getBrandVerificationRequirement。
+  */
+  if(typeof item.verificationRequired === "boolean"){
+    brandVerificationRequired=item.verificationRequired;
+
+    if(item.verificationReady === false && brandVerificationRequired){
+      brandVerificationPassed=false;
+      openBrandVerificationModal("verify");
+
+      const inputArea=document.getElementById("brandVerificationInputArea");
+      const retryButton=document.getElementById("retryBrandVerificationBtn");
+      const verifyButton=document.getElementById("verifyBrandCodeBtn");
+      const message=document.getElementById("brandVerificationMessage");
+
+      if(inputArea) inputArea.classList.add("hidden");
+      if(retryButton) retryButton.classList.add("hidden");
+      if(verifyButton) verifyButton.classList.add("hidden");
+      if(message){
+        message.className="brand-verification-message error";
+        message.textContent="此品牌的驗證設定尚未完成，請聯繫 foodpanda。";
+      }
+      if(hint){
+        hint.textContent="此品牌的驗證設定尚未完成。";
+        hint.style.color="#dc2626";
+      }
+      return;
+    }
+
+    if(brandVerificationRequired){
+      brandVerificationPassed=false;
+      switchBrandVerificationModalToInput();
+      if(hint){
+        hint.textContent=`已選擇${selectedTargetConfig.label}資料，請完成品牌驗證。`;
+        hint.style.color="#64748b";
+      }
+      return;
+    }
+
+    brandVerificationPassed=true;
+    closeBrandVerificationModal(false);
+
+    const card=document.getElementById("selectedVendorCard");
+    if(card){
+      card.classList.add("is-verified");
+      card.classList.remove("hidden");
+    }
+
+    if(hint){
+      hint.textContent=`${selectedTargetConfig.label}資料已選擇。`;
+      hint.style.color="#64748b";
+    }
+    validateBasic();
+    updateApplicationInfo();
+    return;
+  }
+
+  /*
+    相容舊版搜尋快取：若結果沒有新欄位，
+    才退回原本的額外 API 確認流程。
+  */
+  brandVerificationChecking=true;
   openBrandVerificationModal("checking");
   if(hint) hint.textContent=`正在確認${selectedTargetConfig.label}資料…`;
 
@@ -3767,8 +3870,6 @@ async function selectVendor(item,button,isRetry=false){
       if(hint) hint.textContent=`已選擇${selectedTargetConfig.label}資料，請完成品牌驗證。`;
     }else{
       brandVerificationPassed=true;
-
-      // 不需要驗證時，自動關閉確認視窗並顯示完整資料。
       closeBrandVerificationModal(false);
 
       const card=document.getElementById("selectedVendorCard");
