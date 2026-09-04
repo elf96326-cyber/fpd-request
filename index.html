@@ -2569,7 +2569,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <button class="request" data-type="menu_copy" onclick="selectType('menu_copy')"><b>🔗 菜單複製</b><p>將既有菜單內容複製到指定店家或品牌</p></button>
     <button class="request" data-type="plastic_bag" onclick="selectType('plastic_bag')"><b>🛍️ 塑膠袋設定</b><p>僅限更新塑膠袋設定使用</p></button>
     <button class="request" data-type="consumer_note" onclick="selectType('consumer_note')"><b>📝 備註功能</b><p>開 / 關消費者備註功能（以品牌為單位，不可單店開關）</p></button>
-    <button class="request" data-type="restaurant_info" onclick="selectType('restaurant_info')"><b>🏬 餐廳資訊</b><p>協助更新或確認餐廳基本資訊</p></button>
+    <button class="request" data-type="restaurant_info" onclick="selectType('restaurant_info')"><b>🏬 餐廳資訊</b><p>食品登錄字號／統編／肉品來源等資訊調整</p></button>
     <button class="request" data-type="pos_issue" onclick="selectType('pos_issue')"><b>⁉️POS 串接異常</b><p>協助回報或追蹤 POS 串接異常問題</p></button>
   </div></div>
 
@@ -4103,7 +4103,7 @@ const typeInfo = {
   consumer_note:["備註功能","開 / 關消費者備註功能（以品牌為單位，不可單店開關）"],
   store_price_label:["店內價標籤","協助設定或調整店內價相關標籤"],
   export_menu:["匯出菜單","協助匯出指定品牌、門市或校稿版菜單資料"],
-  restaurant_info:["餐廳資訊","協助更新或確認餐廳基本資訊"],
+  restaurant_info:["餐廳資訊","食品登錄字號／統編／肉品來源等資訊調整"],
   pos_issue:["POS 串接異常","協助回報或追蹤 POS 串接異常問題"],
   use_branch_photos:["使用既有分店照片","10 間以上門市"],
   upload_photo_to_preview:["提供餐點照連結至校稿用","不開放單店"],
@@ -4458,7 +4458,7 @@ function showMultilineVal(id){ return val(id) || "未填寫"; }
 function getPhotoUpdateDateTimeSummary(){
   const mode = val("photoUpdateMode");
   if(!mode) return "未填寫";
-  if(mode === "NOW") return "NOW";
+  if(mode === "TODAY") return "當天（無法指定完成時間）";
   const date = val("photoUpdateDate");
   const time = val("photoUpdateTime");
   if(date && time) return `${date} before ${time} as TW time`;
@@ -4587,6 +4587,16 @@ function field(id,label,type="text",placeholder="請填寫"){
 
   return `<div class="field"><label>${label}</label><input id="${id}" type="${type}" placeholder="${placeholder}" oninput="refreshSubject(); validateRequiredVisible(false)"></div>`;
 }
+function fieldWithNote(id,label,type="text",placeholder="請填寫",note=""){
+  return `
+    <div class="field">
+      <label>${label}</label>
+      <input id="${id}" type="${type}" placeholder="${placeholder}" oninput="refreshSubject(); validateRequiredVisible(false)">
+      ${note ? `<div class="sub" style="margin-top:7px;color:#dc2626;font-weight:600;line-height:1.6;">${note}</div>` : ""}
+    </div>
+  `;
+}
+
 function ccFields(){
   return `
     <div class="cc-email-section">
@@ -4851,21 +4861,24 @@ if(!currentType){
           { value: "SAM", label: "🔵Blue" },
           { value: "KAM", label: "🟢Green" }
         ])}
-      <div id="kaCaseTypeBlock" class="hidden">${select("menuCopyCaseSubjectType","更新時間",[
-          { value: "STAT", label: "立即複製" },
-          { value: "複製日期", label: "排程複製" }
+      <div id="kaCaseTypeBlock">${select("menuCopyCaseSubjectType","希望更新日期（必填）",[
+          { value: "STAT", label: "當天" },
+          { value: "複製日期", label: "指定日期" }
         ])}</div>
       ${subjectInput()}
       ${field("muCase","承菜單案件編號","text","請參照信件回覆內容即有該資訊")}
-      <div class="grid">
-        ${field("updateDate","更新日期【非假日】","date")}
-        ${field("updateTime","更新時間","time")}
-        ${field("updateDateNote","特殊時段更新備註 / 原因簡述","text","※若需於特殊時段更新，請備註告知原因")}
-        ${field("chainCode","品牌代碼","text","請填寫 品牌代碼")}
+      <div id="menuCopyTodayNote" class="notice hidden" style="color:#c2410c;background:#fff7ed;border:1px solid #fed7aa;">⚠️ 選擇「當天」僅代表希望於當日處理，無法指定完成時間，實際完成時間將依當日案件量為準。</div>
+      <div id="menuCopyScheduledBlock" class="hidden">
+        <div class="grid">
+          ${field("updateDate","指定更新日期（非完成時間）【非假日】","date")}
+          ${field("updateTime","希望更新時段","time")}
+          ${field("updateDateNote","特殊時段更新備註 / 原因簡述","text","※若需於特殊時段更新，請備註告知原因")}
+        </div>
       </div>
+      ${field("chainCode","品牌代碼","text","請填寫 品牌代碼")}
       ${field("copyMasterMenu","校稿版菜單","text","請填寫要複製的 校稿版菜單 名稱或連結")}
       ${select("itemSupplyStatus","既有品項供應狀態【擇一】",["Same as Master Vendor (品項同校稿版狀態)","Keep as Outlet Vendor (品項維持原分店狀態)"])}
-      ${field("vendorListLink","商家名單（連結）","text","請貼上 商家名單 連結")}
+      ${field("vendorListLink","商家名單（連結）","text","請貼上 商家名單 連結")}<div class="notice" style="color:#dc2626;font-size:12px;font-weight:600;">⚠️ 表單連結請務必開啟檢視權限；未開啟權限或格式錯誤將予以退件。</div>
       <div class="box pink"><h3>【如有全門市塑膠袋更新請備註以下文字】</h3><p class="box" style="font-size:13px;color:#64748b">全門市塑膠袋更新XX元，再協請更新菜單後額外設定於門市內</p>${textarea("plasticBagNote","全門市塑膠袋更新備註","例如：全門市塑膠袋更新 2 元，再協請更新菜單後額外設定於門市內",3)}</div>
     `;
   }
@@ -4966,7 +4979,7 @@ if(!currentType){
   if(currentType==="upload_photo_to_preview"){
     area.innerHTML = `${subjectInput()}
       ${field("previewPhotoMasterMenu","校稿版菜單：代碼 + 完整名稱（必填）","text","請填寫 校稿版菜單：代碼 + 完整名稱")}
-      ${field("previewPhotoLink","餐點照片連結（必填）","url","請貼上 Google Drive、Google Photos 或其他雲端連結")}
+      ${fieldWithNote("previewPhotoLink","餐點照片連結（必填）","url","請貼上 Google Drive、Google Photos 或其他雲端連結","⚠️ 照片檔名請務必與平台名稱完全一致；檔名不符將無法上傳。")}
     `;
   }
 
@@ -5021,7 +5034,9 @@ if(!currentType){
       </div>
       <div class="box">
         <h3>【告知欲更新菜單日期】</h3>
-        ${field("scheduleSyncDate","更新日期（必填）","date")}${field("scheduleSyncTime","更新時間（必填）","time")}
+        ${select("scheduleSyncMode","更新日期（非完成時間）（必填）",[{value:"TODAY",label:"當天"},{value:"Scheduled",label:"指定日期"}])}
+        <div id="scheduleSyncTodayNote" class="notice hidden" style="color:#c2410c;background:#fff7ed;border:1px solid #fed7aa;">⚠️ 選擇「當天」僅代表希望於當日處理，無法指定完成時間，實際完成時間將依當日案件量為準。</div>
+        <div id="scheduleSyncDateBlock" class="hidden">${field("scheduleSyncDate","指定更新日期（非完成時間）（必填）","date")}${field("scheduleSyncTime","希望更新時段","time")}</div>
       </div>
     `;
   }
@@ -5295,7 +5310,7 @@ if(!currentType){
       <div id="aaakalhMenuCategoryBlock" class="hidden">${field("aaakalhMenuCategory","Menu Category（必填）","text","請填寫 Menu Category")}</div>
       <div id="aaakalhPosNotice" class="notice hidden" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 Menu update：Yes，this vendor has updated the menu category by themself.</div>
       ${fixedCard("aaakalhDelivery","Delivery（固定）","Delivery")}
-      ${field("aaakalhVendorListLink","名單連結（必填）","text","請貼上 商家名單連結")}
+      ${field("aaakalhVendorListLink","名單連結（必填）","text","請貼上 商家名單連結")}<div class="notice" style="color:#dc2626;font-size:12px;font-weight:600;">⚠️ 表單連結請務必開啟檢視權限；未開啟權限或格式錯誤將予以退件。</div>
     `;
   }
 
@@ -5323,8 +5338,9 @@ if(!currentType){
       <div class="grid hidden" id="kalhDealContactBlock">${field("contact","主要校稿信箱（必填）","email","請填寫主要校稿信箱")}${ccFields()}</div>
       <div id="kalhDealMenuNotice" class="notice">⚠️ 請先選擇需求模式，系統才會產生對應的欄位。</div>
       ${field("kalhDealOppCase","OPP QC Case Number（必填）","text","請填寫 OPP QC case number")}
-      ${select("kalhDealUpdateMode","更新時間（必填）",["立即","指定日期"])}
-      <div id="kalhDealUpdateDateBlock" class="hidden">${field("kalhDealUpdateDate","指定更新日期","date")}</div>
+      ${select("kalhDealUpdateMode","更新日期（非完成時間）（必填）",[{value:"立即",label:"當天"},"指定日期"])}
+      <div id="kalhDealTodayNote" class="notice hidden" style="color:#dc2626;font-size:12px;font-weight:600;">⚠️ 選擇「當天」僅代表希望於當日處理，無法指定完成時間，實際完成時間將依當日案件量為準。</div>
+      <div id="kalhDealUpdateDateBlock" class="hidden">${field("kalhDealUpdateDate","指定更新日期（非完成時間）","date")}</div>
       ${textarea("kalhDealVendors","更新門市（必填）","請填寫 店家代碼 + 完整名稱，可換行填寫多筆",4)}
       ${field("kalhDealType","活動類型（必填）","text","請填寫活動類型")}
       ${textarea("kalhDealPeriod","活動走期（必填）","請填寫活動走期；走期會放在類別敘述 - CT",3)}
@@ -5336,24 +5352,25 @@ if(!currentType){
         ${select("kalhDealFpFund","是否為 fp fund（必填）",["Yes","No"])}
       </div>
       ${select("kalhDealPhotoNeed","是否有照片相關需求（必填）",["Yes","No"])}
-      <div id="kalhDealPhotoBlock" class="box pink hidden"><h3>【如有照片相關需求，請同附以下資訊】</h3>${textarea("kalhDealPhotoStores","照片更新門市","請填寫 店家代碼 + 完整名稱，可換行填寫多筆",4)}${field("kalhDealPhotoLink","照片檔案【link】","text","請貼上照片檔案 link")}</div>
+      <div id="kalhDealPhotoBlock" class="box pink hidden"><h3>【如有照片相關需求，請同附以下資訊】</h3>${textarea("kalhDealPhotoStores","照片更新門市","請填寫 店家代碼 + 完整名稱，可換行填寫多筆",4)}${fieldWithNote("kalhDealPhotoLink","照片檔案【link】","text","請貼上照片檔案 link","⚠️ 照片檔名請務必與平台名稱完全一致；檔名不符將無法上傳。")}</div>
     `;
   }
 
   if(currentType==="project_kalh_deal_menu_sync"){
     area.innerHTML = `${subjectInput()}
       <div class="box pink portal-template-box"><h3>🟢Green｜活動複製菜單</h3><p class="muted">請選擇活動複製類型，系統會依類型自動切換模板。</p></div>
-      ${select("kalhSyncType","活動複製類型（必填）",["排程",{value:"STAT",label:"立即複製"}])}
-      <div id="kalhSyncNotice" class="notice">⚠️ 請先選擇活動複製類型，系統才會產生對應的欄位。</div>
+      ${select("kalhSyncType","更新日期（非完成時間）（必填）",[{value:"STAT",label:"當天"},{value:"排程",label:"指定日期"}])}
+      <div id="kalhSyncNotice" class="notice">⚠️ 請先選擇「當天」或「指定日期」，系統才會產生對應欄位。</div>
       ${field("kalhSyncOppCase","OPP QC Case Number","text","Voucher 無 OPP 請註記")}
       ${field("kalhSyncMuCase","承 Deal w/ MU Case","text","請填寫 Case 編號；無對應 MU case 請備註")}
       <div class="notice" style="color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;">💡 校稿完成，再請協助指定日複製菜單後設定活動。</div>
       ${select("kalhSyncVoucher","是否為 Voucher 活動（必填）",["Yes","No"])}
       <div id="kalhSyncVoucherNotice" class="notice hidden" style="color:#dc2626;font-style:italic;font-weight:700;">⚠️ Voucher 活動請註記：【複製後不可踢 chain】</div>
+      <div id="kalhSyncTodayNote" class="notice hidden" style="color:#c2410c;background:#fff7ed;border:1px solid #fed7aa;">⚠️ 選擇「當天」僅代表希望於當日處理，無法指定完成時間，實際完成時間將依當日案件量為準。</div>
       <div id="kalhSyncUpdateScheduleBlock" class="hidden">
         <div class="grid">
-          ${field("kalhSyncUpdateDate","更新日期【非假日】（必填）","date")}
-          ${field("kalhSyncUpdateTime","更新時間","time")}
+          ${field("kalhSyncUpdateDate","指定更新日期（非完成時間）【非假日】（必填）","date")}
+          ${field("kalhSyncUpdateTime","希望更新時段","time")}
         </div>
         <div class="notice" style="color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 若需於特殊時段更新，請備註告知原因。</div>
       </div>
@@ -5362,7 +5379,7 @@ if(!currentType){
       ${field("kalhSyncMasterMenu","校稿版菜單：店家代碼 + 完整名稱（必填）","text","請填寫校稿版菜單：店家代碼 + 完整名稱")}
       ${select("kalhSyncSupplyStatus","既有品項供應狀態【擇一】（必填）",["Same as Master Vendor (品項同校稿版狀態)","Keep as Outlet Vendor (品項維持原分店狀態)"])}
       <div id="kalhSyncScheduledBlock" class="box pink hidden"><h3>排程活動資訊</h3>${field("kalhSyncDealType","活動類型","text","請填寫活動類型")}${textarea("kalhSyncDealPeriod","活動走期","請填寫活動走期",3)}${textarea("kalhSyncDealContent","活動內容","請填寫活動品項 + 活動原價 + 折扣後金額",4)}${textarea("kalhSyncDealUpdateDesc","更新內容描述","如品項有客製化需求請詳述；topping 不可設定加價選擇",4)}</div>
-      ${field("kalhSyncVendorList","商家名單【link】（必填）","text","請貼上商家名單 link（店家代碼 + 完整名稱 + 菜單版本 + chain 狀態）")}
+      ${field("kalhSyncVendorList","商家名單【link】（必填）","text","請貼上商家名單 link（店家代碼 + 完整名稱 + 菜單版本 + chain 狀態）")}<div class="notice" style="color:#dc2626;font-size:12px;font-weight:600;">⚠️ 表單連結請務必開啟檢視權限；未開啟權限或格式錯誤將予以退件。</div>
 
     `;
   }
@@ -5448,7 +5465,7 @@ if(!currentType){
     </div>
     ${select("syncMarkup","【抬價漲幅】",["12%","20%","0%"])}${markupNote("syncMarkupNote")}
     ${field("syncMaster","校稿版菜單：店家代碼 + 店家名稱","text","請填寫")}
-    ${field("syncVendorList","商家名單","text","請貼上 link")}
+    ${field("syncVendorList","商家名單","text","請貼上 link")}<div class="notice" style="color:#dc2626;font-size:12px;font-weight:600;">⚠️ 表單連結請務必開啟檢視權限；未開啟權限或格式錯誤將予以退件。</div>
     ${select("syncBag","統一塑膠袋金額",["$1","$2","$3","$4","$5"])}
     ${textarea("syncBagException","未統一塑膠袋金額之分店","店家代碼+店家名稱+塑膠袋金額",3)}
     <div class="notice" style="color:#dc2626;font-style:italic">💡 5元(含)以上請附相關公告佐證</div>`;
@@ -5513,6 +5530,36 @@ function renderConditionalBlocks(){
   if(kalhDealUpdateDateBlock){
     kalhDealUpdateDateBlock.classList.toggle("hidden", val("kalhDealUpdateMode") !== "指定日期");
   }
+  const kalhDealTodayNote = document.getElementById("kalhDealTodayNote");
+  if(kalhDealTodayNote){
+    kalhDealTodayNote.classList.toggle("hidden", val("kalhDealUpdateMode") !== "立即");
+  }
+  const menuCopyScheduledBlock = document.getElementById("menuCopyScheduledBlock");
+  const menuCopyTodayNote = document.getElementById("menuCopyTodayNote");
+  if(menuCopyScheduledBlock){
+    const menuCopyMode = val("menuCopyCaseSubjectType");
+    const isToday = menuCopyMode === "STAT";
+    const isScheduled = menuCopyMode === "複製日期";
+    menuCopyScheduledBlock.classList.toggle("hidden", !isScheduled);
+    if(menuCopyTodayNote) menuCopyTodayNote.classList.toggle("hidden", !isToday);
+  }
+
+  const scheduleSyncDateBlock = document.getElementById("scheduleSyncDateBlock");
+  const scheduleSyncTodayNote = document.getElementById("scheduleSyncTodayNote");
+  if(scheduleSyncDateBlock){
+    const mode = val("scheduleSyncMode");
+    scheduleSyncDateBlock.classList.toggle("hidden", mode !== "Scheduled");
+    if(scheduleSyncTodayNote) scheduleSyncTodayNote.classList.toggle("hidden", mode !== "TODAY");
+  }
+
+  const aaaDealUpdateDateBlock = document.getElementById("aaaDealUpdateDateBlock");
+  const aaaDealTodayNote = document.getElementById("aaaDealTodayNote");
+  if(aaaDealUpdateDateBlock){
+    const mode = val("aaaDealUpdateMode");
+    aaaDealUpdateDateBlock.classList.toggle("hidden", mode !== "Scheduled");
+    if(aaaDealTodayNote) aaaDealTodayNote.classList.toggle("hidden", mode !== "TODAY");
+  }
+
   const kalhDealPhotoBlock = document.getElementById("kalhDealPhotoBlock");
   if(kalhDealPhotoBlock){
     kalhDealPhotoBlock.classList.toggle("hidden", val("kalhDealPhotoNeed") !== "Yes");
@@ -5524,6 +5571,10 @@ function renderConditionalBlocks(){
   const kalhSyncUpdateScheduleBlock = document.getElementById("kalhSyncUpdateScheduleBlock");
   if(kalhSyncUpdateScheduleBlock){
     kalhSyncUpdateScheduleBlock.classList.toggle("hidden", val("kalhSyncType") !== "排程");
+  }
+  const kalhSyncTodayNote = document.getElementById("kalhSyncTodayNote");
+  if(kalhSyncTodayNote){
+    kalhSyncTodayNote.classList.toggle("hidden", val("kalhSyncType") !== "STAT");
   }
   const kalhSyncVoucherNotice = document.getElementById("kalhSyncVoucherNotice");
   if(kalhSyncVoucherNotice){
@@ -5662,21 +5713,21 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
           : (t === "純封面照片修改 (品牌共用)" || t === "Logo 照片修改")
             ? field("photoChain","Chain","text","例如：TW12345 / Pizza Hut")
             : "";
-        extra.innerHTML = `<div class="box pink"><h3>照片需求資訊</h3><div class="grid">${select("photoUpdateMode","Update date/time 更新時間",["NOW","Scheduled"])}</div><div id="photoUpdateHint" class="sub" style="margin-top:-8px;margin-bottom:16px"></div><div id="photoCustomTime"></div>${photoSourceField}${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","照片連結","text","請貼上 Google Drive 連結")}</div>`;
+        extra.innerHTML = `<div class="box pink"><h3>照片需求資訊</h3><div class="grid">${select("photoUpdateMode","更新日期（非完成時間）",[{value:"TODAY",label:"當天"},{value:"Scheduled",label:"指定日期"}])}</div><div id="photoUpdateHint" class="sub" style="margin-top:-8px;margin-bottom:16px"></div><div id="photoCustomTime"></div>${photoSourceField}${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${fieldWithNote("photoLink","照片連結","text","請貼上 Google Drive 連結","⚠️ 照片檔名請務必與平台名稱完全一致；檔名不符將無法上傳。")}</div>`;
       } else if(t === "單店修改"){
-        extra.innerHTML = `${textarea("vendorList","商家名單（必填）","請填寫 商家名單，可換行填寫多筆\n例如：\ny1al STARBUCKS 星巴克 (敦和門市)\ni1ks STARBUCKS 星巴克 (板雙門市)",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","照片連結","text","請貼上 Google Drive 連結")}</div></div>`;
+        extra.innerHTML = `${textarea("vendorList","商家名單（必填）","請填寫 商家名單，可換行填寫多筆\n例如：\ny1al STARBUCKS 星巴克 (敦和門市)\ni1ks STARBUCKS 星巴克 (板雙門市)",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${fieldWithNote("photoLink","照片連結","text","請貼上 Google Drive 連結","⚠️ 照片檔名請務必與平台名稱完全一致；檔名不符將無法上傳。")}</div></div>`;
       } else {
-        extra.innerHTML = `${textarea("masterMenuList","校稿版菜單（必填）","請填寫 校稿版菜單，可換行填寫多筆\n例如：\ny1al STARBUCKS 星巴克 (敦和門市)\ni1ks STARBUCKS 星巴克 (板雙門市)",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="grid">${select("exportMenu","是否需匯出菜單",["是","否"])}${select("remoteCodeUpdate","是否更新 POS 串接碼",["是","否"])}</div><div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${field("photoLink","照片連結","text","請貼上 Google Drive 連結")}</div></div>`;
+        extra.innerHTML = `${textarea("masterMenuList","校稿版菜單（必填）","請填寫 校稿版菜單，可換行填寫多筆\n例如：\ny1al STARBUCKS 星巴克 (敦和門市)\ni1ks STARBUCKS 星巴克 (板雙門市)",5)}${textarea("updateDescription","更新內容描述","請詳細描述本次菜單修改需求內容")}<div class="grid">${select("exportMenu","是否需匯出菜單",["是","否"])}${select("remoteCodeUpdate","是否更新 POS 串接碼",["是","否"])}</div><div class="box pink"><h3>【如有圖片相關需求，請同附以下資訊】</h3><div class="grid">${textarea("photoStoreList","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}${fieldWithNote("photoLink","照片連結","text","請貼上 Google Drive 連結","⚠️ 照片檔名請務必與平台名稱完全一致；檔名不符將無法上傳。")}</div></div>`;
       }
     }
 
     const photoUpdateHint = document.getElementById("photoUpdateHint");
     if(photoUpdateHint){
       const mode = val("photoUpdateMode");
-      if(mode === "NOW"){
-        photoUpdateHint.textContent = "💡 NOW：收到需求後即可安排更新，無需指定日期與時間。";
+      if(mode === "TODAY"){
+        photoUpdateHint.textContent = "⚠️ 選擇「當天」僅代表希望於當日處理，無法指定完成時間，實際完成時間將依當日案件量為準。";
       }else if(mode === "Scheduled"){
-        photoUpdateHint.textContent = "💡 指定時間：請填寫希望完成更新的日期與時間，時間皆以台灣時間（TW time）為準。";
+        photoUpdateHint.textContent = "💡 指定日期：此日期為希望安排更新的日期，非保證完成時間；如需指定時段，時間皆以台灣時間（TW time）為準。";
       }else{
         photoUpdateHint.textContent = "";
       }
@@ -5687,7 +5738,7 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
       const shouldShowCustomTime = val("photoUpdateMode")==="Scheduled";
 
       if(shouldShowCustomTime && !document.getElementById("photoUpdateDate")){
-        customTime.innerHTML = `<div class="grid">${field("photoUpdateDate","Date 日期","date")}${field("photoUpdateTime","Time 時間","time")}</div>`;
+        customTime.innerHTML = `<div class="grid">${field("photoUpdateDate","更新日期（非完成時間）","date")}${field("photoUpdateTime","希望更新時段","time")}</div>`;
       }
 
       if(document.getElementById("photoUpdateDate")){
@@ -5697,10 +5748,8 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
   }
 
   if(currentType==="menu_copy"){
-    const vendor=val("menuCopyVendorType");
     const ka=document.getElementById("kaCaseTypeBlock");
-    if(ka) ka.classList.toggle("hidden", vendor !== "KAM");
-    if(vendor !== "KAM"){ const k=document.getElementById("menuCopyCaseSubjectType"); if(k) k.value=""; }
+    if(ka) ka.classList.remove("hidden");
   }
 
   if(currentType==="store_price_label"){
@@ -5781,7 +5830,7 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
         <div class="box pink">
           <h3>【如有照片相關需求，請同附以下資訊】</h3>
           ${textarea("aaaDealPhotoStore","照片更新門市 / 校稿用","請填寫照片更新門市 / 校稿用，可換行填寫多筆",4)}
-          ${field("aaaDealPhotoLink","照片檔案連結【link】","text","請貼上照片檔案連結")}
+          ${fieldWithNote("aaaDealPhotoLink","照片檔案連結【link】","text","請貼上照片檔案連結","⚠️ 照片檔名請務必與平台名稱完全一致；檔名不符將無法上傳。")}
         </div>
       `;
     }
@@ -5789,11 +5838,15 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
     if(t==="活動複製菜單 / 菜單版本同步"){
       extra.innerHTML = `
         ${field("aaaDealMuCase","承 Deal w/ MU case（必填）","text","請填寫 Deal w/ MU case")}
-        <div class="grid">
-          ${field("aaaDealUpdateDate","校稿無誤後更新日期【非假日】（必填）","date")}
-          ${field("aaaDealUpdateTime","更新時間（必填）","time")}
+        ${select("aaaDealUpdateMode","校稿無誤後更新日期（非完成時間）（必填）",[{value:"TODAY",label:"當天"},{value:"Scheduled",label:"指定日期"}])}
+        <div id="aaaDealTodayNote" class="notice hidden" style="color:#c2410c;background:#fff7ed;border:1px solid #fed7aa;">⚠️ 選擇「當天」僅代表希望於當日處理，無法指定完成時間，實際完成時間將依當日案件量為準。</div>
+        <div id="aaaDealUpdateDateBlock" class="hidden">
+          <div class="grid">
+            ${field("aaaDealUpdateDate","指定更新日期（非完成時間）【非假日】（必填）","date")}
+            ${field("aaaDealUpdateTime","希望更新時段","time")}
+          </div>
+          <div class="notice" style="margin-top:-10px;color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 ※若需於特殊時段更新，請備註告知原因</div>
         </div>
-        <div class="notice" style="margin-top:-10px;color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 ※若需於特殊時段更新，請備註告知原因</div>
         ${field("aaaDealChainCode","品牌代碼（必填）","text","請填寫 品牌代碼")}
         ${field("aaaDealSyncMasterMenu","校稿版菜單：代碼 + 名稱（必填）","text","請填寫校稿版菜單：代碼 + 名稱")}
         <div class="field">
@@ -5808,7 +5861,7 @@ const aaakalhPosNotice = document.getElementById("aaakalhPosNotice");
           <b>複製前檢查：</b>
           <p class="muted">GM可在此備註需開啟 or 隱藏之類別 or 品項，若活動結束請寫明移除某品項 or 整個類別</p>
         </div>
-        ${field("aaaDealVendorList","商家名單【link】（必填）","text","請貼上商家名單 link（店家代碼 + 店家名稱 + 菜單版本）")}
+        ${field("aaaDealVendorList","商家名單【link】（必填）","text","請貼上商家名單 link（店家代碼 + 店家名稱 + 菜單版本）")}<div class="notice" style="color:#dc2626;font-size:12px;font-weight:600;">⚠️ 表單連結請務必開啟檢視權限；未開啟權限或格式錯誤將予以退件。</div>
         <div class="notice" style="color:#dc2626;font-style:italic;font-size:12px;font-weight:500;">💡 【如有封面照相關需求，請 GM 另建 photo case（可於 case 內指定上傳日期）】</div>
       `;
     }
@@ -6370,7 +6423,7 @@ function renderSummary(){
     }
 
     if(photoOnly.includes(req)){
-      rows.push(row("Update date/time 更新時間",getPhotoUpdateDateTimeSummary()));
+      rows.push(row("更新日期（非完成時間）",getPhotoUpdateDateTimeSummary()));
       if(req === "純餐點照片修改 (校稿用)"){
         rows.push(row("校稿版菜單：店家代碼 + 完整名稱",showVal("photoMasterMenu")));
       }
@@ -6407,17 +6460,17 @@ function renderSummary(){
     if(val("menuCopyVendorType")==="KAM"){
       const copyTimingLabel =
         val("menuCopyCaseSubjectType")==="STAT"
-          ? "立即複製"
+          ? "當天（無法指定完成時間）"
           : val("menuCopyCaseSubjectType")==="複製日期"
-            ? "排程複製"
+            ? "指定日期"
             : "未填寫";
 
       rows.push(row("更新時間",copyTimingLabel));
     }
     rows.push(
       row("承菜單案件編號",showVal("muCase")),
-      row("更新日期【非假日】",showVal("updateDate")),
-      row("更新時間",showVal("updateTime")),
+      row("更新日期（非完成時間）",val("menuCopyCaseSubjectType")==="STAT" ? "當天（無法指定完成時間）" : showVal("updateDate")),
+      row("希望更新時段",val("menuCopyCaseSubjectType")==="STAT" ? "不指定" : showVal("updateTime")),
       row("特殊時段更新備註 / 原因簡述",showVal("updateDateNote")),
       row("品牌代碼",showVal("chainCode")),
       row("校稿版菜單",showVal("copyMasterMenu")),
@@ -6523,8 +6576,8 @@ function renderSummary(){
       row("校稿版菜單：店家代碼 + 完整名稱",showVal("scheduleMasterMenu")),
       row("統一塑膠袋金額",showVal("schedulePlasticBagAmount")),
       row("未統一塑膠袋金額之分店",showMultilineVal("schedulePlasticBagException")),
-      row("更新日期",showVal("scheduleSyncDate")),
-      row("更新時間",showVal("scheduleSyncTime"))
+      row("更新日期（非完成時間）",val("scheduleSyncMode")==="TODAY" ? "當天（無法指定完成時間）" : showVal("scheduleSyncDate")),
+      row("希望更新時段",val("scheduleSyncMode")==="TODAY" ? "不指定" : showVal("scheduleSyncTime"))
     );
   }
 
@@ -6694,7 +6747,7 @@ function renderSummary(){
     rows.push(
       row("需求模式",showVal("kalhDealMode")),
       row("OPP QC Case Number",showVal("kalhDealOppCase")),
-      row("更新時間",val("kalhDealUpdateMode")==="指定日期" ? showVal("kalhDealUpdateDate") : showVal("kalhDealUpdateMode")),
+      row("更新日期（非完成時間）",val("kalhDealUpdateMode")==="指定日期" ? showVal("kalhDealUpdateDate") : (val("kalhDealUpdateMode")==="立即" ? "當天（無法指定完成時間）" : showVal("kalhDealUpdateMode"))),
       row("更新門市",showMultilineVal("kalhDealVendors")),
       row("活動類型",showVal("kalhDealType")),
       row("活動走期",showMultilineVal("kalhDealPeriod")),
@@ -6730,8 +6783,8 @@ function renderSummary(){
     );
     if(val("kalhSyncType")==="排程"){
       rows.push(
-        row("更新日期【非假日】",showVal("kalhSyncUpdateDate")),
-        row("更新時間",showVal("kalhSyncUpdateTime")),
+        row("更新日期（非完成時間）",val("kalhSyncType")==="STAT" ? "當天（無法指定完成時間）" : showVal("kalhSyncUpdateDate")),
+        row("希望更新時段",val("kalhSyncType")==="STAT" ? "不指定" : showVal("kalhSyncUpdateTime")),
         row("活動類型",showVal("kalhSyncDealType")),
         row("活動走期",showMultilineVal("kalhSyncDealPeriod")),
         row("活動內容",showMultilineVal("kalhSyncDealContent")),
@@ -6773,8 +6826,8 @@ function renderSummary(){
     if(t==="活動複製菜單 / 菜單版本同步"){
       rows.push(
         row("承 Deal w/ MU case",showVal("aaaDealMuCase")),
-        row("校稿無誤後更新日期【非假日】",showVal("aaaDealUpdateDate")),
-        row("更新時間",showVal("aaaDealUpdateTime")),
+        row("校稿無誤後更新日期（非完成時間）",val("aaaDealUpdateMode")==="TODAY" ? "當天（無法指定完成時間）" : showVal("aaaDealUpdateDate")),
+        row("希望更新時段",val("aaaDealUpdateMode")==="TODAY" ? "不指定" : showVal("aaaDealUpdateTime")),
         row("品牌代碼",showVal("aaaDealChainCode")),
         row("校稿版菜單：店家代碼 + 店家名稱",showVal("aaaDealSyncMasterMenu")),
         row("既有品項供應狀態",showVal("aaaDealSupplyStatus")),
