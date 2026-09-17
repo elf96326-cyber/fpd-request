@@ -2687,6 +2687,48 @@ button:disabled{opacity:.45;cursor:not-allowed}
   }
 }
 
+
+
+/* =========================
+   AMO Workbench Dashboard
+========================= */
+.portal-action-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+.portal-action-card.amo{
+  border-color:#ddd6fe;
+  background:linear-gradient(135deg,#f5f3ff 0%,#fff 100%);
+}
+.portal-action-card.amo:hover{border-color:#8b5cf6}
+.portal-action-card.amo .portal-action-icon{background:#faf5ff;color:#6d28d9}
+
+.amo-portal{max-width:1320px;margin:0 auto;padding:32px 18px 56px}
+.amo-shell{background:#fff;border:1px solid #ede9fe;border-radius:28px;padding:28px;box-shadow:0 8px 28px rgba(15,23,42,.07)}
+.amo-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:22px}
+.amo-title{margin:14px 0 8px;font-size:32px;font-weight:800;letter-spacing:-.02em}
+.amo-desc{margin:0;color:#64748b;font-size:13px;line-height:1.7}
+.amo-toolbar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:10px;align-items:end;padding:16px;border:1px solid #ede9fe;border-radius:18px;background:#fafafa;margin-bottom:18px}
+.amo-filter label{display:block;margin:0 0 6px;color:#64748b;font-size:11px;font-weight:800}
+.amo-filter select{padding:11px 12px;border-radius:12px}
+.amo-refresh{height:43px;background:#7c3aed;color:#fff;border-radius:12px;padding:0 16px;white-space:nowrap}
+.amo-refresh:hover{background:#6d28d9}
+.amo-refresh:disabled{opacity:.55}
+.amo-updated{margin:0 0 16px;color:#94a3b8;font-size:11px;text-align:right}
+.amo-message{display:none;margin-bottom:16px;padding:13px 15px;border-radius:14px;font-size:13px;line-height:1.6}
+.amo-message.show{display:block}.amo-message.info{background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe}.amo-message.error{background:#fff1f2;color:#b91c1c;border:1px solid #fecaca}
+.amo-kpi-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.amo-kpi{min-width:0;padding:16px;border:1px solid #e2e8f0;border-radius:18px;background:#fff}
+.amo-kpi.attention{border-color:#fed7aa;background:#fffaf5}.amo-kpi.rate{border-color:#bbf7d0;background:#f8fffb}
+.amo-kpi-label{color:#64748b;font-size:11px;font-weight:800;line-height:1.4}.amo-kpi-value{margin-top:7px;color:#0f172a;font-size:27px;font-weight:900;letter-spacing:-.03em}.amo-kpi-note{margin-top:4px;color:#94a3b8;font-size:10px;line-height:1.45}
+.amo-metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.amo-metric{padding:15px 16px;border-radius:16px;background:#f8fafc;border:1px solid #e2e8f0}.amo-metric small{display:block;color:#64748b;font-size:11px;font-weight:800}.amo-metric b{display:block;margin-top:6px;font-size:21px}.amo-metric span{display:block;margin-top:3px;color:#94a3b8;font-size:10px}
+.amo-chart-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:14px;margin-bottom:14px}.amo-chart-grid.equal{grid-template-columns:1fr 1fr}
+.amo-panel{min-width:0;border:1px solid #e2e8f0;border-radius:20px;background:#fff;padding:18px}
+.amo-panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.amo-panel-title{font-size:14px;font-weight:800;color:#334155}.amo-panel-sub{font-size:10px;color:#94a3b8}
+.amo-chart-wrap{position:relative;height:280px}.amo-chart-wrap.small{height:250px}
+.amo-table-wrap{overflow:auto}.amo-table{width:100%;border-collapse:collapse;min-width:680px}.amo-table th,.amo-table td{padding:11px 10px;border-bottom:1px solid #f1f5f9;text-align:left;font-size:11px;white-space:nowrap}.amo-table th{color:#64748b;font-weight:800;background:#f8fafc;position:sticky;top:0}.amo-table td{color:#334155}.amo-table tbody tr:last-child td{border-bottom:0}.amo-empty{padding:28px 12px;text-align:center;color:#94a3b8;font-size:12px}
+.amo-over2d{display:inline-flex;padding:4px 8px;border-radius:999px;background:#fff1f2;color:#be123c;font-size:10px;font-weight:800}
+@media(max-width:1080px){.portal-action-grid{grid-template-columns:1fr 1fr}.portal-action-card.amo{grid-column:1/-1}.amo-kpi-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.portal-action-grid{grid-template-columns:1fr}.portal-action-card.amo{grid-column:auto}.amo-head{flex-direction:column}.amo-toolbar{grid-template-columns:1fr}.amo-kpi-grid{grid-template-columns:repeat(2,1fr)}.amo-metric-grid,.amo-chart-grid,.amo-chart-grid.equal{grid-template-columns:1fr}.amo-chart-wrap{height:240px}.amo-shell{padding:20px}.amo-title{font-size:27px}}
+
 </style>
 </head>
 <body>
@@ -2758,6 +2800,14 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <span class="portal-action-copy">
           <b>查詢案件進度</b>
           <span>輸入案件查詢資訊，查看目前的處理狀態與案件內容。</span>
+        </span>
+      </button>
+
+      <button type="button" class="portal-action-card amo" onclick="openAmoPortal()">
+        <span class="portal-action-icon">📊</span>
+        <span class="portal-action-copy">
+          <b>AMO Workbench</b>
+          <span>查看進線量、案件狀態、處理時效與團隊工作量。</span>
         </span>
       </button>
     </div>
@@ -3255,6 +3305,56 @@ button:disabled{opacity:.45;cursor:not-allowed}
 </main>
 </div>
 
+<section id="amoPortal" class="amo-portal hidden">
+  <div class="amo-shell">
+    <div class="amo-head">
+      <div>
+        <div class="portal-home-badge">📊 AMO Workbench</div>
+        <h1 class="amo-title">案件營運儀表板</h1>
+        <p class="amo-desc">集中查看需求進線、目前案件狀態、處理時效與 AMO 工作量。</p>
+      </div>
+      <button type="button" class="portal-back-btn" onclick="backToPortalHome()">‹ 返回入口首頁</button>
+    </div>
+
+    <div class="amo-toolbar">
+      <div class="amo-filter"><label for="amoRange">日期區間</label><select id="amoRange" onchange="loadAmoDashboard()"><option value="7d">近 7 天</option><option value="30d">近 30 天</option><option value="month">本月</option></select></div>
+      <div class="amo-filter"><label for="amoWorkstream">需求分類</label><select id="amoWorkstream" onchange="loadAmoDashboard()"><option value="">全部分類</option></select></div>
+      <div class="amo-filter"><label for="amoHandler">處理人員</label><select id="amoHandler" onchange="loadAmoDashboard()"><option value="">全部人員</option></select></div>
+      <button id="amoRefreshBtn" type="button" class="amo-refresh" onclick="loadAmoDashboard()">重新整理</button>
+    </div>
+    <div id="amoUpdated" class="amo-updated"></div>
+    <div id="amoMessage" class="amo-message" role="status" aria-live="polite"></div>
+
+    <div class="amo-kpi-grid">
+      <div class="amo-kpi"><div class="amo-kpi-label">今日進線</div><div class="amo-kpi-value" id="amoTodayIncoming">—</div><div class="amo-kpi-note">今天送出的案件</div></div>
+      <div class="amo-kpi"><div class="amo-kpi-label">待處理</div><div class="amo-kpi-value" id="amoPending">—</div><div class="amo-kpi-note">目前尚未開始處理</div></div>
+      <div class="amo-kpi"><div class="amo-kpi-label">處理中</div><div class="amo-kpi-value" id="amoInProgress">—</div><div class="amo-kpi-note">目前進行中的案件</div></div>
+      <div class="amo-kpi"><div class="amo-kpi-label">已結案</div><div class="amo-kpi-value" id="amoClosed">—</div><div class="amo-kpi-note">所選期間送出且已結案</div></div>
+      <div class="amo-kpi attention"><div class="amo-kpi-label">待處理 &gt; 2D</div><div class="amo-kpi-value" id="amoOver2d">—</div><div class="amo-kpi-note">目前超過 48 小時未結案</div></div>
+      <div class="amo-kpi rate"><div class="amo-kpi-label">Solved Speed &lt;2D</div><div class="amo-kpi-value" id="amoSolvedRate">—</div><div class="amo-kpi-note">48 小時內完成比例</div></div>
+    </div>
+
+    <div class="amo-metric-grid">
+      <div class="amo-metric"><small>平均案件建置時間</small><b id="amoFirstResponse">—</b><span>送出 → 案件建置</span></div>
+      <div class="amo-metric"><small>平均結案時間</small><b id="amoAvgClose">—</b><span>送出 → 結案</span></div>
+      <div class="amo-metric"><small>區間進線</small><b id="amoPeriodIncoming">—</b><span>依上方日期區間計算</span></div>
+    </div>
+
+    <div class="amo-chart-grid">
+      <div class="amo-panel"><div class="amo-panel-head"><div><div class="amo-panel-title">每日進線 vs 結案</div><div class="amo-panel-sub">觀察案件量與消化速度</div></div></div><div class="amo-chart-wrap"><canvas id="amoTrendChart"></canvas></div></div>
+      <div class="amo-panel"><div class="amo-panel-head"><div><div class="amo-panel-title">需求分類分布</div><div class="amo-panel-sub">Menu / Project / Others</div></div></div><div class="amo-chart-wrap small"><canvas id="amoWorkstreamChart"></canvas></div></div>
+    </div>
+
+    <div class="amo-chart-grid equal">
+      <div class="amo-panel"><div class="amo-panel-head"><div><div class="amo-panel-title">處理時長分布</div><div class="amo-panel-sub">依已結案案件計算</div></div></div><div class="amo-chart-wrap small"><canvas id="amoDurationChart"></canvas></div></div>
+      <div class="amo-panel"><div class="amo-panel-head"><div><div class="amo-panel-title">需求項目分布</div><div class="amo-panel-sub">目前區間主要需求類型</div></div></div><div class="amo-chart-wrap small"><canvas id="amoRequestTypeChart"></canvas></div></div>
+    </div>
+
+    <div class="amo-panel" style="margin-bottom:14px"><div class="amo-panel-head"><div><div class="amo-panel-title">需要留意的案件</div><div class="amo-panel-sub">優先顯示等待時間較長、未指派或超過 2D 的案件</div></div></div><div id="amoAttentionTable" class="amo-table-wrap"></div></div>
+    <div class="amo-panel"><div class="amo-panel-head"><div><div class="amo-panel-title">AMO 工作量</div><div class="amo-panel-sub">用於掌握分工與案件量，不作人員排名</div></div></div><div id="amoWorkloadTable" class="amo-table-wrap"></div></div>
+  </div>
+</section>
+
 <section id="trackingPortal" class="tracking-portal hidden">
   <div class="tracking-card">
     <div class="tracking-head">
@@ -3305,6 +3405,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
     </div>
   </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 
 <script>
       const GAS_URL = "https://script.google.com/macros/s/AKfycbysd5ib7s-YVku7BLJiSYYkRMpOnxEUO95kuKRA29nEPtGdY0OFPSz3tWVb74Y8hFlh/exec";
@@ -7762,7 +7864,7 @@ window.addEventListener("DOMContentLoaded", function(){
    入口首頁／案件進度查詢
 ========================= */
 function showPortalSection(sectionId){
-  ["portalHome","requestPortal","trackingPortal"].forEach(function(id){
+  ["portalHome","requestPortal","trackingPortal","amoPortal"].forEach(function(id){
     const section = document.getElementById(id);
     if(!section) return;
     section.classList.toggle("hidden", id !== sectionId);
@@ -7776,11 +7878,130 @@ function showPortalSection(sectionId){
         ? "filling"
         : sectionId === "trackingPortal"
           ? "tracking"
-          : "home";
+          : sectionId === "amoPortal"
+            ? "dashboard"
+            : "home";
     window.portalRealtime.setMode(mode);
   }
 
   window.scrollTo({top:0, behavior:"smooth"});
+}
+
+
+let amoDashboardLoaded = false;
+let amoCharts = {};
+
+function openAmoPortal(){
+  showPortalSection("amoPortal");
+  if(!amoDashboardLoaded) loadAmoDashboard();
+}
+
+function showAmoMessage(text,type){
+  const el=document.getElementById("amoMessage");
+  if(!el) return;
+  el.textContent=text || "";
+  el.className="amo-message" + (text ? " show " + (type || "info") : "");
+}
+
+function setAmoText(id,value,suffix){
+  const el=document.getElementById(id);
+  if(el) el.textContent=(value === undefined || value === null || value === "") ? "—" : String(value)+(suffix || "");
+}
+
+function formatAmoHours(value){
+  const n=Number(value);
+  if(!Number.isFinite(n)) return "—";
+  if(n < 24) return n.toFixed(1).replace(/\.0$/,"") + " hr";
+  return (n/24).toFixed(1).replace(/\.0$/,"") + " D";
+}
+
+function escapeAmoHtml(value){
+  return String(value == null ? "" : value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+
+function fillAmoSelect(id,items,placeholder){
+  const select=document.getElementById(id);
+  if(!select) return;
+  const current=select.value;
+  select.innerHTML='<option value="">'+escapeAmoHtml(placeholder)+'</option>'+(items || []).map(function(item){return '<option value="'+escapeAmoHtml(item)+'">'+escapeAmoHtml(item)+'</option>';}).join("");
+  if((items || []).includes(current)) select.value=current;
+}
+
+function destroyAmoChart(key){
+  if(amoCharts[key]){ amoCharts[key].destroy(); delete amoCharts[key]; }
+}
+
+function createAmoChart(key,canvasId,config){
+  destroyAmoChart(key);
+  const canvas=document.getElementById(canvasId);
+  if(!canvas || typeof Chart === "undefined") return;
+  amoCharts[key]=new Chart(canvas,config);
+}
+
+function renderAmoCharts(data){
+  const trend=data.dailyTrend || [];
+  createAmoChart("trend","amoTrendChart",{type:"line",data:{labels:trend.map(x=>x.date),datasets:[{label:"進線",data:trend.map(x=>x.incoming),borderColor:"#ff2b85",backgroundColor:"rgba(255,43,133,.08)",tension:.35,fill:false},{label:"結案",data:trend.map(x=>x.solved),borderColor:"#16a34a",backgroundColor:"rgba(22,163,74,.08)",tension:.35,fill:false}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"top",align:"end"}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{grid:{display:false}}}}});
+
+  const ws=data.workstreamDistribution || [];
+  createAmoChart("workstream","amoWorkstreamChart",{type:"doughnut",data:{labels:ws.map(x=>x.label || x.name || x.workstream || "未分類"),datasets:[{data:ws.map(x=>Number(x.value ?? x.count ?? 0)),backgroundColor:["#ff2b85","#3b82f6","#16a34a","#8b5cf6","#f59e0b"],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"bottom",labels:{boxWidth:10,usePointStyle:true}}}}});
+
+  const duration=data.durationDistribution || [];
+  createAmoChart("duration","amoDurationChart",{type:"bar",data:{labels:duration.map(x=>x.label || x.bucket || ""),datasets:[{label:"案件數",data:duration.map(x=>Number(x.value ?? x.count ?? 0)),backgroundColor:"rgba(124,58,237,.75)",borderRadius:7}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{grid:{display:false}}}}});
+
+  const types=(data.requestTypeDistribution || []).slice(0,8);
+  createAmoChart("requestType","amoRequestTypeChart",{type:"bar",data:{labels:types.map(x=>x.label || x.name || x.requestType || "未分類"),datasets:[{label:"案件數",data:types.map(x=>Number(x.value ?? x.count ?? 0)),backgroundColor:"rgba(59,130,246,.75)",borderRadius:7}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{precision:0}},y:{grid:{display:false}}}}});
+}
+
+function renderAmoAttention(items){
+  const wrap=document.getElementById("amoAttentionTable"); if(!wrap) return;
+  if(!items || !items.length){wrap.innerHTML='<div class="amo-empty">目前沒有需要特別留意的案件。</div>';return;}
+  wrap.innerHTML='<table class="amo-table"><thead><tr><th>案件</th><th>品牌</th><th>需求項目</th><th>狀態</th><th>處理人員</th><th>送出時間</th><th>等待</th></tr></thead><tbody>'+items.map(function(x){return '<tr><td>'+escapeAmoHtml(x.caseNumber || "—")+'</td><td>'+escapeAmoHtml(x.brand || "—")+'</td><td>'+escapeAmoHtml(x.requestType || "—")+'</td><td>'+escapeAmoHtml(x.statusRaw || x.status || "—")+'</td><td>'+escapeAmoHtml(x.handler || "未指派")+'</td><td>'+escapeAmoHtml(x.submittedAt || "—")+'</td><td>'+(x.over2d ? '<span class="amo-over2d">'+escapeAmoHtml(x.ageHours || "")+' hr</span>' : escapeAmoHtml((x.ageHours ?? "—")+" hr"))+'</td></tr>';}).join("")+'</tbody></table>';
+}
+
+function renderAmoWorkload(items){
+  const wrap=document.getElementById("amoWorkloadTable"); if(!wrap) return;
+  if(!items || !items.length){wrap.innerHTML='<div class="amo-empty">目前沒有可顯示的工作量資料。</div>';return;}
+  wrap.innerHTML='<table class="amo-table"><thead><tr><th>處理人員</th><th>進線</th><th>未結案</th><th>已結案</th><th>平均結案</th><th>2D 完成率</th></tr></thead><tbody>'+items.map(function(x){return '<tr><td><b>'+escapeAmoHtml(x.handler || x.name || "未指派")+'</b></td><td>'+escapeAmoHtml(x.incoming ?? x.total ?? 0)+'</td><td>'+escapeAmoHtml(x.open ?? x.pending ?? 0)+'</td><td>'+escapeAmoHtml(x.closed ?? x.solved ?? 0)+'</td><td>'+escapeAmoHtml(formatAmoHours(x.avgCloseHours))+'</td><td>'+escapeAmoHtml((x.solvedWithin2dRate ?? x.rate ?? 0)+"%")+'</td></tr>';}).join("")+'</tbody></table>';
+}
+
+function renderAmoDashboard(data){
+  data=data || {}; const k=data.kpi || {};
+  setAmoText("amoTodayIncoming",k.todayIncoming ?? 0);
+  setAmoText("amoPending",k.pending ?? 0);
+  setAmoText("amoInProgress",k.inProgress ?? 0);
+  setAmoText("amoClosed",k.periodClosed ?? 0);
+  setAmoText("amoOver2d",k.over2d ?? 0);
+  setAmoText("amoSolvedRate",k.solvedWithin2dRate ?? 0,"%");
+  setAmoText("amoFirstResponse",formatAmoHours(k.avgFirstResponseHours));
+  setAmoText("amoAvgClose",formatAmoHours(k.avgCloseHours));
+  setAmoText("amoPeriodIncoming",k.periodIncoming ?? 0);
+  fillAmoSelect("amoHandler",data.filters && data.filters.handlers,"全部人員");
+  fillAmoSelect("amoWorkstream",data.filters && data.filters.workstreams,"全部分類");
+  renderAmoCharts(data); renderAmoAttention(data.attentionCases || []); renderAmoWorkload(data.workload || []);
+  const updated=document.getElementById("amoUpdated"); if(updated) updated.textContent="更新時間："+(data.generatedAt || new Date().toLocaleString("zh-TW"));
+  amoDashboardLoaded=true;
+}
+
+function requestAmoDashboard(filters){
+  return new Promise(function(resolve,reject){
+    if(window.google && google.script && google.script.run){
+      google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).getAmoDashboardData(filters);
+      return;
+    }
+    const url=GAS_URL+"?action=getAmoDashboardData&range="+encodeURIComponent(filters.range)+"&workstream="+encodeURIComponent(filters.workstream)+"&handler="+encodeURIComponent(filters.handler)+"&t="+Date.now();
+    fetch(url).then(function(r){if(!r.ok) throw new Error("HTTP "+r.status);return r.json();}).then(function(r){resolve(r && r.data ? r.data : r);}).catch(reject);
+  });
+}
+
+async function loadAmoDashboard(){
+  const btn=document.getElementById("amoRefreshBtn"); if(btn){btn.disabled=true;btn.textContent="載入中…";}
+  showAmoMessage("正在整理最新案件資料…","info");
+  try{
+    const data=await requestAmoDashboard({range:(document.getElementById("amoRange")||{}).value || "7d",workstream:(document.getElementById("amoWorkstream")||{}).value || "",handler:(document.getElementById("amoHandler")||{}).value || ""});
+    if(data && data.success === false) throw new Error(data.message || "Dashboard 資料讀取失敗");
+    renderAmoDashboard(data); showAmoMessage("","");
+  }catch(error){console.error("AMO Dashboard 載入失敗：",error);showAmoMessage("目前無法取得 AMO Dashboard 資料，請確認 Apps Script 已部署最新版本後再試。","error");}
+  finally{if(btn){btn.disabled=false;btn.textContent="重新整理";}}
 }
 
 function openRequestPortal(){
@@ -9080,12 +9301,15 @@ try{
       // 依目前畫面決定初始模式。
       const requestPortal = document.getElementById("requestPortal");
       const trackingPortal = document.getElementById("trackingPortal");
+      const amoPortal = document.getElementById("amoPortal");
       currentMode =
         requestPortal && !requestPortal.classList.contains("hidden")
           ? "filling"
           : trackingPortal && !trackingPortal.classList.contains("hidden")
             ? "tracking"
-            : "home";
+            : amoPortal && !amoPortal.classList.contains("hidden")
+              ? "dashboard"
+              : "home";
 
       startPresence(user);
       return;
