@@ -2726,6 +2726,79 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .amo-chart-wrap{position:relative;height:280px}.amo-chart-wrap.small{height:250px}
 .amo-table-wrap{overflow:auto}.amo-table{width:100%;border-collapse:collapse;min-width:680px}.amo-table th,.amo-table td{padding:11px 10px;border-bottom:1px solid #f1f5f9;text-align:left;font-size:11px;white-space:nowrap}.amo-table th{color:#64748b;font-weight:800;background:#f8fafc;position:sticky;top:0}.amo-table td{color:#334155}.amo-table tbody tr:last-child td{border-bottom:0}.amo-empty{padding:28px 12px;text-align:center;color:#94a3b8;font-size:12px}
 .amo-over2d{display:inline-flex;padding:4px 8px;border-radius:999px;background:#fff1f2;color:#be123c;font-size:10px;font-weight:800}
+
+/* AMO 工作量：圖表＋效率指標 */
+.amo-workload-panel{overflow:hidden}
+.amo-workload-chart-wrap{
+  position:relative;
+  height:300px;
+  margin-top:2px;
+}
+.amo-workload-efficiency{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-top:16px;
+}
+.amo-workload-eff-card{
+  min-width:0;
+  padding:15px 16px;
+  border:1px solid #eef2f7;
+  border-radius:16px;
+  background:#fafafa;
+}
+.amo-workload-eff-title{
+  margin-bottom:10px;
+  color:#64748b;
+  font-size:11px;
+  font-weight:800;
+}
+.amo-workload-eff-list{
+  display:grid;
+  gap:9px;
+}
+.amo-workload-eff-row{
+  display:grid;
+  grid-template-columns:minmax(90px,1fr) auto;
+  align-items:center;
+  gap:12px;
+  color:#334155;
+  font-size:12px;
+}
+.amo-workload-eff-name{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-weight:700;
+}
+.amo-workload-eff-value{
+  color:#0f172a;
+  font-size:15px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.amo-workload-rate-track{
+  width:82px;
+  height:6px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#e2e8f0;
+}
+.amo-workload-rate-fill{
+  height:100%;
+  border-radius:999px;
+  background:#8b5cf6;
+}
+.amo-workload-rate-value{
+  min-width:42px;
+  text-align:right;
+}
+@media(max-width:760px){
+  .amo-workload-chart-wrap{height:280px}
+  .amo-workload-efficiency{grid-template-columns:1fr}
+}
+
 @media(max-width:1080px){.portal-action-grid{grid-template-columns:1fr 1fr}.portal-action-card.amo{grid-column:1/-1}.amo-kpi-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:760px){.portal-action-grid{grid-template-columns:1fr}.portal-action-card.amo{grid-column:auto}.amo-head{flex-direction:column}.amo-toolbar{grid-template-columns:1fr}.amo-kpi-grid{grid-template-columns:repeat(2,1fr)}.amo-metric-grid,.amo-chart-grid,.amo-chart-grid.equal{grid-template-columns:1fr}.amo-chart-wrap{height:240px}.amo-shell{padding:20px}.amo-title{font-size:27px}}
 
@@ -3351,7 +3424,21 @@ button:disabled{opacity:.45;cursor:not-allowed}
     </div>
 
     <div class="amo-panel" style="margin-bottom:14px"><div class="amo-panel-head"><div><div class="amo-panel-title">需要留意的案件</div><div class="amo-panel-sub">優先顯示等待時間較長、未指派或超過 2D 的案件</div></div></div><div id="amoAttentionTable" class="amo-table-wrap"></div></div>
-    <div class="amo-panel"><div class="amo-panel-head"><div><div class="amo-panel-title">AMO 工作量</div><div class="amo-panel-sub">用於掌握分工與案件量，不作人員排名</div></div></div><div id="amoWorkloadTable" class="amo-table-wrap"></div></div>
+    <div class="amo-panel amo-workload-panel">
+      <div class="amo-panel-head">
+        <div>
+          <div class="amo-panel-title">AMO 工作量</div>
+          <div class="amo-panel-sub">用於掌握分工與案件量，不作人員排名</div>
+        </div>
+      </div>
+      <div id="amoWorkloadEmpty" class="amo-empty hidden">目前沒有可顯示的工作量資料。</div>
+      <div id="amoWorkloadContent">
+        <div class="amo-workload-chart-wrap">
+          <canvas id="amoWorkloadChart"></canvas>
+        </div>
+        <div id="amoWorkloadEfficiency" class="amo-workload-efficiency"></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -7959,9 +8046,117 @@ function renderAmoAttention(items){
 }
 
 function renderAmoWorkload(items){
-  const wrap=document.getElementById("amoWorkloadTable"); if(!wrap) return;
-  if(!items || !items.length){wrap.innerHTML='<div class="amo-empty">目前沒有可顯示的工作量資料。</div>';return;}
-  wrap.innerHTML='<table class="amo-table"><thead><tr><th>處理人員</th><th>進線</th><th>未結案</th><th>已結案</th><th>平均結案</th><th>2D 完成率</th></tr></thead><tbody>'+items.map(function(x){return '<tr><td><b>'+escapeAmoHtml(x.handler || x.name || "未指派")+'</b></td><td>'+escapeAmoHtml(x.incoming ?? x.total ?? 0)+'</td><td>'+escapeAmoHtml(x.open ?? x.pending ?? 0)+'</td><td>'+escapeAmoHtml(x.closed ?? x.solved ?? 0)+'</td><td>'+escapeAmoHtml(formatAmoHours(x.avgCloseHours))+'</td><td>'+escapeAmoHtml((x.solvedWithin2dRate ?? x.rate ?? 0)+"%")+'</td></tr>';}).join("")+'</tbody></table>';
+  const content=document.getElementById("amoWorkloadContent");
+  const empty=document.getElementById("amoWorkloadEmpty");
+  const efficiency=document.getElementById("amoWorkloadEfficiency");
+
+  if(!content || !empty || !efficiency) return;
+
+  if(!items || !items.length){
+    destroyAmoChart("workload");
+    content.classList.add("hidden");
+    empty.classList.remove("hidden");
+    efficiency.innerHTML="";
+    return;
+  }
+
+  empty.classList.add("hidden");
+  content.classList.remove("hidden");
+
+  const labels=items.map(function(x){
+    return x.handler || x.name || "未指派";
+  });
+
+  createAmoChart("workload","amoWorkloadChart",{
+    type:"bar",
+    data:{
+      labels:labels,
+      datasets:[
+        {
+          label:"進線",
+          data:items.map(function(x){return Number(x.incoming ?? x.total ?? 0);}),
+          backgroundColor:"rgba(59,130,246,.78)",
+          borderRadius:7,
+          borderSkipped:false
+        },
+        {
+          label:"未結案",
+          data:items.map(function(x){return Number(x.open ?? x.pending ?? 0);}),
+          backgroundColor:"rgba(245,158,11,.78)",
+          borderRadius:7,
+          borderSkipped:false
+        },
+        {
+          label:"已結案",
+          data:items.map(function(x){return Number(x.closed ?? x.solved ?? 0);}),
+          backgroundColor:"rgba(22,163,74,.78)",
+          borderRadius:7,
+          borderSkipped:false
+        }
+      ]
+    },
+    options:{
+      indexAxis:"y",
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{
+          position:"top",
+          align:"end",
+          labels:{
+            boxWidth:9,
+            boxHeight:9,
+            usePointStyle:true,
+            pointStyle:"rectRounded",
+            padding:16,
+            font:{size:11,weight:"600"}
+          }
+        },
+        tooltip:{
+          callbacks:{
+            label:function(context){
+              return " "+context.dataset.label+"："+context.parsed.x+" 件";
+            }
+          }
+        }
+      },
+      scales:{
+        x:{
+          beginAtZero:true,
+          ticks:{precision:0},
+          grid:{color:"rgba(226,232,240,.65)"}
+        },
+        y:{
+          grid:{display:false},
+          ticks:{font:{weight:"700"}}
+        }
+      }
+    }
+  });
+
+  const avgCloseHtml=items.map(function(x){
+    const name=escapeAmoHtml(x.handler || x.name || "未指派");
+    const value=escapeAmoHtml(formatAmoHours(x.avgCloseHours));
+    return '<div class="amo-workload-eff-row"><span class="amo-workload-eff-name">'+name+'</span><span class="amo-workload-eff-value">'+value+'</span></div>';
+  }).join("");
+
+  const rateHtml=items.map(function(x){
+    const name=escapeAmoHtml(x.handler || x.name || "未指派");
+    const rawRate=Number(x.solvedWithin2dRate ?? x.rate ?? 0);
+    const rate=Number.isFinite(rawRate) ? Math.max(0,Math.min(100,rawRate)) : 0;
+    return '<div class="amo-workload-eff-row"><span class="amo-workload-eff-name">'+name+'</span><span class="amo-workload-rate-track"><span class="amo-workload-rate-fill" style="display:block;width:'+rate+'%"></span></span><span class="amo-workload-eff-value amo-workload-rate-value">'+escapeAmoHtml(rate+"%")+'</span></div>';
+  }).join("");
+
+  efficiency.innerHTML=
+    '<div class="amo-workload-eff-card">'+
+      '<div class="amo-workload-eff-title">平均結案時間</div>'+
+      '<div class="amo-workload-eff-list">'+avgCloseHtml+'</div>'+
+    '</div>'+
+    '<div class="amo-workload-eff-card">'+
+      '<div class="amo-workload-eff-title">2D 完成率</div>'+
+      '<div class="amo-workload-eff-list">'+rateHtml+'</div>'+
+    '</div>';
 }
 
 function renderAmoDashboard(data){
