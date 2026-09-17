@@ -2689,6 +2689,101 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 
 
+
+/* =========================
+   AMO 專區密碼驗證
+========================= */
+.amo-lock-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:10020;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(15,23,42,.42);
+  backdrop-filter:blur(5px);
+}
+.amo-lock-backdrop.show{display:flex}
+.amo-lock-modal{
+  width:min(420px,100%);
+  padding:26px;
+  border:1px solid #ede9fe;
+  border-radius:24px;
+  background:#fff;
+  box-shadow:0 24px 70px rgba(15,23,42,.18);
+}
+.amo-lock-icon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:48px;
+  height:48px;
+  margin-bottom:16px;
+  border-radius:15px;
+  background:#f5f3ff;
+  font-size:22px;
+}
+.amo-lock-title{
+  margin:0 0 7px;
+  color:#0f172a;
+  font-size:20px;
+  font-weight:800;
+}
+.amo-lock-desc{
+  margin:0 0 18px;
+  color:#64748b;
+  font-size:12px;
+  line-height:1.7;
+}
+.amo-lock-input{
+  width:100%;
+  box-sizing:border-box;
+  padding:12px 14px;
+  border:1px solid #dbe2ea;
+  border-radius:12px;
+  outline:none;
+  font-size:14px;
+}
+.amo-lock-input:focus{
+  border-color:#8b5cf6;
+  box-shadow:0 0 0 3px rgba(139,92,246,.10);
+}
+.amo-lock-message{
+  display:none;
+  margin-top:9px;
+  color:#dc2626;
+  font-size:11px;
+  font-weight:700;
+}
+.amo-lock-message.show{display:block}
+.amo-lock-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+  margin-top:20px;
+}
+.amo-lock-btn{
+  min-width:88px;
+  padding:10px 14px;
+  border:0;
+  border-radius:11px;
+  cursor:pointer;
+  font-weight:800;
+}
+.amo-lock-btn.cancel{
+  background:#f1f5f9;
+  color:#475569;
+}
+.amo-lock-btn.confirm{
+  background:#7c3aed;
+  color:#fff;
+}
+.amo-lock-btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
 /* =========================
    AMO Workbench Dashboard
 ========================= */
@@ -3376,6 +3471,20 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div>
 </section>
 </main>
+</div>
+
+<div id="amoLockBackdrop" class="amo-lock-backdrop" aria-hidden="true">
+  <div class="amo-lock-modal" role="dialog" aria-modal="true" aria-labelledby="amoLockTitle">
+    <div class="amo-lock-icon">🔒</div>
+    <h2 id="amoLockTitle" class="amo-lock-title">AMO 專區驗證</h2>
+    <p class="amo-lock-desc">此區域僅供 AMO 使用，請輸入密碼後進入。</p>
+    <input id="amoLockPassword" class="amo-lock-input" type="password" autocomplete="current-password" placeholder="請輸入密碼">
+    <div id="amoLockMessage" class="amo-lock-message"></div>
+    <div class="amo-lock-actions">
+      <button type="button" class="amo-lock-btn cancel" onclick="closeAmoLock()">取消</button>
+      <button id="amoLockConfirmBtn" type="button" class="amo-lock-btn confirm" onclick="submitAmoPassword()">進入專區</button>
+    </div>
+  </div>
 </div>
 
 <section id="amoPortal" class="amo-portal hidden">
@@ -7978,10 +8087,146 @@ function showPortalSection(sectionId){
 let amoDashboardLoaded = false;
 let amoCharts = {};
 
+const AMO_SESSION_STORAGE_KEY = "amoPortalSessionToken";
+
+function getAmoSessionToken(){
+  try{
+    return sessionStorage.getItem(AMO_SESSION_STORAGE_KEY) || "";
+  }catch(error){
+    return "";
+  }
+}
+
+function saveAmoSessionToken(token){
+  try{
+    sessionStorage.setItem(AMO_SESSION_STORAGE_KEY,token || "");
+  }catch(error){}
+}
+
+function clearAmoSessionToken(){
+  try{
+    sessionStorage.removeItem(AMO_SESSION_STORAGE_KEY);
+  }catch(error){}
+}
+
 function openAmoPortal(){
+  if(getAmoSessionToken()){
+    enterAmoPortal();
+    return;
+  }
+  openAmoLock();
+}
+
+function enterAmoPortal(){
   showPortalSection("amoPortal");
   if(!amoDashboardLoaded) loadAmoDashboard();
 }
+
+function openAmoLock(){
+  const backdrop=document.getElementById("amoLockBackdrop");
+  const input=document.getElementById("amoLockPassword");
+  const message=document.getElementById("amoLockMessage");
+  if(message){
+    message.textContent="";
+    message.classList.remove("show");
+  }
+  if(input) input.value="";
+  if(backdrop){
+    backdrop.classList.add("show");
+    backdrop.setAttribute("aria-hidden","false");
+  }
+  setTimeout(function(){
+    if(input) input.focus();
+  },60);
+}
+
+function closeAmoLock(){
+  const backdrop=document.getElementById("amoLockBackdrop");
+  const input=document.getElementById("amoLockPassword");
+  const message=document.getElementById("amoLockMessage");
+  if(backdrop){
+    backdrop.classList.remove("show");
+    backdrop.setAttribute("aria-hidden","true");
+  }
+  if(input) input.value="";
+  if(message){
+    message.textContent="";
+    message.classList.remove("show");
+  }
+}
+
+async function submitAmoPassword(){
+  const input=document.getElementById("amoLockPassword");
+  const message=document.getElementById("amoLockMessage");
+  const btn=document.getElementById("amoLockConfirmBtn");
+  const password=input ? input.value : "";
+
+  if(!password){
+    if(message){
+      message.textContent="請輸入密碼。";
+      message.classList.add("show");
+    }
+    if(input) input.focus();
+    return;
+  }
+
+  if(btn){
+    btn.disabled=true;
+    btn.textContent="驗證中…";
+  }
+  if(message){
+    message.textContent="";
+    message.classList.remove("show");
+  }
+
+  try{
+    const url=GAS_URL+
+      "?action=verifyAmoPassword"+
+      "&password="+encodeURIComponent(password)+
+      "&t="+Date.now();
+
+    const response=await fetch(url);
+    if(!response.ok) throw new Error("HTTP "+response.status);
+
+    const result=await response.json();
+
+    if(!result || result.success !== true || result.verified !== true || !result.token){
+      throw new Error((result && result.message) || "密碼不正確，請重新輸入。");
+    }
+
+    saveAmoSessionToken(result.token);
+    closeAmoLock();
+    enterAmoPortal();
+
+  }catch(error){
+    console.error("AMO 專區驗證失敗：",error);
+    if(message){
+      message.textContent=error && error.message ? error.message : "目前無法完成驗證，請稍後再試。";
+      message.classList.add("show");
+    }
+    if(input){
+      input.select();
+      input.focus();
+    }
+  }finally{
+    if(btn){
+      btn.disabled=false;
+      btn.textContent="進入專區";
+    }
+  }
+}
+
+document.addEventListener("keydown",function(event){
+  const backdrop=document.getElementById("amoLockBackdrop");
+  if(!backdrop || !backdrop.classList.contains("show")) return;
+
+  if(event.key === "Enter"){
+    event.preventDefault();
+    submitAmoPassword();
+  }else if(event.key === "Escape"){
+    closeAmoLock();
+  }
+});
 
 function showAmoMessage(text,type){
   const el=document.getElementById("amoMessage");
@@ -8183,7 +8428,7 @@ function requestAmoDashboard(filters){
       google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).getAmoDashboardData(filters);
       return;
     }
-    const url=GAS_URL+"?action=getAmoDashboardData&range="+encodeURIComponent(filters.range)+"&workstream="+encodeURIComponent(filters.workstream)+"&handler="+encodeURIComponent(filters.handler)+"&t="+Date.now();
+    const url=GAS_URL+"?action=getAmoDashboardData&range="+encodeURIComponent(filters.range)+"&workstream="+encodeURIComponent(filters.workstream)+"&handler="+encodeURIComponent(filters.handler)+"&amoToken="+encodeURIComponent(getAmoSessionToken())+"&t="+Date.now();
     fetch(url).then(function(r){if(!r.ok) throw new Error("HTTP "+r.status);return r.json();}).then(function(r){resolve(r && r.data ? r.data : r);}).catch(reject);
   });
 }
@@ -8193,6 +8438,13 @@ async function loadAmoDashboard(){
   showAmoMessage("正在整理最新案件資料…","info");
   try{
     const data=await requestAmoDashboard({range:(document.getElementById("amoRange")||{}).value || "7d",workstream:(document.getElementById("amoWorkstream")||{}).value || "",handler:(document.getElementById("amoHandler")||{}).value || ""});
+    if(data && data.authRequired === true){
+      clearAmoSessionToken();
+      amoDashboardLoaded=false;
+      showPortalSection("portalHome");
+      openAmoLock();
+      throw new Error(data.message || "AMO 專區驗證已失效，請重新輸入密碼。");
+    }
     if(data && data.success === false) throw new Error(data.message || "Dashboard 資料讀取失敗");
     renderAmoDashboard(data); showAmoMessage("","");
   }catch(error){console.error("AMO Dashboard 載入失敗：",error);showAmoMessage("目前無法取得 AMO Dashboard 資料，請確認 Apps Script 已部署最新版本後再試。","error");}
