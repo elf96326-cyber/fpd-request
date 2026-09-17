@@ -2263,9 +2263,435 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .announcement-modal-actions button{width:100%}
 }
 
+
+/* =========================
+   v48 AM Workspace / UX Upgrade
+========================= */
+.portal-workspace{
+  margin-top:22px;
+  display:grid;
+  gap:16px;
+}
+.workspace-kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+}
+.workspace-kpi{
+  padding:16px 6px 13px;
+  border:0;
+  border-bottom:2px solid #f1f5f9;
+  border-radius:0;
+  background:transparent;
+  min-width:0;
+}
+.workspace-kpi-label{color:#64748b;font-size:12px;font-weight:700;margin-bottom:7px}
+.workspace-kpi-value{font-size:26px;font-weight:900;letter-spacing:-.03em;color:#0f172a}
+.workspace-kpi-note{margin-top:5px;color:#94a3b8;font-size:11px;line-height:1.5}
+.workspace-kpi.open{border-bottom-color:#fde68a;background:transparent}
+.workspace-kpi.processing{border-bottom-color:#bfdbfe;background:transparent}
+.workspace-kpi.done{border-bottom-color:#bbf7d0;background:transparent}
+.workspace-kpi.week{border-bottom-color:#fbcfe8;background:transparent}
+.workspace-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
+.workspace-panel{
+  border:0;
+  border-top:1px solid #f1f5f9;
+  border-radius:0;
+  background:transparent;
+  padding:20px 0 0;
+}
+.workspace-panel-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px
+}
+.workspace-panel-title{font-size:15px;font-weight:800;color:#0f172a}
+.workspace-panel-sub{font-size:11px;color:#94a3b8;margin-top:3px}
+.workspace-link-btn{
+  padding:7px 10px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;
+  color:#64748b;font-size:12px;font-weight:700
+}
+.workspace-link-btn:hover{border-color:#f9a8d4;color:#be185d;background:#fff7fa}
+.workspace-recent-list{display:grid;gap:9px}
+.workspace-recent-item{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;
+  padding:13px 14px;border:1px solid #f1f5f9;border-radius:14px;background:#fff;
+  cursor:pointer;transition:.16s ease
+}
+.workspace-recent-item:hover{
+  border-color:#fbcfe8;background:#fff9fb;transform:translateY(-1px)
+}
+.workspace-recent-main{min-width:0}
+.workspace-recent-title{font-size:13px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.workspace-recent-meta{margin-top:4px;font-size:11px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.workspace-recent-actions{display:flex;gap:6px}
+.workspace-mini-btn{
+  padding:7px 9px;border:1px solid #e2e8f0;border-radius:9px;background:#fff;color:#475569;font-size:11px;font-weight:700
+}
+.workspace-mini-btn:hover{border-color:#f9a8d4;color:#be185d}
+.workspace-empty{
+  padding:20px 12px;text-align:center;border:1px dashed #cbd5e1;border-radius:14px;
+  color:#94a3b8;font-size:12px;line-height:1.7
+}
+.recent-searches{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.recent-search-chip{
+  padding:7px 10px;border:1px solid #dbeafe;border-radius:999px;background:#fff;color:#475569;font-size:11px;font-weight:700
+}
+.recent-search-chip:hover{background:#eff6ff;color:#1d4ed8}
+.vendor-skeleton{display:grid;gap:10px;margin-top:14px}
+.vendor-skeleton-card{height:76px;border-radius:16px;background:linear-gradient(90deg,#f8fafc 25%,#f1f5f9 40%,#f8fafc 60%);background-size:300% 100%;animation:skeletonMove 1.15s ease-in-out infinite}
+@keyframes skeletonMove{0%{background-position:100% 0}100%{background-position:0 0}}
+.success-upgrade{
+  max-width:720px;margin:0 auto;text-align:center
+}
+.success-check{
+  width:64px;height:64px;margin:0 auto 15px;border-radius:20px;display:grid;place-items:center;
+  background:#dcfce7;color:#059669;font-size:34px;font-weight:900
+}
+.success-case-card{
+  margin:22px auto 0;text-align:left;border:1px solid #bbf7d0;background:#f0fdf4;
+  border-radius:20px;padding:17px;max-width:620px
+}
+.success-case-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.success-case-item{padding:11px 12px;border-radius:12px;background:#fff;border:1px solid #dcfce7}
+.success-case-item small{display:block;color:#64748b;font-size:11px;font-weight:700;margin-bottom:4px}
+.success-case-item b{display:block;color:#0f172a;font-size:13px;line-height:1.55;word-break:break-word}
+.success-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin-top:18px}
+.tracking-copy-btn{
+  padding:8px 11px;border:1px solid #fbcfe8;border-radius:11px;background:#fff7fa;color:#be185d;font-size:12px;font-weight:700
+}
+.tracking-copy-btn:hover{background:#fff0f6;border-color:#f9a8d4}
+.cache-badge{
+  display:inline-flex;margin-left:6px;padding:2px 6px;border-radius:999px;background:#dcfce7;color:#166534;font-size:10px;font-weight:800
+}
+@media(max-width:760px){
+  .workspace-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .workspace-grid{grid-template-columns:1fr}
+  .success-case-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .workspace-kpi-grid{grid-template-columns:1fr 1fr}
+  .workspace-kpi{padding:14px}
+  .workspace-kpi-value{font-size:22px}
+  .workspace-recent-item{grid-template-columns:1fr}
+}
+
+
+/* v50 首頁資訊順序：主要入口 → 案件概況 → 最近申請 */
+.portal-home-main-actions .portal-action-grid{
+  margin-top:30px;
+}
+.portal-workspace{
+  margin-top:28px;
+}
+.workspace-overview{
+  padding-top:2px;
+}
+.workspace-overview::before{
+  content:"案件概況";
+  display:block;
+  margin-bottom:15px;
+  color:#334155;
+  font-size:13px;
+  font-weight:800;
+}
+.workspace-recent-bottom{
+  margin-top:28px;
+  padding-top:22px;
+  border-top:1px solid #f1f5f9;
+}
+.workspace-recent-bottom .workspace-panel{
+  border-top:0;
+  padding-top:0;
+}
+@media(max-width:760px){
+  .portal-workspace{margin-top:22px}
+  .workspace-recent-bottom{margin-top:22px;padding-top:18px}
+}
+
+
+/* =========================================================
+   v51 首頁視覺重整
+   - 即時狀態：由三張彩色卡片改為單一資訊列
+   - 主要入口：白底、輕邊界、左側 accent、hover 才上色
+   - 移除重複的右上在線人數
+========================================================= */
+
+/* 隱藏 Hero 右上角重複的在線狀態，但不動原本即時統計邏輯 */
+.portal-live-pill,
+.portal-online-pill,
+.portal-home-online,
+.portal-home-live,
+.portal-presence-pill{
+  display:none !important;
+}
+
+/* 即時狀態三欄：變成一條乾淨資訊列 */
+.portal-live-stats,
+.portal-presence-grid,
+.portal-realtime-grid,
+.portal-home-stats{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:0 !important;
+  margin-top:24px !important;
+  padding:5px 0 !important;
+  background:#fff !important;
+  border:1px solid #eef2f7 !important;
+  border-radius:18px !important;
+  overflow:hidden !important;
+  box-shadow:none !important;
+}
+
+/* 相容目前首頁三個即時狀態卡 class */
+.portal-live-card,
+.portal-presence-card,
+.portal-realtime-card,
+.portal-stat-card{
+  position:relative !important;
+  min-height:auto !important;
+  padding:14px 20px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+.portal-live-card + .portal-live-card::before,
+.portal-presence-card + .portal-presence-card::before,
+.portal-realtime-card + .portal-realtime-card::before,
+.portal-stat-card + .portal-stat-card::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:14px;
+  bottom:14px;
+  width:1px;
+  background:#eef2f7;
+}
+
+/* 如果實際卡片用了狀態顏色 class，也強制取消大片底色 */
+.portal-live-card.online,
+.portal-live-card.filling,
+.portal-live-card.today,
+.portal-presence-card.online,
+.portal-presence-card.filling,
+.portal-presence-card.today,
+.portal-realtime-card.online,
+.portal-realtime-card.filling,
+.portal-realtime-card.today,
+.portal-stat-card.online,
+.portal-stat-card.filling,
+.portal-stat-card.today{
+  background:transparent !important;
+  border:0 !important;
+}
+
+/* 主要入口 */
+.portal-action-grid{
+  gap:14px !important;
+  margin-top:26px !important;
+}
+
+.portal-action-card{
+  position:relative !important;
+  min-height:124px !important;
+  padding:22px 24px 22px 28px !important;
+  gap:17px !important;
+  overflow:hidden !important;
+  background:#fff !important;
+  border:1px solid #e8edf3 !important;
+  border-radius:18px !important;
+  box-shadow:0 4px 14px rgba(15,23,42,.035) !important;
+  transform:none !important;
+}
+
+.portal-action-card::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:20px;
+  bottom:20px;
+  width:4px;
+  border-radius:0 999px 999px 0;
+  opacity:.9;
+}
+
+.portal-action-card::after{
+  content:"→";
+  position:absolute;
+  right:22px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#cbd5e1;
+  font-size:20px;
+  font-weight:600;
+  transition:.18s ease;
+}
+
+.portal-action-card.create::before{background:#ff2b85}
+.portal-action-card.tracking::before{background:#60a5fa}
+
+.portal-action-card.create,
+.portal-action-card.tracking{
+  background:#fff !important;
+  border-color:#e8edf3 !important;
+}
+
+.portal-action-card:hover{
+  transform:translateY(-2px) !important;
+  box-shadow:0 10px 24px rgba(15,23,42,.065) !important;
+}
+
+.portal-action-card.create:hover{
+  border-color:#fbcfe8 !important;
+  background:#fffafd !important;
+}
+
+.portal-action-card.tracking:hover{
+  border-color:#bfdbfe !important;
+  background:#fbfdff !important;
+}
+
+.portal-action-card:hover::after{
+  right:18px;
+  color:#64748b;
+}
+
+.portal-action-icon{
+  width:50px !important;
+  height:50px !important;
+  border-radius:14px !important;
+  background:#f8fafc !important;
+  box-shadow:none !important;
+  font-size:24px !important;
+}
+
+.portal-action-card.create .portal-action-icon{
+  background:#fff1f6 !important;
+}
+
+.portal-action-card.tracking .portal-action-icon{
+  background:#eff6ff !important;
+}
+
+.portal-action-copy{
+  min-width:0;
+  padding-right:34px;
+}
+
+.portal-action-copy b{
+  margin-bottom:5px !important;
+  font-size:18px !important;
+  letter-spacing:-.01em;
+}
+
+.portal-action-copy span{
+  max-width:350px;
+  font-size:12px !important;
+  line-height:1.65 !important;
+}
+
+/* KPI 與主要入口拉開一點，形成清楚層級 */
+.portal-workspace{
+  margin-top:34px !important;
+}
+
+.workspace-overview::before{
+  margin-bottom:12px !important;
+  color:#475569 !important;
+  font-size:12px !important;
+  letter-spacing:.02em;
+}
+
+.workspace-kpi-grid{
+  gap:18px !important;
+}
+
+.workspace-kpi{
+  padding:13px 6px 12px !important;
+}
+
+.workspace-kpi-value{
+  font-size:24px !important;
+}
+
+/* 手機 */
+@media(max-width:760px){
+  .portal-live-stats,
+  .portal-presence-grid,
+  .portal-realtime-grid,
+  .portal-home-stats{
+    grid-template-columns:1fr !important;
+    padding:0 !important;
+  }
+
+  .portal-live-card + .portal-live-card::before,
+  .portal-presence-card + .portal-presence-card::before,
+  .portal-realtime-card + .portal-realtime-card::before,
+  .portal-stat-card + .portal-stat-card::before{
+    left:18px;
+    right:18px;
+    top:0;
+    bottom:auto;
+    width:auto;
+    height:1px;
+  }
+
+  .portal-action-grid{
+    grid-template-columns:1fr !important;
+  }
+
+  .portal-action-card{
+    min-height:108px !important;
+  }
+}
+
+
+/* v51 actual homepage selectors */
+.portal-presence-summary{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:0 !important;
+  margin-top:24px !important;
+  padding:4px 0 !important;
+  border:1px solid #eef2f7 !important;
+  border-radius:18px !important;
+  background:#fff !important;
+}
+.portal-presence-item{
+  position:relative !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  padding:14px 20px !important;
+}
+.portal-presence-item + .portal-presence-item::before{
+  content:"";position:absolute;left:0;top:14px;bottom:14px;width:1px;background:#eef2f7;
+}
+.portal-presence-item.online,
+.portal-presence-item.filling,
+.portal-presence-item.submitted{
+  border:0 !important;background:transparent !important;
+}
+.portal-presence-badge{
+  display:none !important;
+}
+@media(max-width:760px){
+  .portal-presence-summary{grid-template-columns:1fr !important}
+  .portal-presence-item + .portal-presence-item::before{
+    left:18px;right:18px;top:0;bottom:auto;width:auto;height:1px;
+  }
+}
+
 </style>
 </head>
 <body>
+<!-- v51 homepage visual refresh: compact realtime strip + clean action cards -->
+
 
 
 <section id="portalHome" class="portal-home">
@@ -2317,7 +2743,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
     <div id="portalAnnouncements" class="portal-announcements" aria-live="polite"></div>
 
-    <div class="portal-action-grid">
+    <div class="portal-home-main-actions">
+<div class="portal-action-grid">
       <button type="button" class="portal-action-card create" onclick="openRequestPortal()">
         <span class="portal-action-icon">📝</span>
         <span class="portal-action-copy">
@@ -2334,6 +2761,48 @@ button:disabled{opacity:.45;cursor:not-allowed}
         </span>
       </button>
     </div>
+</div>
+
+<div class="portal-workspace" aria-label="AM 個人工作台">
+  <div class="workspace-overview">
+<div class="workspace-kpi-grid">
+        <div class="workspace-kpi open">
+          <div class="workspace-kpi-label">近期送出</div>
+          <div class="workspace-kpi-value" id="workspaceRecentCount">0</div>
+          <div class="workspace-kpi-note">此瀏覽器記錄的近期案件</div>
+        </div>
+        <div class="workspace-kpi processing">
+          <div class="workspace-kpi-label">進行中</div>
+          <div class="workspace-kpi-value" id="workspaceOpenCount">—</div>
+          <div class="workspace-kpi-note">最近一次案件查詢結果</div>
+        </div>
+        <div class="workspace-kpi done">
+          <div class="workspace-kpi-label">已完成</div>
+          <div class="workspace-kpi-value" id="workspaceClosedCount">—</div>
+          <div class="workspace-kpi-note">最近一次案件查詢結果</div>
+        </div>
+        <div class="workspace-kpi week">
+          <div class="workspace-kpi-label">本週建立</div>
+          <div class="workspace-kpi-value" id="workspaceWeekCount">0</div>
+          <div class="workspace-kpi-note">此瀏覽器本週完成送出</div>
+        </div>
+      </div>
+  </div>
+
+  <div class="workspace-recent-bottom">
+<div class="workspace-grid">
+        <div class="workspace-panel">
+          <div class="workspace-panel-head">
+            <div>
+              <div class="workspace-panel-title">🕘 最近申請</div>
+              <div class="workspace-panel-sub">點選案件即可查看進度；需要建立相似需求時再使用「複製」</div>
+            </div>
+          </div>
+          <div id="workspaceRecentList" class="workspace-recent-list"></div>
+        </div>
+      </div>
+  </div>
+</div>
   </div>
 </section>
 
@@ -2762,11 +3231,25 @@ button:disabled{opacity:.45;cursor:not-allowed}
 </section>
 
 <section class="page" id="page6">
-  <div style="text-align:center">
-    <div style="font-size:48px;color:#059669">✓</div>
+  <div class="success-upgrade">
+    <div class="success-check">✓</div>
     <h2>申請已成功送出</h2>
-    <div class="sub">需求已進入處理流程，後續進度將透過 Email 通知。</div>
-    <div class="btn-row" style="justify-content:center"><button class="btn-primary" onclick="requestInternalLeave(()=>resetPreview())">建立另一筆需求</button></div>
+    <div class="sub">需求已進入處理流程。你可以直接查看案件進度，或複製本次基本資料建立相似需求。</div>
+
+    <div class="success-case-card">
+      <div class="success-case-grid">
+        <div class="success-case-item"><small>需求項目</small><b id="successRequestType">—</b></div>
+        <div class="success-case-item"><small>品牌／門市</small><b id="successBrand">—</b></div>
+        <div class="success-case-item"><small>Case Subject</small><b id="successCaseSubject">—</b></div>
+        <div class="success-case-item"><small>預計處理</small><b id="successExpectedProcess">—</b></div>
+      </div>
+    </div>
+
+    <div class="success-actions">
+      <button class="btn-primary" type="button" onclick="openTrackingFromLastSubmission()">查看案件進度</button>
+      <button class="btn-outline" type="button" onclick="repeatLastSubmission()">建立相似需求</button>
+      <button class="portal-back-btn" type="button" onclick="requestInternalLeave(()=>backToPortalHome())">返回首頁</button>
+    </div>
   </div>
 </section>
 </main>
@@ -2796,6 +3279,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <button id="trackingSearchButton" type="button" class="btn-primary" onclick="searchCaseProgress()">查詢進度</button>
       </div>
       <div class="tracking-hint">可搜尋品牌、門市名稱、Case Subject 或信件主旨。</div>
+      <div id="trackingRecentSearches" class="recent-searches" aria-label="最近搜尋"></div>
       <div id="trackingMessage" class="tracking-message" role="status" aria-live="polite"></div>
     </div>
 
@@ -2837,7 +3321,193 @@ let isSubmitting = false;
 let currentVendorResults = [];
 let currentSearchTarget = "";
 let brandVerificationPassed = false;
+
 let brandVerificationRequired = false;
+
+/* =========================
+   v48 Workspace / Local UX
+========================= */
+const FP_RECENT_SUBMISSIONS_KEY = "fp_portal_recent_submissions_v1";
+const FP_RECENT_SEARCHES_KEY = "fp_portal_recent_searches_v1";
+const FP_VENDOR_CACHE_PREFIX = "fp_vendor_cache_v1:";
+const FP_VENDOR_CACHE_TTL = 5 * 60 * 1000;
+let lastSuccessfulPayload = null;
+
+function safeLocalGet(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  }catch(e){ return fallback; }
+}
+function safeLocalSet(key, value){
+  try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
+}
+function getRecentSubmissions(){
+  const rows = safeLocalGet(FP_RECENT_SUBMISSIONS_KEY, []);
+  return Array.isArray(rows) ? rows : [];
+}
+function rememberSubmission(payload){
+  const rows = getRecentSubmissions().filter(x => x && x.submissionId !== payload.submissionId);
+  rows.unshift({
+    submissionId: payload.submissionId || "",
+    submittedAt: payload.submittedAt || new Date().toISOString(),
+    brand: payload.brand || payload.selectedVendorFullName || "",
+    selectedVendorFullName: payload.selectedVendorFullName || "",
+    am: payload.am || "",
+    amEmail: payload.amEmail || "",
+    workstream: payload.workstream || "",
+    workstreamKey: currentWorkstream || "",
+    requestType: payload.requestType || "",
+    requestTypeKey: payload.requestTypeKey || "",
+    caseSubject: payload.caseSubject || ""
+  });
+  safeLocalSet(FP_RECENT_SUBMISSIONS_KEY, rows.slice(0, 12));
+  lastSuccessfulPayload = rows[0];
+  renderWorkspaceDashboard();
+  renderSuccessDetails(rows[0]);
+}
+function renderWorkspaceDashboard(){
+  const rows = getRecentSubmissions();
+  const recentEl = document.getElementById("workspaceRecentCount");
+  const weekEl = document.getElementById("workspaceWeekCount");
+  const openEl = document.getElementById("workspaceOpenCount");
+  const closedEl = document.getElementById("workspaceClosedCount");
+  if(recentEl) recentEl.textContent = rows.length;
+  const now = new Date();
+  const monday = new Date(now);
+  const day = (now.getDay() + 6) % 7;
+  monday.setHours(0,0,0,0);
+  monday.setDate(now.getDate() - day);
+  if(weekEl) weekEl.textContent = rows.filter(x => new Date(x.submittedAt) >= monday).length;
+  if(openEl) openEl.textContent = trackingLastCounts && trackingLastCounts.all ? trackingLastCounts.open : "—";
+  if(closedEl) closedEl.textContent = trackingLastCounts && trackingLastCounts.all ? trackingLastCounts.closed : "—";
+
+  const list = document.getElementById("workspaceRecentList");
+  if(!list) return;
+  if(!rows.length){
+    list.innerHTML = '<div class="workspace-empty">目前還沒有此瀏覽器的送出紀錄。<br>完成第一筆申請後，這裡會自動顯示最近案件。</div>';
+    return;
+  }
+  list.innerHTML = rows.slice(0,5).map((x,i) => `
+    <div class="workspace-recent-item" onclick="trackRecentSubmission(${i})" role="button" tabindex="0"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();trackRecentSubmission(${i});}">
+      <div class="workspace-recent-main">
+        <div class="workspace-recent-title">${escapeTrackingHtml(x.requestType || "未命名需求")}｜${escapeTrackingHtml(x.brand || "—")}</div>
+        <div class="workspace-recent-meta">${escapeTrackingHtml(x.caseSubject || "—")} · ${formatWorkspaceTime(x.submittedAt)}</div>
+      </div>
+      <div class="workspace-recent-actions">
+        <button type="button" class="workspace-mini-btn"
+          onclick="event.stopPropagation();repeatSubmissionByIndex(${i})">複製</button>
+      </div>
+    </div>
+  `).join("");
+}
+function formatWorkspaceTime(v){
+  const d = new Date(v);
+  if(Number.isNaN(d.getTime())) return "—";
+  return new Intl.DateTimeFormat("zh-TW",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(d);
+}
+function renderSuccessDetails(item){
+  item = item || lastSuccessfulPayload || getRecentSubmissions()[0] || {};
+  const set = (id, value) => { const el=document.getElementById(id); if(el) el.textContent=value || "—"; };
+  set("successRequestType", item.requestType);
+  set("successBrand", item.brand || item.selectedVendorFullName);
+  set("successCaseSubject", item.caseSubject);
+  const expected = document.getElementById("expectedProcessValue");
+  set("successExpectedProcess", expected ? expected.textContent : "請依服務時間說明");
+}
+function getRecentTrackingSearches(){
+  const rows=safeLocalGet(FP_RECENT_SEARCHES_KEY,[]);
+  return Array.isArray(rows)?rows:[];
+}
+function rememberTrackingSearch(keyword){
+  const k=(keyword||"").trim();
+  if(!k) return;
+  const rows=getRecentTrackingSearches().filter(x=>x!==k);
+  rows.unshift(k);
+  safeLocalSet(FP_RECENT_SEARCHES_KEY,rows.slice(0,6));
+  renderRecentTrackingSearches();
+}
+function renderRecentTrackingSearches(){
+  const el=document.getElementById("trackingRecentSearches");
+  if(!el) return;
+  const rows=getRecentTrackingSearches();
+  el.innerHTML=rows.map(k=>`<button type="button" class="recent-search-chip" onclick='runRecentTrackingSearch(${JSON.stringify(k)})'>🕘 ${escapeTrackingHtml(k)}</button>`).join("");
+}
+function runRecentTrackingSearch(keyword){
+  const input=document.getElementById("trackingKeyword");
+  if(input) input.value=keyword;
+  searchCaseProgress();
+}
+function trackRecentSubmission(index){
+  const item=getRecentSubmissions()[index];
+  if(!item) return;
+  showPortalSection("trackingPortal");
+  const input=document.getElementById("trackingKeyword");
+  if(input) input.value=item.brand || item.caseSubject || "";
+  renderRecentTrackingSearches();
+  if(input && input.value.trim().length>=2) searchCaseProgress();
+}
+function openTrackingFromLastSubmission(){
+  const item=lastSuccessfulPayload || getRecentSubmissions()[0];
+  showPortalSection("trackingPortal");
+  renderRecentTrackingSearches();
+  const input=document.getElementById("trackingKeyword");
+  if(input && item) input.value=item.brand || item.caseSubject || "";
+  if(input && input.value.trim().length>=2) searchCaseProgress();
+}
+function repeatLastSubmission(){ repeatSubmissionByIndex(0); }
+function repeatSubmissionByIndex(index){
+  const item=getRecentSubmissions()[index];
+  if(!item){ openRequestPortal(); return; }
+  resetPreview();
+  showPortalSection("requestPortal");
+  setTimeout(()=>prefillRepeatedSubmission(item),60);
+}
+function prefillRepeatedSubmission(item){
+  const brand=document.getElementById("brand");
+  const am=document.getElementById("am");
+  const amEmail=document.getElementById("amEmail");
+  if(brand) brand.value=item.brand || "";
+  if(am) am.value=item.am || "";
+  if(amEmail) amEmail.value=item.amEmail || "";
+  validateBasic();
+  const hint=document.getElementById("vendorSearchHint");
+  if(hint){
+    hint.textContent="已帶入上一筆案件的基本資料；請重新查詢並選擇正確店家資料後繼續。";
+    hint.style.color="#be185d";
+  }
+}
+function copyTrackingCaseToNewRequest(item){
+  const normalized={
+    brand:getTrackingValue(item,["vendorName","brand","brandName","品牌","品牌／門市"],""),
+    am:getTrackingValue(item,["amName","am","負責窗口"],""),
+    amEmail:getTrackingValue(item,["amEmail","負責窗口Email","負責窗口 Email"],""),
+    requestType:getTrackingValue(item,["requestType","requestItem","需求項目"],""),
+    caseSubject:getTrackingValue(item,["caseSubject","Case Subject","emailSubject","信件主旨"],"")
+  };
+  resetPreview();
+  showPortalSection("requestPortal");
+  setTimeout(()=>prefillRepeatedSubmission(normalized),60);
+}
+function getVendorCacheKey(target, keyword){
+  return FP_VENDOR_CACHE_PREFIX + String(target||"") + ":" + String(keyword||"").trim().toLowerCase();
+}
+function readVendorCache(target, keyword){
+  try{
+    const data=JSON.parse(sessionStorage.getItem(getVendorCacheKey(target,keyword))||"null");
+    if(!data || Date.now()-data.ts>FP_VENDOR_CACHE_TTL) return null;
+    return Array.isArray(data.items)?data.items:null;
+  }catch(e){ return null; }
+}
+function writeVendorCache(target, keyword, items){
+  try{ sessionStorage.setItem(getVendorCacheKey(target,keyword),JSON.stringify({ts:Date.now(),items:items||[]})); }catch(e){}
+}
+function showVendorSkeleton(){
+  const results=document.getElementById("vendorSearchResults");
+  if(results) results.innerHTML='<div class="vendor-skeleton"><div class="vendor-skeleton-card"></div><div class="vendor-skeleton-card"></div><div class="vendor-skeleton-card"></div></div>';
+}
+
 let brandVerificationChecking = false;
 let formHasUnsavedChanges = false;
 let formSubmittedSuccessfully = false;
@@ -3364,8 +4034,17 @@ async function searchVendor(){
     return;
   }
 
+  const cachedVendorResults = readVendorCache(currentSearchTarget, keyword);
+  if(cachedVendorResults){
+    currentVendorResults = cachedVendorResults;
+    hint.innerHTML = `已找到 ${cachedVendorResults.length} 筆資料 <span class="cache-badge">快速載入</span>`;
+    renderVendorResults(false);
+    return;
+  }
+
   hint.textContent="查詢中，請稍候…";
   hint.style.color="#64748b";
+  showVendorSkeleton();
 
   if(searchButton){
     searchButton.disabled=true;
@@ -3414,6 +4093,7 @@ async function searchVendor(){
       .slice(0,10);
 
     currentVendorResults = matched;
+    writeVendorCache(currentSearchTarget, keyword, matched);
 
     hint.style.color="#64748b";
 
@@ -6368,6 +7048,8 @@ async function confirmSubmit(){
       });
     }
 
+    rememberSubmission(payload);
+    renderSuccessDetails(lastSuccessfulPayload);
     go(6);
 
   } catch(err) {
@@ -7109,6 +7791,7 @@ function openRequestPortal(){
 function openTrackingPortal(){
   showPortalSection("trackingPortal");
   clearTrackingResult();
+  renderRecentTrackingSearches();
   setTimeout(function(){
     const input = document.getElementById("trackingKeyword");
     if(input) input.focus();
@@ -7533,7 +8216,12 @@ function createTrackingCaseCard(item, index){
           <span>👤 ${escapeTrackingHtml(assignee)}</span>
         </div>
 
-        <div class="tracking-case-actions">
+        <div class="tracking-case-actions" style="gap:8px">
+          <button
+            type="button"
+            class="tracking-copy-btn"
+            onclick='copyTrackingCaseToNewRequest(${JSON.stringify(item).replace(/'/g,"&#39;")})'
+          >複製建立新需求</button>
           <button
             type="button"
             class="tracking-detail-btn"
@@ -7590,6 +8278,7 @@ function renderTrackingResult(data, resultMeta){
   );
 
   updateTrackingFilterButtons(trackingCurrentFilter);
+  renderWorkspaceDashboard();
 
   const totalMatched =
     Number(resultMeta && resultMeta.totalMatched);
@@ -7702,6 +8391,7 @@ async function searchCaseProgress(options){
   }
 
   trackingLastKeyword = keyword;
+  rememberTrackingSearch(keyword);
 
   if(button){
     button.disabled = true;
@@ -7785,10 +8475,15 @@ async function searchCaseProgress(options){
 
 window.addEventListener("DOMContentLoaded", function(){
   showPortalSection("portalHome");
+  renderWorkspaceDashboard();
+  renderRecentTrackingSearches();
 });
 
 </script>
 
+<!-- v50 homepage reorder: primary actions first, recent submissions moved to bottom -->
+<!-- v49 homepage cleanup: remove duplicate tracking actions, simplify dashboard, clickable recent cases -->
+<!-- v48 workspace upgrade: dashboard + recent submissions + clone + cache + recent search + success actions -->
 <!-- v47 check: project_aaa_device_replacement template + subject + summary added -->
 
 <div id="brandVerificationBackdrop" class="brand-verification-backdrop" aria-hidden="true">
