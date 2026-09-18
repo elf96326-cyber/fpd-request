@@ -2897,6 +2897,103 @@ button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:1080px){.portal-action-grid{grid-template-columns:1fr 1fr}.portal-action-card.amo{grid-column:1/-1}.amo-kpi-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:760px){.portal-action-grid{grid-template-columns:1fr}.portal-action-card.amo{grid-column:auto}.amo-head{flex-direction:column}.amo-toolbar{grid-template-columns:1fr}.amo-kpi-grid{grid-template-columns:repeat(2,1fr)}.amo-metric-grid,.amo-chart-grid,.amo-chart-grid.equal{grid-template-columns:1fr}.amo-chart-wrap{height:240px}.amo-shell{padding:20px}.amo-title{font-size:27px}}
 
+
+
+/* =========================================================
+   v53 AMO Dashboard 視覺重整
+   - Loading 改右上角浮動 Toast
+   - KPI 改為 4 個核心案件量 + 1 條效率摘要
+   - 人員平均結案時間 / 2D 完成率改為圖表
+========================================================= */
+.amo-message{
+  position:fixed;
+  top:22px;
+  right:22px;
+  z-index:100500;
+  width:min(330px,calc(100vw - 32px));
+  margin:0;
+  padding:13px 15px 13px 44px;
+  border-radius:16px;
+  background:#fff !important;
+  box-shadow:0 16px 40px rgba(15,23,42,.16);
+  font-size:12px;
+  font-weight:700;
+  line-height:1.55;
+  opacity:0;
+  transform:translateY(-8px);
+  pointer-events:none;
+  transition:opacity .18s ease,transform .18s ease;
+}
+.amo-message.show{display:block;opacity:1;transform:translateY(0)}
+.amo-message::before{
+  content:"";
+  position:absolute;
+  left:16px;
+  top:50%;
+  width:15px;
+  height:15px;
+  margin-top:-9px;
+  border:2px solid #ddd6fe;
+  border-top-color:#7c3aed;
+  border-radius:50%;
+  animation:amo-toast-spin .75s linear infinite;
+}
+.amo-message.info{color:#5b21b6;border:1px solid #ddd6fe}
+.amo-message.success{color:#166534;border:1px solid #bbf7d0}
+.amo-message.success::before{content:"✓";display:grid;place-items:center;width:20px;height:20px;margin-top:-10px;border:0;background:#dcfce7;color:#15803d;font-size:12px;font-weight:900;animation:none}
+.amo-message.error{color:#b91c1c;border:1px solid #fecaca}
+.amo-message.error::before{content:"!";display:grid;place-items:center;width:20px;height:20px;margin-top:-10px;border:0;background:#fee2e2;color:#b91c1c;font-size:12px;font-weight:900;animation:none}
+@keyframes amo-toast-spin{to{transform:rotate(360deg)}}
+
+.amo-kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:12px}
+.amo-kpi{position:relative;overflow:hidden;padding:17px 18px;border-color:#e8edf3;box-shadow:0 2px 8px rgba(15,23,42,.025)}
+.amo-kpi::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:#e2e8f0}
+.amo-kpi:nth-child(1)::after{background:#c4b5fd}
+.amo-kpi:nth-child(2)::after{background:#fcd34d}
+.amo-kpi:nth-child(3)::after{background:#93c5fd}
+.amo-kpi:nth-child(4)::after{background:#86efac}
+.amo-kpi-value{font-size:29px}
+
+.amo-efficiency-strip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  margin-bottom:18px;
+  border:1px solid #e8edf3;
+  border-radius:18px;
+  background:#fafbfc;
+  overflow:hidden;
+}
+.amo-efficiency-item{position:relative;padding:15px 18px;min-width:0}
+.amo-efficiency-item + .amo-efficiency-item::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:1px;background:#e5e7eb}
+.amo-efficiency-label{display:flex;align-items:center;gap:7px;color:#64748b;font-size:10px;font-weight:800}
+.amo-efficiency-value{margin-top:6px;color:#0f172a;font-size:20px;font-weight:900;letter-spacing:-.02em}
+.amo-efficiency-note{margin-top:3px;color:#94a3b8;font-size:9px;line-height:1.4}
+.amo-efficiency-item.warning .amo-efficiency-value{color:#c2410c}
+.amo-efficiency-item.good .amo-efficiency-value{color:#15803d}
+.amo-panel-total{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f5f3ff;color:#6d28d9;font-size:10px;font-weight:800}
+
+.amo-workload-efficiency{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.amo-workload-eff-card{padding:16px;border:1px solid #e8edf3;border-radius:18px;background:#fff}
+.amo-workload-eff-title{margin:0;color:#334155;font-size:12px;font-weight:800}
+.amo-workload-eff-sub{margin-top:4px;color:#94a3b8;font-size:10px;line-height:1.5}
+.amo-eff-chart-wrap{position:relative;height:210px;margin-top:12px}
+
+@media(max-width:900px){
+  .amo-kpi-grid,.amo-efficiency-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .amo-efficiency-item:nth-child(3)::before{display:none}
+  .amo-efficiency-item:nth-child(n+3){border-top:1px solid #e5e7eb}
+}
+@media(max-width:760px){
+  .amo-workload-efficiency{grid-template-columns:1fr}
+  .amo-message{top:14px;right:16px}
+}
+@media(max-width:520px){
+  .amo-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .amo-efficiency-strip{grid-template-columns:1fr}
+  .amo-efficiency-item + .amo-efficiency-item::before{display:none}
+  .amo-efficiency-item + .amo-efficiency-item{border-top:1px solid #e5e7eb}
+}
+
 </style>
 </head>
 <body>
@@ -3508,22 +3605,21 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div id="amoMessage" class="amo-message" role="status" aria-live="polite"></div>
 
     <div class="amo-kpi-grid">
-      <div class="amo-kpi"><div class="amo-kpi-label">今日進線</div><div class="amo-kpi-value" id="amoTodayIncoming">—</div><div class="amo-kpi-note">今天送出的案件</div></div>
-      <div class="amo-kpi"><div class="amo-kpi-label">待處理</div><div class="amo-kpi-value" id="amoPending">—</div><div class="amo-kpi-note">目前尚未開始處理</div></div>
+      <div class="amo-kpi"><div class="amo-kpi-label">今日進線</div><div class="amo-kpi-value" id="amoTodayIncoming">—</div><div class="amo-kpi-note">今天新增案件</div></div>
+      <div class="amo-kpi"><div class="amo-kpi-label">待處理</div><div class="amo-kpi-value" id="amoPending">—</div><div class="amo-kpi-note">等待開始處理</div></div>
       <div class="amo-kpi"><div class="amo-kpi-label">處理中</div><div class="amo-kpi-value" id="amoInProgress">—</div><div class="amo-kpi-note">目前進行中的案件</div></div>
-      <div class="amo-kpi"><div class="amo-kpi-label">已結案</div><div class="amo-kpi-value" id="amoClosed">—</div><div class="amo-kpi-note">所選期間送出且已結案</div></div>
-      <div class="amo-kpi attention"><div class="amo-kpi-label">待處理 &gt; 2D</div><div class="amo-kpi-value" id="amoOver2d">—</div><div class="amo-kpi-note">目前超過 48 小時未結案</div></div>
-      <div class="amo-kpi rate"><div class="amo-kpi-label">Solved Speed &lt;2D</div><div class="amo-kpi-value" id="amoSolvedRate">—</div><div class="amo-kpi-note">48 小時內完成比例</div></div>
+      <div class="amo-kpi"><div class="amo-kpi-label">已結案</div><div class="amo-kpi-value" id="amoClosed">—</div><div class="amo-kpi-note">所選期間已完成</div></div>
     </div>
 
-    <div class="amo-metric-grid">
-      <div class="amo-metric"><small>平均案件建置時間</small><b id="amoFirstResponse">—</b><span>送出 → 案件建置</span></div>
-      <div class="amo-metric"><small>平均結案時間</small><b id="amoAvgClose">—</b><span>送出 → 結案</span></div>
-      <div class="amo-metric"><small>區間進線</small><b id="amoPeriodIncoming">—</b><span>依上方日期區間計算</span></div>
+    <div class="amo-efficiency-strip">
+      <div class="amo-efficiency-item warning"><div class="amo-efficiency-label">⚠ 待處理 &gt; 2D</div><div class="amo-efficiency-value" id="amoOver2d">—</div><div class="amo-efficiency-note">超過 48 小時未結案</div></div>
+      <div class="amo-efficiency-item good"><div class="amo-efficiency-label">⚡ Solved Speed &lt;2D</div><div class="amo-efficiency-value" id="amoSolvedRate">—</div><div class="amo-efficiency-note">48 小時內完成比例</div></div>
+      <div class="amo-efficiency-item"><div class="amo-efficiency-label">◷ 平均案件建置時間</div><div class="amo-efficiency-value" id="amoFirstResponse">—</div><div class="amo-efficiency-note">送出 → 案件建置</div></div>
+      <div class="amo-efficiency-item"><div class="amo-efficiency-label">✓ 平均結案時間</div><div class="amo-efficiency-value" id="amoAvgClose">—</div><div class="amo-efficiency-note">送出 → 結案</div></div>
     </div>
 
     <div class="amo-chart-grid">
-      <div class="amo-panel"><div class="amo-panel-head"><div><div class="amo-panel-title">每日進線 vs 結案</div><div class="amo-panel-sub">觀察案件量與消化速度</div></div></div><div class="amo-chart-wrap"><canvas id="amoTrendChart"></canvas></div></div>
+      <div class="amo-panel"><div class="amo-panel-head"><div><div class="amo-panel-title">每日進線 vs 結案</div><div class="amo-panel-sub">觀察案件量與消化速度</div></div><div class="amo-panel-total">區間進線 <span id="amoPeriodIncoming" style="margin-left:5px">—</span> 件</div></div><div class="amo-chart-wrap"><canvas id="amoTrendChart"></canvas></div></div>
       <div class="amo-panel"><div class="amo-panel-head"><div><div class="amo-panel-title">需求分類分布</div><div class="amo-panel-sub">Menu / Project / Others</div></div></div><div class="amo-chart-wrap small"><canvas id="amoWorkstreamChart"></canvas></div></div>
     </div>
 
@@ -3534,18 +3630,14 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
     <div class="amo-panel" style="margin-bottom:14px"><div class="amo-panel-head"><div><div class="amo-panel-title">需要留意的案件</div><div class="amo-panel-sub">優先顯示等待時間較長、未指派或超過 2D 的案件</div></div></div><div id="amoAttentionTable" class="amo-table-wrap"></div></div>
     <div class="amo-panel amo-workload-panel">
-      <div class="amo-panel-head">
-        <div>
-          <div class="amo-panel-title">AMO 工作量</div>
-          <div class="amo-panel-sub">用於掌握分工與案件量，不作人員排名</div>
-        </div>
-      </div>
+      <div class="amo-panel-head"><div><div class="amo-panel-title">AMO 工作量與處理效率</div><div class="amo-panel-sub">比較案件分工與處理時效，不作人員排名</div></div></div>
       <div id="amoWorkloadEmpty" class="amo-empty hidden">目前沒有可顯示的工作量資料。</div>
       <div id="amoWorkloadContent">
-        <div class="amo-workload-chart-wrap">
-          <canvas id="amoWorkloadChart"></canvas>
+        <div class="amo-workload-chart-wrap"><canvas id="amoWorkloadChart"></canvas></div>
+        <div id="amoWorkloadEfficiency" class="amo-workload-efficiency">
+          <div class="amo-workload-eff-card"><div class="amo-workload-eff-title">平均結案時間</div><div class="amo-workload-eff-sub">各處理人員平均從送出到結案所需時間</div><div class="amo-eff-chart-wrap"><canvas id="amoAvgCloseByHandlerChart"></canvas></div></div>
+          <div class="amo-workload-eff-card"><div class="amo-workload-eff-title">2D 完成率</div><div class="amo-workload-eff-sub">各處理人員於 48 小時內完成案件的比例</div><div class="amo-eff-chart-wrap"><canvas id="amoRateByHandlerChart"></canvas></div></div>
         </div>
-        <div id="amoWorkloadEfficiency" class="amo-workload-efficiency"></div>
       </div>
     </div>
   </div>
@@ -8293,115 +8385,45 @@ function renderAmoAttention(items){
 function renderAmoWorkload(items){
   const content=document.getElementById("amoWorkloadContent");
   const empty=document.getElementById("amoWorkloadEmpty");
-  const efficiency=document.getElementById("amoWorkloadEfficiency");
-
-  if(!content || !empty || !efficiency) return;
+  if(!content || !empty) return;
 
   if(!items || !items.length){
     destroyAmoChart("workload");
+    destroyAmoChart("avgCloseByHandler");
+    destroyAmoChart("rateByHandler");
     content.classList.add("hidden");
     empty.classList.remove("hidden");
-    efficiency.innerHTML="";
     return;
   }
 
   empty.classList.add("hidden");
   content.classList.remove("hidden");
 
-  const labels=items.map(function(x){
-    return x.handler || x.name || "未指派";
-  });
+  const labels=items.map(function(x){return x.handler || x.name || "未指派";});
 
   createAmoChart("workload","amoWorkloadChart",{
     type:"bar",
-    data:{
-      labels:labels,
-      datasets:[
-        {
-          label:"進線",
-          data:items.map(function(x){return Number(x.incoming ?? x.total ?? 0);}),
-          backgroundColor:"rgba(59,130,246,.78)",
-          borderRadius:7,
-          borderSkipped:false
-        },
-        {
-          label:"未結案",
-          data:items.map(function(x){return Number(x.open ?? x.pending ?? 0);}),
-          backgroundColor:"rgba(245,158,11,.78)",
-          borderRadius:7,
-          borderSkipped:false
-        },
-        {
-          label:"已結案",
-          data:items.map(function(x){return Number(x.closed ?? x.solved ?? 0);}),
-          backgroundColor:"rgba(22,163,74,.78)",
-          borderRadius:7,
-          borderSkipped:false
-        }
-      ]
-    },
-    options:{
-      indexAxis:"y",
-      responsive:true,
-      maintainAspectRatio:false,
-      interaction:{mode:"index",intersect:false},
-      plugins:{
-        legend:{
-          position:"top",
-          align:"end",
-          labels:{
-            boxWidth:9,
-            boxHeight:9,
-            usePointStyle:true,
-            pointStyle:"rectRounded",
-            padding:16,
-            font:{size:11,weight:"600"}
-          }
-        },
-        tooltip:{
-          callbacks:{
-            label:function(context){
-              return " "+context.dataset.label+"："+context.parsed.x+" 件";
-            }
-          }
-        }
-      },
-      scales:{
-        x:{
-          beginAtZero:true,
-          ticks:{precision:0},
-          grid:{color:"rgba(226,232,240,.65)"}
-        },
-        y:{
-          grid:{display:false},
-          ticks:{font:{weight:"700"}}
-        }
-      }
-    }
+    data:{labels:labels,datasets:[
+      {label:"進線",data:items.map(function(x){return Number(x.incoming ?? x.total ?? 0);}),backgroundColor:"rgba(59,130,246,.78)",borderRadius:7,borderSkipped:false},
+      {label:"未結案",data:items.map(function(x){return Number(x.open ?? x.pending ?? 0);}),backgroundColor:"rgba(245,158,11,.78)",borderRadius:7,borderSkipped:false},
+      {label:"已結案",data:items.map(function(x){return Number(x.closed ?? x.solved ?? 0);}),backgroundColor:"rgba(22,163,74,.78)",borderRadius:7,borderSkipped:false}
+    ]},
+    options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"top",align:"end",labels:{boxWidth:9,boxHeight:9,usePointStyle:true,pointStyle:"rectRounded",padding:16,font:{size:11,weight:"600"}}},tooltip:{callbacks:{label:function(context){return " "+context.dataset.label+"："+context.parsed.x+" 件";}}}},scales:{x:{beginAtZero:true,ticks:{precision:0},grid:{color:"rgba(226,232,240,.65)"}},y:{grid:{display:false},ticks:{font:{weight:"700"}}}}}
   });
 
-  const avgCloseHtml=items.map(function(x){
-    const name=escapeAmoHtml(x.handler || x.name || "未指派");
-    const value=escapeAmoHtml(formatAmoHours(x.avgCloseHours));
-    return '<div class="amo-workload-eff-row"><span class="amo-workload-eff-name">'+name+'</span><span class="amo-workload-eff-value">'+value+'</span></div>';
-  }).join("");
+  const closeValues=items.map(function(x){const n=Number(x.avgCloseHours);return Number.isFinite(n)?n:0;});
+  createAmoChart("avgCloseByHandler","amoAvgCloseByHandlerChart",{
+    type:"bar",
+    data:{labels:labels,datasets:[{label:"平均結案時間",data:closeValues,backgroundColor:"rgba(124,58,237,.76)",borderRadius:8,borderSkipped:false}]},
+    options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(context){return " "+formatAmoHours(context.parsed.x);}}}},scales:{x:{beginAtZero:true,title:{display:true,text:"小時",color:"#94a3b8",font:{size:10}},grid:{color:"rgba(226,232,240,.6)"}},y:{grid:{display:false},ticks:{font:{weight:"700"}}}}}
+  });
 
-  const rateHtml=items.map(function(x){
-    const name=escapeAmoHtml(x.handler || x.name || "未指派");
-    const rawRate=Number(x.solvedWithin2dRate ?? x.rate ?? 0);
-    const rate=Number.isFinite(rawRate) ? Math.max(0,Math.min(100,rawRate)) : 0;
-    return '<div class="amo-workload-eff-row"><span class="amo-workload-eff-name">'+name+'</span><span class="amo-workload-rate-track"><span class="amo-workload-rate-fill" style="display:block;width:'+rate+'%"></span></span><span class="amo-workload-eff-value amo-workload-rate-value">'+escapeAmoHtml(rate+"%")+'</span></div>';
-  }).join("");
-
-  efficiency.innerHTML=
-    '<div class="amo-workload-eff-card">'+
-      '<div class="amo-workload-eff-title">平均結案時間</div>'+
-      '<div class="amo-workload-eff-list">'+avgCloseHtml+'</div>'+
-    '</div>'+
-    '<div class="amo-workload-eff-card">'+
-      '<div class="amo-workload-eff-title">2D 完成率</div>'+
-      '<div class="amo-workload-eff-list">'+rateHtml+'</div>'+
-    '</div>';
+  const rateValues=items.map(function(x){const n=Number(x.solvedWithin2dRate ?? x.rate ?? 0);return Number.isFinite(n)?Math.max(0,Math.min(100,n)):0;});
+  createAmoChart("rateByHandler","amoRateByHandlerChart",{
+    type:"bar",
+    data:{labels:labels,datasets:[{label:"2D 完成率",data:rateValues,backgroundColor:"rgba(22,163,74,.76)",borderRadius:8,borderSkipped:false}]},
+    options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(context){return " "+context.parsed.x+"%";}}}},scales:{x:{beginAtZero:true,max:100,ticks:{callback:function(v){return v+"%";}},grid:{color:"rgba(226,232,240,.6)"}},y:{grid:{display:false},ticks:{font:{weight:"700"}}}}}
+  });
 }
 
 function renderAmoDashboard(data){
@@ -8446,7 +8468,7 @@ async function loadAmoDashboard(){
       throw new Error(data.message || "AMO 專區驗證已失效，請重新輸入密碼。");
     }
     if(data && data.success === false) throw new Error(data.message || "Dashboard 資料讀取失敗");
-    renderAmoDashboard(data); showAmoMessage("","");
+    renderAmoDashboard(data); showAmoMessage("資料已更新","success"); setTimeout(function(){showAmoMessage("","");},1200);
   }catch(error){console.error("AMO Dashboard 載入失敗：",error);showAmoMessage("目前無法取得 AMO Dashboard 資料，請確認 Apps Script 已部署最新版本後再試。","error");}
   finally{if(btn){btn.disabled=false;btn.textContent="重新整理";}}
 }
