@@ -2999,20 +2999,37 @@ button:disabled{opacity:.45;cursor:not-allowed}
 /* =========================================================
    v53 首頁最近申請：全站案件摘要（隱私版）
 ========================================================= */
-.recent-global-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:14px 0 12px;flex-wrap:wrap}
+.recent-global-toolbar{display:flex;align-items:center;justify-content:flex-start;gap:14px;margin:14px 0 12px;flex-wrap:wrap;max-width:100%}
 .recent-global-tabs{display:flex;align-items:center;border:1px solid #e2e8f0;border-radius:13px;overflow:hidden;background:#fff}
 .recent-global-tab{border:0;border-right:1px solid #e2e8f0;border-radius:0;background:#fff;color:#64748b;padding:10px 14px;font-size:12px;font-weight:800;white-space:nowrap}
 .recent-global-tab:last-child{border-right:0}.recent-global-tab:hover{background:#fff7fa;color:#be185d}.recent-global-tab.active{background:#fff0f6;color:#e01970}
 .recent-global-tab-count{display:inline-grid;place-items:center;min-width:21px;height:21px;margin-left:5px;padding:0 6px;border-radius:999px;background:#f1f5f9;color:#64748b;font-size:10px}
 .recent-global-tab.active .recent-global-tab-count{background:#ff2b85;color:#fff}
 .recent-global-search{position:relative;flex:1;min-width:230px;max-width:340px}.recent-global-search input{height:42px;padding:10px 14px 10px 38px;border-radius:12px;font-size:12px}.recent-global-search::before{content:'⌕';position:absolute;left:13px;top:50%;transform:translateY(-52%);color:#94a3b8;font-size:20px;z-index:1}
-.recent-global-table-wrap{overflow:auto;border:1px solid #e2e8f0;border-radius:15px;background:#fff}
-.recent-global-table{width:100%;min-width:900px;border-collapse:collapse;font-size:12px}.recent-global-table th{padding:12px 14px;background:#f8fafc;color:#64748b;text-align:left;font-weight:800;white-space:nowrap}.recent-global-table td{padding:12px 14px;border-top:1px solid #f1f5f9;color:#334155;vertical-align:middle;white-space:nowrap}.recent-global-table tbody tr:hover{background:#fffafb}
+.recent-global-table-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;border:1px solid #e2e8f0;border-radius:15px;background:#fff}
+.recent-global-table{width:100%;min-width:0;table-layout:fixed;border-collapse:collapse;font-size:12px}.recent-global-table th{padding:12px 14px;background:#f8fafc;color:#64748b;text-align:left;font-weight:800;white-space:nowrap}.recent-global-table td{padding:12px 14px;border-top:1px solid #f1f5f9;color:#334155;vertical-align:middle;white-space:nowrap}.recent-global-table tbody tr:hover{background:#fffafb}
 .recent-category{display:inline-flex;padding:5px 9px;border-radius:8px;font-size:11px;font-weight:800}.recent-category.menu{background:#fff0f6;color:#e01970}.recent-category.project{background:#f5f3ff;color:#7c3aed}.recent-category.others{background:#f1f5f9;color:#475569}
 .recent-status{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:8px;font-size:11px;font-weight:800}.recent-status::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}.recent-status.pending{background:#fff7ed;color:#d97706}.recent-status.processing{background:#eff6ff;color:#2563eb}.recent-status.closed{background:#ecfdf5;color:#059669}.recent-status.neutral{background:#f8fafc;color:#64748b}
 .recent-global-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;color:#94a3b8;font-size:11px}.recent-global-pages{display:flex;gap:6px}.recent-page-btn{min-width:34px;height:34px;padding:0 9px;border:1px solid #e2e8f0;border-radius:9px;background:#fff;color:#64748b;font-size:11px}.recent-page-btn.active{background:#fff0f6;border-color:#fbcfe8;color:#e01970}.recent-page-btn:disabled{opacity:.4}
 .recent-global-loading{padding:26px;text-align:center;color:#94a3b8;font-size:12px}.recent-global-privacy{margin-top:7px;color:#94a3b8;font-size:10px;line-height:1.6}
-@media(max-width:760px){.recent-global-toolbar{align-items:stretch}.recent-global-tabs{width:100%;overflow:auto}.recent-global-search{max-width:none;width:100%}.recent-global-footer{align-items:flex-start;flex-direction:column}}
+.recent-global-table th:nth-child(1),.recent-global-table td:nth-child(1){width:17%}.recent-global-table th:nth-child(2),.recent-global-table td:nth-child(2){width:27%}.recent-global-table th:nth-child(3),.recent-global-table td:nth-child(3){width:13%}.recent-global-table th:nth-child(4),.recent-global-table td:nth-child(4){width:12%}.recent-global-table th:nth-child(5),.recent-global-table td:nth-child(5){width:17%}.recent-global-table th:nth-child(6),.recent-global-table td:nth-child(6){width:14%}.recent-global-table td:nth-child(2){white-space:normal;word-break:break-word}.workspace-panel{min-width:0;max-width:100%;overflow:hidden}.workspace-recent-bottom{min-width:0;max-width:100%}
+@media(max-width:760px){.recent-global-toolbar{align-items:stretch}.recent-global-tabs{width:100%;overflow:auto}.recent-global-footer{align-items:flex-start;flex-direction:column}}
+
+/* v54 最近申請版面修正：避免內容超出首頁卡片 */
+.workspace-recent-bottom,.workspace-recent-bottom .workspace-panel{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+.recent-global-toolbar{width:100%;max-width:100%;box-sizing:border-box;overflow:hidden}
+.recent-global-tabs{max-width:100%;box-sizing:border-box}
+.recent-global-table-wrap{width:100%;max-width:100%;min-width:0;box-sizing:border-box;overflow:hidden}
+.recent-global-table{width:100%;max-width:100%;min-width:0;table-layout:fixed;box-sizing:border-box}
+.recent-global-table th,.recent-global-table td{box-sizing:border-box;overflow:hidden;text-overflow:ellipsis}
+.recent-global-table th:nth-child(1),.recent-global-table td:nth-child(1){width:18%}
+.recent-global-table th:nth-child(2),.recent-global-table td:nth-child(2){width:27%}
+.recent-global-table th:nth-child(3),.recent-global-table td:nth-child(3){width:13%}
+.recent-global-table th:nth-child(4),.recent-global-table td:nth-child(4){width:12%}
+.recent-global-table th:nth-child(5),.recent-global-table td:nth-child(5){width:16%}
+.recent-global-table th:nth-child(6),.recent-global-table td:nth-child(6){width:14%}
+.recent-global-table td:nth-child(2){white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+@media(max-width:900px){.recent-global-tabs{overflow-x:auto}.recent-global-table-wrap{overflow-x:auto}.recent-global-table{min-width:760px}}
 
 </style>
 </head>
@@ -3129,8 +3146,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="workspace-panel-head">
         <div>
           <div class="workspace-panel-title">🕘 最近申請</div>
-          <div class="workspace-panel-sub">顯示全站最近案件進度；其他品牌名稱會自動遮罩，且不提供案件內容查看。</div>
-          <div class="recent-global-privacy">為保護品牌需求內容，此區僅顯示案件摘要，不提供查看或展開功能。</div>
+          <div class="workspace-panel-sub">顯示全站最近案件進度，快速掌握目前案件處理狀態。</div>
         </div>
       </div>
       <div class="recent-global-toolbar">
@@ -3140,9 +3156,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <button type="button" class="recent-global-tab" data-recent-tab="pending" onclick="changeRecentGlobalTab('pending')">待處理 <span class="recent-global-tab-count" id="recentCountPending">0</span></button>
           <button type="button" class="recent-global-tab" data-recent-tab="processing" onclick="changeRecentGlobalTab('processing')">處理中 <span class="recent-global-tab-count" id="recentCountProcessing">0</span></button>
           <button type="button" class="recent-global-tab" data-recent-tab="closed" onclick="changeRecentGlobalTab('closed')">已結案 <span class="recent-global-tab-count" id="recentCountClosed">0</span></button>
-        </div>
-        <div class="recent-global-search">
-          <input id="recentGlobalSearch" type="search" placeholder="搜尋遮罩品牌、需求項目或案件編號…" oninput="filterRecentGlobalList()">
         </div>
       </div>
       <div id="workspaceRecentList" class="recent-global-loading">正在載入最近案件…</div>
@@ -3870,7 +3883,7 @@ function renderRecentGlobalList(){
   const list=document.getElementById("workspaceRecentList");
   if(!list) return;
   const mineKeys=getRecentMineKeys();
-  const search=String(document.getElementById("recentGlobalSearch")?.value||"").trim().toLowerCase();
+  const search="";
   const counts={all:recentGlobalRows.length,mine:0,pending:0,processing:0,closed:0};
   recentGlobalRows.forEach(item=>{counts[recentStatusGroup(item)]++;if(isRecentMine(item,mineKeys))counts.mine++;});
   const setCount=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
@@ -3878,10 +3891,6 @@ function renderRecentGlobalList(){
   let rows=recentGlobalRows.filter(item=>{
     if(recentGlobalTab==="mine"&&!isRecentMine(item,mineKeys))return false;
     if(["pending","processing","closed"].includes(recentGlobalTab)&&recentStatusGroup(item)!==recentGlobalTab)return false;
-    if(search){
-      const text=[item.maskedVendorName,item.workstream,item.requestType,item.assignee,item.currentStatus,item.caseNumber].join(" ").toLowerCase();
-      if(!text.includes(search))return false;
-    }
     return true;
   });
   const pages=Math.max(1,Math.ceil(rows.length/RECENT_GLOBAL_PAGE_SIZE));
@@ -3893,11 +3902,12 @@ function renderRecentGlobalList(){
     list.innerHTML=recentGlobalTab==="mine"?"此瀏覽器目前沒有可對應的案件紀錄。":"目前沒有符合條件的案件。";
   }else{
     list.className="recent-global-table-wrap";
-    list.innerHTML=`<table class="recent-global-table"><thead><tr><th>送出時間</th><th>品牌／門市</th><th>需求分類</th><th>需求項目</th><th>處理人員</th><th>處理狀態</th><th>案件編號</th><th>更新時間</th></tr></thead><tbody>${pageRows.map(item=>{
+    list.innerHTML=`<table class="recent-global-table"><thead><tr><th>送出時間</th><th>品牌／門市</th><th>需求分類</th><th>處理人員</th><th>處理狀態</th><th>更新時間</th></tr></thead><tbody>${pageRows.map(item=>{
       const group=recentStatusGroup(item);
       const work=String(item.workstream||"").toLowerCase();
       const cat=work.includes("menu")?"menu":work.includes("project")?"project":"others";
-      return `<tr><td>${escapeTrackingHtml(item.submittedAt||"—")}</td><td><b>${escapeTrackingHtml(item.maskedVendorName||"—")}</b></td><td><span class="recent-category ${cat}">${escapeTrackingHtml(item.workstream||"Others")}</span></td><td>${escapeTrackingHtml(item.requestType||"—")}</td><td>${escapeTrackingHtml(item.assignee||"—")}</td><td><span class="recent-status ${group}">${escapeTrackingHtml(item.currentStatus||"—")}</span></td><td>${escapeTrackingHtml(item.caseNumber||"—")}</td><td>${escapeTrackingHtml(item.updatedAt||item.submittedAt||"—")}</td></tr>`;
+      const vendorName=item.vendorName||item.brand||item.maskedVendorName||"—";
+      return `<tr><td>${escapeTrackingHtml(item.submittedAt||"—")}</td><td><b>${escapeTrackingHtml(vendorName)}</b></td><td><span class="recent-category ${cat}">${escapeTrackingHtml(item.workstream||"Others")}</span></td><td>${escapeTrackingHtml(item.assignee||"—")}</td><td><span class="recent-status ${group}">${escapeTrackingHtml(item.currentStatus||"—")}</span></td><td>${escapeTrackingHtml(item.updatedAt||item.submittedAt||"—")}</td></tr>`;
     }).join("")}</tbody></table>`;
   }
   const summary=document.getElementById("recentGlobalSummary");
