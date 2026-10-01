@@ -3097,7 +3097,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .cover-preview-stage.has-image .cover-preview-placeholder{display:none}
 .cover-crop-overlay{position:absolute;inset:0;width:100%;height:100%;display:none;pointer-events:none}
 .cover-preview-stage.has-image .cover-crop-overlay{display:block}
-.cover-safe-area{position:absolute;left:13.50%;top:16.05%;width:73.00%;height:67.90%;display:none;border:2px solid rgba(255,255,255,.98);box-sizing:border-box;box-shadow:0 0 0 1px rgba(17,24,39,.28),0 0 18px rgba(0,0,0,.10);pointer-events:none}
+.cover-safe-area{position:absolute;left:0;top:18.33%;width:100%;height:63.34%;display:none;border:2px solid rgba(255,255,255,.98);box-sizing:border-box;box-shadow:0 0 0 1px rgba(17,24,39,.28),0 0 18px rgba(0,0,0,.10);pointer-events:none}
 .cover-preview-stage.has-image .cover-safe-area{display:block}
 .cover-safe-label{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.94);color:#111827;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .cover-crop-label{position:absolute;left:12px;bottom:10px;display:none;background:rgba(17,24,39,.82);color:#fff;padding:6px 9px;border-radius:8px;font-size:11px;font-weight:800;pointer-events:none}
@@ -3331,23 +3331,23 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <div id="coverPreviewStage" class="cover-preview-stage">
           <div class="cover-preview-placeholder"><b>尚未選擇照片</b><span>上傳後會在這裡顯示裁切範圍</span></div>
           <img id="coverPreviewImage" class="cover-preview-image" alt="封面照片預覽">
-          <svg class="cover-crop-overlay" viewBox="0 0 1000 731.25" preserveAspectRatio="none" aria-hidden="true">
+          <svg class="cover-crop-overlay" viewBox="0 0 4000 2925" preserveAspectRatio="none" aria-hidden="true">
             <defs>
-              <pattern id="coverCropStripePattern" width="56" height="56" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                <rect width="28" height="56" fill="rgba(17,24,39,.76)"></rect>
-                <rect x="28" width="28" height="56" fill="rgba(239,68,68,.58)"></rect>
+              <pattern id="coverCropStripePattern" width="160" height="160" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <rect width="80" height="160" fill="rgba(17,24,39,.76)"></rect>
+                <rect x="80" width="80" height="160" fill="rgba(239,68,68,.58)"></rect>
               </pattern>
               <mask id="coverCropFrameMask">
-                <rect width="1000" height="731.25" fill="white"></rect>
-                <rect x="135" y="117.34" width="730" height="496.57" fill="black"></rect>
+                <rect width="4000" height="2925" fill="white"></rect>
+                <rect x="0" y="536" width="4000" height="1853" fill="black"></rect>
               </mask>
             </defs>
-            <rect width="1000" height="731.25" fill="url(#coverCropStripePattern)" mask="url(#coverCropFrameMask)"></rect>
+            <rect width="4000" height="2925" fill="url(#coverCropStripePattern)" mask="url(#coverCropFrameMask)"></rect>
           </svg>
           <div class="cover-safe-area"><span class="cover-safe-label">SAFE AREA｜重要內容建議放置區</span></div>
-          <div class="cover-crop-label">斜線區域｜可能被系統裁切</div>
+          <div class="cover-crop-label">上下斜線區域｜可能被系統裁切</div>
         </div>
-        <div class="cover-result-note"><strong>怎麼看？</strong> 中央未被遮罩覆蓋的區域是建議保留主要內容的位置；外圍斜線區域請避免放置 Logo、文字或不可被裁切的主體。</div>
+        <div class="cover-result-note"><strong>怎麼看？</strong> 中央未被遮罩覆蓋的區域是建議保留主要內容的位置；上下斜線區域可能被系統裁切，請避免放置 Logo、文字或不可被裁切的主體。</div>
         <div class="cover-test-disclaimer">此工具依現行 Safe Area Guideline 的比例模擬，主要用途為協助品牌預先檢查構圖。實際顯示結果仍可能因系統介面、裝置或後續規格調整而略有差異。</div>
       </div>
     </div>
