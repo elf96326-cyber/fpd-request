@@ -1208,6 +1208,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   gap:18px;
   margin-top:30px;
 }
+
 .portal-action-card{
   display:flex;
   align-items:center;
@@ -3107,6 +3108,22 @@ button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:900px){.cover-test-layout{grid-template-columns:1fr}.cover-test-head{padding:22px}.cover-test-head h2{font-size:25px}}
 @media(max-width:600px){.cover-test-portal{padding:18px 12px 42px}.cover-test-panel{padding:16px}.cover-safe-label{font-size:9px;padding:5px 7px}.cover-crop-label{font-size:9px}}
 
+
+/* =========================
+   v57 餐點照片安全區域測試
+========================= */
+.portal-action-card.food-test::before{background:#10b981}
+.portal-action-card.food-test{background:linear-gradient(180deg,#fff,#f0fdf4);border-color:#bbf7d0}
+.portal-action-card.food-test:hover{border-color:#10b981}
+.portal-action-card.food-test .portal-action-icon{background:#f0fdf4;color:#047857}
+.food-preview-stage{position:relative;width:100%;aspect-ratio:1440 / 1053;background:#f3f4f6;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb}
+.food-preview-stage.has-image .cover-preview-image{display:block}
+.food-preview-stage.has-image .cover-preview-placeholder{display:none}
+.food-preview-stage.has-image .cover-crop-overlay{display:block}
+.food-safe-area{position:absolute;left:13.4375%;top:0;width:73.125%;height:100%;display:none;border:2px solid rgba(255,255,255,.98);box-sizing:border-box;box-shadow:0 0 0 1px rgba(17,24,39,.28),0 0 18px rgba(0,0,0,.10);pointer-events:none}
+.food-preview-stage.has-image .food-safe-area{display:block}
+.food-preview-stage.has-image .cover-crop-label{display:block}
+
 </style>
 </head>
 <body>
@@ -3181,6 +3198,14 @@ button:disabled{opacity:.45;cursor:not-allowed}
         </span>
       </button>
 
+      <button type="button" class="portal-action-card amo" onclick="openAmoPortal()">
+        <span class="portal-action-icon">📊</span>
+        <span class="portal-action-copy">
+          <b>AMO Workbench</b>
+          <span>查看進線量、案件狀態、處理時效與團隊工作量。</span>
+        </span>
+      </button>
+
       <button type="button" class="portal-action-card cover-test" onclick="openCoverPhotoTest()">
         <span class="portal-action-icon">🖼️</span>
         <span class="portal-action-copy">
@@ -3189,11 +3214,11 @@ button:disabled{opacity:.45;cursor:not-allowed}
         </span>
       </button>
 
-      <button type="button" class="portal-action-card amo" onclick="openAmoPortal()">
-        <span class="portal-action-icon">📊</span>
+      <button type="button" class="portal-action-card food-test" onclick="openFoodPhotoTest()">
+        <span class="portal-action-icon">🍽️</span>
         <span class="portal-action-copy">
-          <b>AMO Workbench</b>
-          <span>查看進線量、案件狀態、處理時效與團隊工作量。</span>
+          <b>餐點照片測試</b>
+          <span>上傳餐點照片，預覽網頁版與手機 App 顯示時左右可能被裁切的區域。</span>
         </span>
       </button>
     </div>
@@ -3271,7 +3296,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <h3>照片規格與上傳</h3>
         <div class="cover-test-spec">
           <div class="cover-test-spec-item"><span>📐</span><div><b>建議尺寸</b><br>橫幅圖片 4,000 × 2,925 px</div></div>
-          <div class="cover-test-spec-item"><span>🗂️</span><div><b>建議格式</b><br>JPG 圖檔（此測試工具亦可預覽 PNG / WEBP）</div></div>
+          <div class="cover-test-spec-item"><span>🗂️</span><div><b>建議格式</b><br>JPG 圖檔</div></div>
           <div class="cover-test-spec-item"><span>🎯</span><div><b>判讀方式</b><br>斜線區域為可能裁切範圍</div></div>
         </div>
 
@@ -3328,6 +3353,80 @@ button:disabled{opacity:.45;cursor:not-allowed}
     </div>
 
 
+  </div>
+</section>
+
+<section id="foodPhotoTestPortal" class="cover-test-portal hidden">
+  <div class="cover-test-shell">
+    <div class="cover-test-topbar">
+      <button type="button" class="cover-test-back" onclick="backToPortalHome()">← 回到首頁</button>
+    </div>
+
+    <div class="cover-test-head">
+      <div class="cover-test-eyebrow">MENU IMAGE TOOL</div>
+      <h2>餐點照片安全區域測試</h2>
+      <p>上傳餐點照片，即時預覽原圖在網頁版與手機 App 顯示時的裁切範圍。中央為 Safe Area，左右區域可能被系統裁切。</p>
+    </div>
+
+    <div class="cover-test-layout">
+      <div class="cover-test-panel">
+        <h3>照片規格與上傳</h3>
+        <div class="cover-test-spec">
+          <div class="cover-test-spec-item"><span>📐</span><div><b>建議尺寸</b><br>餐點圖片 1,440 × 1,053 px</div></div>
+          <div class="cover-test-spec-item"><span>🗂️</span><div><b>建議格式</b><br>JPG 圖檔</div></div>
+          <div class="cover-test-spec-item"><span>🎯</span><div><b>判讀方式</b><br>左右斜線區域為可能裁切範圍</div></div>
+        </div>
+
+        <label class="cover-upload-box" id="foodUploadBox" for="foodPhotoInput">
+          <span class="cover-upload-icon">🍽️</span>
+          <div class="cover-upload-title">選擇餐點照片</div>
+          <div class="cover-upload-note">點擊選擇檔案，或將圖片拖曳到這裡<br>照片只會在您的瀏覽器中預覽，不會上傳或儲存。</div>
+        </label>
+        <input id="foodPhotoInput" class="cover-file-input" type="file" accept="image/jpeg,image/png,image/webp">
+        <div id="foodFileMeta" class="cover-file-meta"></div>
+        <button id="foodResetBtn" type="button" class="cover-reset-btn" onclick="resetFoodPhotoTest()">重新選擇照片</button>
+
+        <div class="cover-inline-guidelines">
+          <div class="cover-guideline-title">🚫 圖檔禁止出現</div>
+          <ul class="cover-rule-list">
+            <li><span class="cover-rule-x">×</span><span>浮水印</span></li>
+            <li><span class="cover-rule-x">×</span><span>人手、身體部位入鏡</span></li>
+            <li><span class="cover-rule-x">×</span><span>影像模糊</span></li>
+            <li><span class="cover-rule-x">×</span><span>拼貼圖</span></li>
+            <li><span class="cover-rule-x">×</span><span>商家聯絡資訊</span></li>
+          </ul>
+          <div class="cover-inline-text-limit" style="margin-top:8px">📝 <b>照片檔名請與平台餐點名稱一致</b></div>
+        </div>
+      </div>
+
+      <div class="cover-test-panel">
+        <div class="cover-preview-title-row">
+          <h3>裁切範圍預覽</h3>
+          <span class="cover-preview-badge">Safe Area Preview</span>
+        </div>
+        <div id="foodPreviewStage" class="food-preview-stage">
+          <div class="cover-preview-placeholder"><b>尚未選擇照片</b><span>上傳後會在這裡顯示左右裁切範圍</span></div>
+          <img id="foodPreviewImage" class="cover-preview-image" alt="餐點照片預覽">
+          <svg class="cover-crop-overlay" viewBox="0 0 1440 1053" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <pattern id="foodCropStripePattern" width="56" height="56" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <rect width="28" height="56" fill="rgba(17,24,39,.76)"></rect>
+                <rect x="28" width="28" height="56" fill="rgba(239,68,68,.58)"></rect>
+              </pattern>
+              <mask id="foodCropFrameMask">
+                <rect width="1440" height="1053" fill="white"></rect>
+                <rect x="193.5" y="0" width="1053" height="1053" fill="black"></rect>
+              </mask>
+            </defs>
+            <rect width="1440" height="1053" fill="url(#foodCropStripePattern)" mask="url(#foodCropFrameMask)"></rect>
+          </svg>
+          <div class="food-safe-area"><span class="cover-safe-label">SAFE AREA｜重要內容建議放置區</span></div>
+          <div class="cover-crop-label">左右斜線區域｜可能被系統裁切</div>
+        </div>
+        <div class="cover-result-note"><strong>怎麼看？</strong> 中央正方形為網頁版與手機 App 的主要顯示範圍；原圖左右各約 193.5 px 可能被裁切，重要餐點主體請盡量放在中央 Safe Area。</div>
+        <div class="cover-test-disclaimer">此工具依現行 Safe Area Guideline 的比例模擬，主要用途為協助品牌預先檢查構圖。實際顯示結果仍可能因系統介面、裝置或後續規格調整而略有差異。</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -8444,7 +8543,7 @@ window.addEventListener("DOMContentLoaded", function(){
    入口首頁／案件進度查詢
 ========================= */
 function showPortalSection(sectionId){
-  ["portalHome","requestPortal","trackingPortal","amoPortal","coverPhotoTestPortal"].forEach(function(id){
+  ["portalHome","requestPortal","trackingPortal","amoPortal","coverPhotoTestPortal","foodPhotoTestPortal"].forEach(function(id){
     const section = document.getElementById(id);
     if(!section) return;
     section.classList.toggle("hidden", id !== sectionId);
@@ -8903,6 +9002,97 @@ function initCoverPhotoTest(){
 }
 
 document.addEventListener("DOMContentLoaded", initCoverPhotoTest);
+
+function openFoodPhotoTest(){
+  showPortalSection("foodPhotoTestPortal");
+}
+
+let foodPhotoObjectUrl = "";
+
+function handleFoodPhotoFile(file){
+  if(!file || !file.type || !file.type.startsWith("image/")){
+    alert("請選擇 JPG、PNG 或 WEBP 圖片檔案。");
+    return;
+  }
+  if(foodPhotoObjectUrl){
+    URL.revokeObjectURL(foodPhotoObjectUrl);
+    foodPhotoObjectUrl = "";
+  }
+  foodPhotoObjectUrl = URL.createObjectURL(file);
+  const img = document.getElementById("foodPreviewImage");
+  const stage = document.getElementById("foodPreviewStage");
+  const meta = document.getElementById("foodFileMeta");
+  const resetBtn = document.getElementById("foodResetBtn");
+  if(!img || !stage) return;
+
+  img.onload = function(){
+    const width = img.naturalWidth || 0;
+    const height = img.naturalHeight || 0;
+    const ratio = height ? width / height : 0;
+    const targetRatio = 1440 / 1053;
+    const diff = targetRatio ? Math.abs(ratio - targetRatio) / targetRatio : 0;
+    const ratioMessage = diff <= 0.02
+      ? '<span style="color:#15803d;font-weight:800">✓ 圖片比例接近 1,440 × 1,053 規格</span>'
+      : '<span style="color:#b45309;font-weight:800">⚠ 圖片比例與 1,440 × 1,053 不同，預覽會以中央裁切方式填滿</span>';
+    const isJpg = file.type === "image/jpeg";
+    const formatMessage = isJpg
+      ? '<span style="color:#15803d;font-weight:800">✓ JPG 格式符合建議</span>'
+      : '<span style="color:#b45309;font-weight:800">⚠ 建議使用 JPG 圖檔</span>';
+    const sizeMessage = (width === 1440 && height === 1053)
+      ? '<span style="color:#15803d;font-weight:800">✓ 圖片尺寸符合 1,440 × 1,053 px</span>'
+      : '<span style="color:#6b7280;font-weight:700">ℹ 建議尺寸為 1,440 × 1,053 px</span>';
+    if(meta){
+      meta.innerHTML = '<b>檔案：</b>' + escapeCoverTestHtml(file.name) +
+        '<br><b>尺寸：</b>' + width.toLocaleString() + ' × ' + height.toLocaleString() + ' px' +
+        '<br><b>格式：</b>' + escapeCoverTestHtml((file.type.split('/')[1] || '').toUpperCase()) +
+        '<br><br><b>規格檢查</b><br>' + formatMessage + '<br>' + sizeMessage + '<br>' + ratioMessage;
+      meta.classList.add("show");
+    }
+    if(resetBtn) resetBtn.classList.add("show");
+    stage.classList.add("has-image");
+  };
+  img.src = foodPhotoObjectUrl;
+}
+
+function resetFoodPhotoTest(){
+  const input = document.getElementById("foodPhotoInput");
+  const img = document.getElementById("foodPreviewImage");
+  const stage = document.getElementById("foodPreviewStage");
+  const meta = document.getElementById("foodFileMeta");
+  const resetBtn = document.getElementById("foodResetBtn");
+  if(foodPhotoObjectUrl){ URL.revokeObjectURL(foodPhotoObjectUrl); foodPhotoObjectUrl = ""; }
+  if(input) input.value = "";
+  if(img) img.removeAttribute("src");
+  if(stage) stage.classList.remove("has-image");
+  if(meta){ meta.innerHTML = ""; meta.classList.remove("show"); }
+  if(resetBtn) resetBtn.classList.remove("show");
+}
+
+function initFoodPhotoTest(){
+  const input = document.getElementById("foodPhotoInput");
+  const box = document.getElementById("foodUploadBox");
+  if(input && !input.dataset.bound){
+    input.dataset.bound = "1";
+    input.addEventListener("change", function(){
+      if(this.files && this.files[0]) handleFoodPhotoFile(this.files[0]);
+    });
+  }
+  if(box && !box.dataset.bound){
+    box.dataset.bound = "1";
+    ["dragenter","dragover"].forEach(function(type){
+      box.addEventListener(type,function(e){ e.preventDefault(); e.stopPropagation(); box.classList.add("dragging"); });
+    });
+    ["dragleave","drop"].forEach(function(type){
+      box.addEventListener(type,function(e){ e.preventDefault(); e.stopPropagation(); box.classList.remove("dragging"); });
+    });
+    box.addEventListener("drop",function(e){
+      const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if(file) handleFoodPhotoFile(file);
+    });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", initFoodPhotoTest);
 
 function openRequestPortal(){
   showPortalSection("requestPortal");
