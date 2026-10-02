@@ -3087,6 +3087,13 @@ button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:760px){.cover-guideline-grid{grid-template-columns:1fr}.cover-rule-list{grid-template-columns:1fr}.cover-check-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.cover-check-grid{grid-template-columns:1fr}.cover-guideline-head{display:block}.cover-guideline-tag{display:inline-block;margin-top:9px}}
 .cover-preview-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.cover-mode-switch{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.cover-mode-btn{padding:9px 13px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;color:#6b7280;font-size:12px;font-weight:800;transition:.15s}
+.cover-mode-btn:hover{border-color:#f9a8d4;background:#fff7fa;color:#be185d}
+.cover-mode-btn.active{border-color:#ff2b85;background:#ff2b85;color:#fff;box-shadow:0 5px 14px rgba(255,43,133,.16)}
+.cover-mode-summary{margin:-3px 0 12px;padding:10px 12px;border-radius:12px;background:#f8fafc;color:#64748b;font-size:12px;line-height:1.6}
+.cover-mode-summary b{color:#334155}
+
 .cover-preview-title-row h3{margin:0}
 .cover-preview-badge{font-size:12px;font-weight:900;color:#166534;background:#dcfce7;border-radius:999px;padding:6px 9px}
 .cover-preview-stage{position:relative;width:100%;aspect-ratio:4000 / 2925;background:#f3f4f6;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb}
@@ -3123,6 +3130,17 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .food-safe-area{position:absolute;left:13.4375%;top:0;width:73.125%;height:100%;display:none;border:2px solid rgba(255,255,255,.98);box-sizing:border-box;box-shadow:0 0 0 1px rgba(17,24,39,.28),0 0 18px rgba(0,0,0,.10);pointer-events:none}
 .food-preview-stage.has-image .food-safe-area{display:block}
 .food-preview-stage.has-image .cover-crop-label{display:block}
+
+/* v58 餐點照片多版本裁切預覽 */
+.food-mode-switch{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0 14px}
+.food-mode-btn{padding:9px 13px;border-radius:999px;border:1px solid #d1d5db;background:#fff;color:#4b5563;font-size:12px;font-weight:800}
+.food-mode-btn.active{background:#10b981;border-color:#10b981;color:#fff}
+.food-ui-blocker{position:absolute;display:none;z-index:5;pointer-events:none}
+.food-preview-stage.has-image .food-ui-blocker.show{display:flex}
+.food-plus-blocker{right:2.2%;bottom:2.2%;width:12.8%;aspect-ratio:1;border-radius:50%;align-items:center;justify-content:center;background:rgba(255,255,255,.96);border:1px solid rgba(17,24,39,.18);box-shadow:0 2px 8px rgba(0,0,0,.18);color:#374151;font-size:clamp(20px,4vw,42px);font-weight:400}
+.food-close-blocker{right:.9%;top:2.4%;width:5.2%;aspect-ratio:1;border-radius:50%;align-items:center;justify-content:center;background:rgba(255,255,255,.96);border:1px solid rgba(17,24,39,.16);box-shadow:0 1px 5px rgba(0,0,0,.14);color:#374151;font-size:clamp(14px,2vw,25px);font-weight:400}
+.food-ui-blocker::after{content:"UI 遮擋";position:absolute;right:0;top:calc(100% + 5px);padding:4px 7px;border-radius:7px;background:rgba(17,24,39,.82);color:#fff;font-size:9px;font-weight:800;white-space:nowrap}
+.food-close-blocker::after{top:calc(100% + 5px)}
 
 </style>
 </head>
@@ -3328,10 +3346,15 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <h3>裁切範圍預覽</h3>
           <span class="cover-preview-badge">Safe Area Preview</span>
         </div>
+        <div class="cover-mode-switch" aria-label="封面顯示版本">
+          <button type="button" class="cover-mode-btn active" data-cover-mode="mobile" onclick="setCoverPreviewMode('mobile')">📱 手機版本</button>
+          <button type="button" class="cover-mode-btn" data-cover-mode="swimlane" onclick="setCoverPreviewMode('swimlane')">🖥️ 電腦版（Swimlane）</button>
+          <button type="button" class="cover-mode-btn" data-cover-mode="list" onclick="setCoverPreviewMode('list')">🖥️ 電腦版（List）</button>
+        </div>
         <div id="coverPreviewStage" class="cover-preview-stage">
           <div class="cover-preview-placeholder"><b>尚未選擇照片</b><span>上傳後會在這裡顯示裁切範圍</span></div>
           <img id="coverPreviewImage" class="cover-preview-image" alt="封面照片預覽">
-          <svg class="cover-crop-overlay" viewBox="0 0 4000 2925" preserveAspectRatio="none" aria-hidden="true">
+          <svg id="coverCropOverlay" class="cover-crop-overlay" viewBox="0 0 4000 2925" preserveAspectRatio="none" aria-hidden="true">
             <defs>
               <pattern id="coverCropStripePattern" width="160" height="160" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
                 <rect width="80" height="160" fill="rgba(17,24,39,.76)"></rect>
@@ -3339,15 +3362,15 @@ button:disabled{opacity:.45;cursor:not-allowed}
               </pattern>
               <mask id="coverCropFrameMask">
                 <rect width="4000" height="2925" fill="white"></rect>
-                <rect x="0" y="536" width="4000" height="1853" fill="black"></rect>
+                <rect id="coverCropSafeRect" x="0" y="536" width="4000" height="1853" fill="black"></rect>
               </mask>
             </defs>
             <rect width="4000" height="2925" fill="url(#coverCropStripePattern)" mask="url(#coverCropFrameMask)"></rect>
           </svg>
-          <div class="cover-safe-area"><span class="cover-safe-label">SAFE AREA｜重要內容建議放置區</span></div>
-          <div class="cover-crop-label">上下斜線區域｜可能被系統裁切</div>
+          <div id="coverSafeArea" class="cover-safe-area"><span class="cover-safe-label">SAFE AREA｜重要內容建議放置區</span></div>
+          <div id="coverCropLabel" class="cover-crop-label">上下斜線區域｜可能被系統裁切</div>
         </div>
-        <div class="cover-result-note"><strong>怎麼看？</strong> 中央未被遮罩覆蓋的區域是建議保留主要內容的位置；上下斜線區域可能被系統裁切，請避免放置 Logo、文字或不可被裁切的主體。</div>
+        <div id="coverResultNote" class="cover-result-note"><strong>怎麼看？</strong> 中央未被遮罩覆蓋的區域是建議保留主要內容的位置；上下斜線區域可能被系統裁切，請避免放置 Logo、文字或不可被裁切的主體。</div>
         <div class="cover-test-disclaimer">此工具依現行 Safe Area Guideline 的比例模擬，主要用途為協助品牌預先檢查構圖。實際顯示結果仍可能因系統介面、裝置或後續規格調整而略有差異。</div>
       </div>
     </div>
@@ -3404,8 +3427,14 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <h3>裁切範圍預覽</h3>
           <span class="cover-preview-badge">Safe Area Preview</span>
         </div>
+        <div class="food-mode-switch" aria-label="餐點照片顯示版本">
+          <button type="button" class="food-mode-btn active" data-food-mode="mobile" onclick="setFoodPreviewMode('mobile')">📱 手機版本</button>
+          <button type="button" class="food-mode-btn" data-food-mode="featured" onclick="setFoodPreviewMode('featured')">🖥️ 電腦版（人氣精選）</button>
+          <button type="button" class="food-mode-btn" data-food-mode="menu" onclick="setFoodPreviewMode('menu')">🖥️ 電腦版（一般菜單）</button>
+          <button type="button" class="food-mode-btn" data-food-mode="detail" onclick="setFoodPreviewMode('detail')">🔍 點開餐點</button>
+        </div>
         <div id="foodPreviewStage" class="food-preview-stage">
-          <div class="cover-preview-placeholder"><b>尚未選擇照片</b><span>上傳後會在這裡顯示左右裁切範圍</span></div>
+          <div class="cover-preview-placeholder"><b>尚未選擇照片</b><span>上傳後會在這裡顯示裁切範圍</span></div>
           <img id="foodPreviewImage" class="cover-preview-image" alt="餐點照片預覽">
           <svg class="cover-crop-overlay" viewBox="0 0 1440 1053" preserveAspectRatio="none" aria-hidden="true">
             <defs>
@@ -3415,15 +3444,17 @@ button:disabled{opacity:.45;cursor:not-allowed}
               </pattern>
               <mask id="foodCropFrameMask">
                 <rect width="1440" height="1053" fill="white"></rect>
-                <rect x="193.5" y="0" width="1053" height="1053" fill="black"></rect>
+                <rect id="foodCropSafeRect" x="193.5" y="0" width="1053" height="1053" fill="black"></rect>
               </mask>
             </defs>
             <rect width="1440" height="1053" fill="url(#foodCropStripePattern)" mask="url(#foodCropFrameMask)"></rect>
           </svg>
-          <div class="food-safe-area"><span class="cover-safe-label">SAFE AREA｜重要內容建議放置區</span></div>
-          <div class="cover-crop-label">左右斜線區域｜可能被系統裁切</div>
+          <div id="foodSafeArea" class="food-safe-area"><span class="cover-safe-label">SAFE AREA｜重要內容建議放置區</span></div>
+          <div id="foodCropLabel" class="cover-crop-label">左右斜線區域｜可能被系統裁切</div>
+          <div id="foodPlusBlocker" class="food-ui-blocker food-plus-blocker">＋</div>
+          <div id="foodCloseBlocker" class="food-ui-blocker food-close-blocker">×</div>
         </div>
-        <div class="cover-result-note"><strong>怎麼看？</strong> 中央正方形為網頁版與手機 App 的主要顯示範圍；原圖左右各約 193.5 px 可能被裁切，重要餐點主體請盡量放在中央 Safe Area。</div>
+        <div id="foodResultNote" class="cover-result-note"><strong>怎麼看？</strong> 中央正方形為手機版主要顯示範圍；原圖左右各約 193.5 px 可能被裁切，重要餐點主體請盡量放在中央 Safe Area。</div>
         <div class="cover-test-disclaimer">此工具依現行 Safe Area Guideline 的比例模擬，主要用途為協助品牌預先檢查構圖。實際顯示結果仍可能因系統介面、裝置或後續規格調整而略有差異。</div>
       </div>
     </div>
@@ -8911,6 +8942,46 @@ function openCoverPhotoTest(){
 }
 
 let coverPhotoObjectUrl = "";
+let coverPreviewMode = "mobile";
+
+const COVER_PREVIEW_MODES = {
+  // 手機版沿用昨天已確認、目前 HTML 內既有的 Safe Area，不改動原本裁切規則。
+  mobile: { label:"手機版本", cropRatio:536/2925, detail:"依目前既有 Safe Area 規則顯示" },
+  // 依 2048 × 1497 原圖與實際 Swimlane 截圖反推：中央約保留 2048 × 1166。
+  swimlane: { label:"電腦版（Swimlane）", cropRatio:165.5/1497, detail:"中央約保留原圖高度 77.89%（2048 × 1497 範例約保留 2048 × 1166）" },
+  // 依實際 List 截圖反推：中央為 16:9，2048 × 1497 範例保留 2048 × 1152。
+  list: { label:"電腦版（List）", cropRatio:172.5/1497, detail:"中央為 16:9 顯示區（2048 × 1497 範例約保留 2048 × 1152）" }
+};
+
+function setCoverPreviewMode(mode){
+  const config = COVER_PREVIEW_MODES[mode] || COVER_PREVIEW_MODES.mobile;
+  coverPreviewMode = COVER_PREVIEW_MODES[mode] ? mode : "mobile";
+  const cropPct = config.cropRatio * 100;
+  const safePct = 100 - cropPct * 2;
+  const safeArea = document.getElementById("coverSafeArea");
+  const safeRect = document.getElementById("coverCropSafeRect");
+  const summary = document.getElementById("coverModeSummary");
+  const note = document.getElementById("coverResultNote");
+  document.querySelectorAll("[data-cover-mode]").forEach(function(btn){
+    btn.classList.toggle("active", btn.dataset.coverMode === coverPreviewMode);
+  });
+  if(safeArea){
+    safeArea.style.top = cropPct.toFixed(4) + "%";
+    safeArea.style.height = safePct.toFixed(4) + "%";
+  }
+  // SVG 維持 4000 × 2925 的座標系，只按相同比例換算上下遮罩。
+  if(safeRect){
+    const y = 2925 * config.cropRatio;
+    safeRect.setAttribute("y", y.toFixed(3));
+    safeRect.setAttribute("height", (2925 - y * 2).toFixed(3));
+  }
+  if(summary){
+    summary.innerHTML = "<b>" + config.label + "</b>｜" + config.detail + "；左右不裁切，上下各約裁切 " + cropPct.toFixed(2) + "% 。";
+  }
+  if(note){
+    note.innerHTML = "<strong>怎麼看？</strong> 中央未被遮罩覆蓋的區域是「" + config.label + "」建議保留主要內容的位置；上下斜線區域可能被系統裁切，左右維持完整，請避免將 Logo、文字或不可被裁切的主體放在斜線區域。";
+  }
+}
 
 function handleCoverPhotoFile(file){
   if(!file || !file.type || !file.type.startsWith("image/")){
@@ -8987,6 +9058,7 @@ function resetCoverPhotoTest(){
 }
 
 function initCoverPhotoTest(){
+  setCoverPreviewMode(coverPreviewMode);
   const input = document.getElementById("coverPhotoInput");
   const box = document.getElementById("coverUploadBox");
   if(input && !input.dataset.bound){
@@ -9012,8 +9084,49 @@ function initCoverPhotoTest(){
 
 document.addEventListener("DOMContentLoaded", initCoverPhotoTest);
 
+let foodPreviewMode = "mobile";
+const FOOD_PREVIEW_MODES = {
+  mobile:   {x:193.5,y:0,w:1053,h:1053,label:"左右斜線區域｜可能被系統裁切", note:"中央正方形為手機版主要顯示範圍；原圖左右各約 193.5 px 可能被裁切，重要餐點主體請盡量放在中央 Safe Area。"},
+  featured: {x:193.5,y:0,w:1053,h:1053,label:"左右斜線區域｜可能被系統裁切", note:"電腦版（人氣精選）裁切範圍與手機版相同；原圖左右各約 193.5 px 可能被裁切。"},
+  menu:     {x:193.5,y:0,w:1053,h:1053,label:"左右斜線區域｜可能被系統裁切", note:"電腦版（一般菜單）裁切範圍與手機版相同；原圖左右各約 193.5 px 可能被裁切。右下角「＋」為介面按鈕遮擋區。", plus:true},
+  detail:   {x:0,y:163,w:1440,h:727,label:"上下斜線區域｜可能被系統裁切", note:"點開餐點後主要裁切上下；上、下各約 163 px 可能不顯示。右上角「×」為關閉按鈕遮擋區。", close:true}
+};
+function setFoodPreviewMode(mode){
+  const cfg=FOOD_PREVIEW_MODES[mode]||FOOD_PREVIEW_MODES.mobile; foodPreviewMode=mode;
+  document.querySelectorAll('[data-food-mode]').forEach(b=>b.classList.toggle('active',b.dataset.foodMode===mode));
+  const r=document.getElementById('foodCropSafeRect'); if(r){r.setAttribute('x',cfg.x);r.setAttribute('y',cfg.y);r.setAttribute('width',cfg.w);r.setAttribute('height',cfg.h);}
+  const a=document.getElementById('foodSafeArea'); if(a){a.style.left=(cfg.x/1440*100)+'%';a.style.top=(cfg.y/1053*100)+'%';a.style.width=(cfg.w/1440*100)+'%';a.style.height=(cfg.h/1053*100)+'%';}
+  const l=document.getElementById('foodCropLabel'); if(l) l.textContent=cfg.label;
+  const n=document.getElementById('foodResultNote'); if(n) n.innerHTML='<strong>怎麼看？</strong> '+cfg.note;
+  const p=document.getElementById('foodPlusBlocker');
+  if(p){
+    p.classList.toggle('show',!!cfg.plus);
+    if(cfg.plus){
+      // 「＋」以裁切後實際可見照片範圍為基準定位，不會落在斜線裁切區。
+      const d=cfg.w*0.27, insetX=cfg.w*0.022, insetY=cfg.h*0.022;
+      p.style.width=(d/1440*100)+'%';
+      p.style.left=((cfg.x+cfg.w-insetX-d)/1440*100)+'%';
+      p.style.top=((cfg.y+cfg.h-insetY-d)/1053*100)+'%';
+      p.style.right='auto'; p.style.bottom='auto';
+    }
+  }
+  const c=document.getElementById('foodCloseBlocker');
+  if(c){
+    c.classList.toggle('show',!!cfg.close);
+    if(cfg.close){
+      // 「×」同樣以裁切後實際可見照片範圍為基準定位。
+      const d=cfg.w*0.052, insetX=cfg.w*0.009, insetY=cfg.h*0.024;
+      c.style.width=(d/1440*100)+'%';
+      c.style.left=((cfg.x+cfg.w-insetX-d)/1440*100)+'%';
+      c.style.top=((cfg.y+insetY)/1053*100)+'%';
+      c.style.right='auto'; c.style.bottom='auto';
+    }
+  }
+}
+
 function openFoodPhotoTest(){
   showPortalSection("foodPhotoTestPortal");
+  setFoodPreviewMode(foodPreviewMode || "mobile");
 }
 
 let foodPhotoObjectUrl = "";
