@@ -3155,18 +3155,24 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .cover-ui-more{right:3%;top:34%;width:10%;aspect-ratio:1;font-size:clamp(26px,5vw,50px)}
 .cover-ui-status{position:absolute;left:10%;right:9%;top:6%;display:flex;justify-content:space-between;align-items:center;color:#050505;font-size:clamp(14px,2.8vw,30px);font-weight:900;text-shadow:0 1px 2px rgba(255,255,255,.35)}
 
-/* 手機版（商家頁面）：依實際畫面，上方約裁 15.8%；下緣為中央較低、兩側較高的弧形。
+/* 手機版（商家頁面）：依實際畫面，上方約裁 13.5%；下緣為中央較低、兩側較高的弧形。
    不模擬手機 UI 按鈕，避免不同裝置造成誤導。 */
 .cover-safe-area.mobile-merchant-curved{
-  top:15.8% !important; left:0 !important; right:0 !important; bottom:0 !important;
-  width:100% !important; height:84.2% !important;
+  top:13.5% !important; left:0 !important; right:0 !important; bottom:0 !important;
+  width:100% !important; height:86.5% !important;
   border:0; box-shadow:none;
   /* 左右下緣約落在原圖 79.2%，中央約 84.6% */
-  clip-path:polygon(0 0,100% 0,100% 75.3%,92% 76.2%,82% 78.2%,70% 80.4%,58% 81.5%,50% 81.7%,42% 81.5%,30% 80.4%,18% 78.2%,8% 76.2%,0 75.3%);
+  clip-path:polygon(0 0,100% 0,100% 75.95%,92% 76.85%,82% 78.90%,70% 81.05%,58% 82.05%,50% 82.20%,42% 82.05%,30% 81.05%,18% 78.90%,8% 76.85%,0 75.95%);
 }
 .cover-safe-area.mobile-merchant-curved::after{
-  content:""; position:absolute; inset:0; pointer-events:none;
-  border:2px solid rgba(255,255,255,.98);
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:2px;
+  background:rgba(255,255,255,.98);
+  pointer-events:none;
 }
 .cover-safe-area.mobile-merchant-curved .cover-safe-label{top:10px}
 
@@ -3394,7 +3400,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
               <mask id="coverCropFrameMask">
                 <rect width="4000" height="2925" fill="white"></rect>
                 <rect id="coverCropSafeRect" x="0" y="536" width="4000" height="1853" fill="black"></rect>
-                <path id="coverCropSafeCurve" d="M 0 462 H 4000 V 2317 Q 2000 2633 0 2317 Z" fill="black" style="display:none"></path>
+                <path id="coverCropSafeCurve" d="M 0 395 H 4000 V 2317 Q 2000 2475 0 2317 Z" fill="black" style="display:none"></path>
               </mask>
             </defs>
             <rect width="4000" height="2925" fill="url(#coverCropStripePattern)" mask="url(#coverCropFrameMask)"></rect>
@@ -8980,7 +8986,7 @@ let coverPreviewMode = "mobile";
 const COVER_PREVIEW_MODES = {
   mobile: { label:"手機版本", top:536/2925, right:0, bottom:536/2925, left:0, ui:"" },
   mobileSwimlane: { label:"手機版（Swimlane）", top:0.162, right:0, bottom:0.162, left:0, ui:"mobileSwimlane" },
-  mobileMerchant: { label:"手機版（商家頁面）", top:0.158, right:0, bottom:0.154, left:0, ui:"" },
+  mobileMerchant: { label:"手機版（商家頁面）", top:0.135, right:0, bottom:0.154, left:0, ui:"" },
   swimlane: { label:"電腦版（Swimlane）", top:165.5/1497, right:0, bottom:165.5/1497, left:0, ui:"" },
   list: { label:"電腦版（List）", top:172.5/1497, right:0, bottom:172.5/1497, left:0, ui:"" },
   desktopMerchant: { label:"電腦版（商家頁面）", top:0, right:275/2048, bottom:0, left:276/2048, ui:"" }
@@ -9028,7 +9034,7 @@ function setCoverPreviewMode(mode){
   }
   if(note){
     note.innerHTML = coverPreviewMode === "mobileMerchant"
-      ? "<strong>怎麼看？</strong> 「手機版（商家頁面）」上方約裁 15.8%；下方以弧形銜接商家資訊區，左右兩側約裁 20.8%、中央約裁 15.4%。重要文字、Logo 與主體請放在中央未被斜線遮罩覆蓋的區域。"
+      ? "<strong>怎麼看？</strong> 「手機版（商家頁面）」上方約裁 13.5%；下方以弧形銜接商家資訊區，左右兩側約裁 20.8%、中央約裁 15.4%。重要文字、Logo 與主體請放在中央未被斜線遮罩覆蓋的區域。"
       : "<strong>怎麼看？</strong> 中央未被遮罩覆蓋的區域是「"+config.label+"」建議保留主要內容的位置；斜線區域可能被系統裁切，介面圖示則代表實際畫面可能遮擋的位置。";
   }
   if(ui){
