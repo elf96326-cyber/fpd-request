@@ -3161,19 +3161,10 @@ button:disabled{opacity:.45;cursor:not-allowed}
   top:13.5% !important; left:0 !important; right:0 !important; bottom:0 !important;
   width:100% !important; height:86.5% !important;
   border:0; box-shadow:none;
-  /* 左右下緣約落在原圖 79.2%，中央約 84.6% */
-  clip-path:polygon(0 0,100% 0,100% 75.95%,92% 76.85%,82% 78.90%,70% 81.05%,58% 82.05%,50% 82.20%,42% 82.05%,30% 81.05%,18% 78.90%,8% 76.85%,0 75.95%);
+  /* 白框改由 SVG 依實際弧形完整描邊，避免只顯示上緣 */
+  clip-path:none;
 }
-.cover-safe-area.mobile-merchant-curved::after{
-  content:"";
-  position:absolute;
-  left:0;
-  right:0;
-  top:0;
-  height:2px;
-  background:rgba(255,255,255,.98);
-  pointer-events:none;
-}
+.cover-safe-area.mobile-merchant-curved::after{display:none !important;}
 .cover-safe-area.mobile-merchant-curved .cover-safe-label{top:10px}
 
 </style>
@@ -3400,10 +3391,11 @@ button:disabled{opacity:.45;cursor:not-allowed}
               <mask id="coverCropFrameMask">
                 <rect width="4000" height="2925" fill="white"></rect>
                 <rect id="coverCropSafeRect" x="0" y="536" width="4000" height="1853" fill="black"></rect>
-                <path id="coverCropSafeCurve" d="M 0 395 H 4000 V 2317 Q 2000 2475 0 2317 Z" fill="black" style="display:none"></path>
+                <path id="coverCropSafeCurve" d="M 0 395 H 4000 V 2530 Q 2000 2760 0 2530 Z" fill="black" style="display:none"></path>
               </mask>
             </defs>
             <rect width="4000" height="2925" fill="url(#coverCropStripePattern)" mask="url(#coverCropFrameMask)"></rect>
+            <path id="coverCropSafeCurveBorder" d="M 0 395 H 4000 V 2530 Q 2000 2760 0 2530 Z" fill="none" stroke="rgba(255,255,255,.98)" stroke-width="2" vector-effect="non-scaling-stroke" style="display:none"></path>
           </svg>
           <div id="coverSafeArea" class="cover-safe-area"><span class="cover-safe-label">SAFE AREA｜重要內容建議放置區</span></div>
           <div id="coverUiOverlay" class="cover-ui-overlay" aria-hidden="true"></div>
@@ -8999,6 +8991,7 @@ function setCoverPreviewMode(mode){
   const safeArea = document.getElementById("coverSafeArea");
   const safeRect = document.getElementById("coverCropSafeRect");
   const safeCurve = document.getElementById("coverCropSafeCurve");
+  const safeCurveBorder = document.getElementById("coverCropSafeCurveBorder");
   const note = document.getElementById("coverResultNote");
   const label = document.getElementById("coverCropLabel");
   const ui = document.getElementById("coverUiOverlay");
@@ -9018,6 +9011,7 @@ function setCoverPreviewMode(mode){
     const curved = coverPreviewMode === "mobileMerchant";
     safeRect.style.display = curved ? "none" : "";
     if(safeCurve) safeCurve.style.display = curved ? "" : "none";
+    if(safeCurveBorder) safeCurveBorder.style.display = curved ? "" : "none";
     if(!curved){
       const x=4000*config.left, y=2925*config.top;
       safeRect.setAttribute("x",x.toFixed(3)); safeRect.setAttribute("y",y.toFixed(3));
@@ -9034,14 +9028,14 @@ function setCoverPreviewMode(mode){
   }
   if(note){
     note.innerHTML = coverPreviewMode === "mobileMerchant"
-      ? "<strong>怎麼看？</strong> 「手機版（商家頁面）」上方約裁 13.5%；下方以弧形銜接商家資訊區，左右兩側約裁 20.8%、中央約裁 15.4%。重要文字、Logo 與主體請放在中央未被斜線遮罩覆蓋的區域。"
+      ? "<strong>怎麼看？</strong> 「手機版（商家頁面）」上方約裁 13.5%；下方以實際弧形銜接商家資訊區；弧線左右較高、中央較低。重要文字、Logo 與主體請放在中央未被斜線遮罩覆蓋的區域。"
       : "<strong>怎麼看？</strong> 中央未被遮罩覆蓋的區域是「"+config.label+"」建議保留主要內容的位置；斜線區域可能被系統裁切，介面圖示則代表實際畫面可能遮擋的位置。";
   }
   if(ui){
     ui.innerHTML=""; ui.className="cover-ui-overlay";
     ui.style.top=topPct+"%"; ui.style.right=rightPct+"%"; ui.style.bottom=bottomPct+"%"; ui.style.left=leftPct+"%";
     if(config.ui==="mobileSwimlane"){
-      ui.innerHTML='<span class="cover-ui-circle cover-ui-heart">♡</span><span class="cover-ui-sponsored">贊助</span>';
+      ui.innerHTML='<span class="cover-ui-circle cover-ui-heart">♡</span>';
     }else if(config.ui==="mobileMerchant"){
       ui.innerHTML='<span class="cover-ui-circle cover-ui-back">‹</span><span class="cover-ui-circle cover-ui-info">ⓘ</span><span class="cover-ui-circle cover-ui-fav">♡</span><span class="cover-ui-circle cover-ui-more">⋮</span><div class="cover-ui-status"><b>11:36</b><span>▮▮▮⌁</span></div>';
     }
