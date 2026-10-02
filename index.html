@@ -3109,8 +3109,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .cover-safe-label{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.94);color:#111827;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .cover-crop-label{position:absolute;left:12px;bottom:10px;display:none;background:rgba(17,24,39,.82);color:#fff;padding:6px 9px;border-radius:8px;font-size:11px;font-weight:800;pointer-events:none}
 .cover-preview-stage.has-image .cover-crop-label{display:block}
-.cover-result-note{margin-top:12px;color:#6b7280;font-size:13px;line-height:1.65}
-.cover-result-note strong{color:#374151}
 .cover-test-disclaimer{margin-top:16px;background:#f9fafb;border-radius:14px;padding:12px 14px;color:#6b7280;font-size:12px;line-height:1.65}
 @media(max-width:900px){.cover-test-layout{grid-template-columns:1fr}.cover-test-head{padding:22px}.cover-test-head h2{font-size:25px}}
 @media(max-width:600px){.cover-test-portal{padding:18px 12px 42px}.cover-test-panel{padding:16px}.cover-safe-label{font-size:9px;padding:5px 7px}.cover-crop-label{font-size:9px}}
@@ -3401,7 +3399,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <div id="coverUiOverlay" class="cover-ui-overlay" aria-hidden="true"></div>
           <div id="coverCropLabel" class="cover-crop-label">上下斜線區域｜可能被系統裁切</div>
         </div>
-        <div id="coverResultNote" class="cover-result-note"><strong>怎麼看？</strong> 中央未被遮罩覆蓋的區域是建議保留主要內容的位置；上下斜線區域可能被系統裁切，請避免放置 Logo、文字或不可被裁切的主體。</div>
         <div class="cover-test-disclaimer">此工具依現行 Safe Area Guideline 的比例模擬，主要用途為協助品牌預先檢查構圖。實際顯示結果仍可能因系統介面、裝置或後續規格調整而略有差異。</div>
       </div>
     </div>
@@ -3485,7 +3482,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <div id="foodPlusBlocker" class="food-ui-blocker food-plus-blocker">＋</div>
           <div id="foodCloseBlocker" class="food-ui-blocker food-close-blocker">×</div>
         </div>
-        <div id="foodResultNote" class="cover-result-note"><strong>怎麼看？</strong> 中央正方形為手機版主要顯示範圍；原圖左右各約 193.5 px 可能被裁切，重要餐點主體請盡量放在中央 Safe Area。</div>
         <div class="cover-test-disclaimer">此工具依現行 Safe Area Guideline 的比例模擬，主要用途為協助品牌預先檢查構圖。實際顯示結果仍可能因系統介面、裝置或後續規格調整而略有差異。</div>
       </div>
     </div>
@@ -8992,7 +8988,6 @@ function setCoverPreviewMode(mode){
   const safeRect = document.getElementById("coverCropSafeRect");
   const safeCurve = document.getElementById("coverCropSafeCurve");
   const safeCurveBorder = document.getElementById("coverCropSafeCurveBorder");
-  const note = document.getElementById("coverResultNote");
   const label = document.getElementById("coverCropLabel");
   const ui = document.getElementById("coverUiOverlay");
   document.querySelectorAll("[data-cover-mode]").forEach(function(btn){ btn.classList.toggle("active", btn.dataset.coverMode === coverPreviewMode); });
@@ -9025,11 +9020,6 @@ function setCoverPreviewMode(mode){
       const vertical=(config.top||config.bottom), horizontal=(config.left||config.right);
       label.textContent = vertical && horizontal ? "斜線區域｜可能被系統裁切" : horizontal ? "左右斜線區域｜可能被系統裁切" : "上下斜線區域｜可能被系統裁切";
     }
-  }
-  if(note){
-    note.innerHTML = coverPreviewMode === "mobileMerchant"
-      ? "<strong>怎麼看？</strong> 「手機版（商家頁面）」上方約裁 13.5%；下方以實際弧形銜接商家資訊區；弧線左右較高、中央較低。重要文字、Logo 與主體請放在中央未被斜線遮罩覆蓋的區域。"
-      : "<strong>怎麼看？</strong> 中央未被遮罩覆蓋的區域是「"+config.label+"」建議保留主要內容的位置；斜線區域可能被系統裁切，介面圖示則代表實際畫面可能遮擋的位置。";
   }
   if(ui){
     ui.innerHTML=""; ui.className="cover-ui-overlay";
@@ -9145,10 +9135,10 @@ document.addEventListener("DOMContentLoaded", initCoverPhotoTest);
 
 let foodPreviewMode = "mobile";
 const FOOD_PREVIEW_MODES = {
-  mobile:   {x:193.5,y:0,w:1053,h:1053,label:"左右斜線區域｜可能被系統裁切", note:"中央正方形為手機版主要顯示範圍；原圖左右各約 193.5 px 可能被裁切，重要餐點主體請盡量放在中央 Safe Area。"},
-  featured: {x:193.5,y:0,w:1053,h:1053,label:"左右斜線區域｜可能被系統裁切", note:"電腦版（人氣精選）裁切範圍與手機版相同；原圖左右各約 193.5 px 可能被裁切。"},
-  menu:     {x:193.5,y:0,w:1053,h:1053,label:"左右斜線區域｜可能被系統裁切", note:"電腦版（一般菜單）裁切範圍與手機版相同；原圖左右各約 193.5 px 可能被裁切。右下角「＋」為介面按鈕遮擋區。", plus:true},
-  detail:   {x:0,y:163,w:1440,h:727,label:"上下斜線區域｜可能被系統裁切", note:"點開餐點後主要裁切上下；上、下各約 163 px 可能不顯示。右上角「×」為關閉按鈕遮擋區。", close:true}
+  mobile:   {x:193.5,y:0,w:1053,h:1053,label:"左右斜線區域｜可能被系統裁切"},
+  featured: {x:193.5,y:0,w:1053,h:1053,label:"左右斜線區域｜可能被系統裁切"},
+  menu:     {x:193.5,y:0,w:1053,h:1053,label:"左右斜線區域｜可能被系統裁切", plus:true},
+  detail:   {x:0,y:163,w:1440,h:727,label:"上下斜線區域｜可能被系統裁切", close:true}
 };
 function setFoodPreviewMode(mode){
   const cfg=FOOD_PREVIEW_MODES[mode]||FOOD_PREVIEW_MODES.mobile; foodPreviewMode=mode;
@@ -9156,7 +9146,6 @@ function setFoodPreviewMode(mode){
   const r=document.getElementById('foodCropSafeRect'); if(r){r.setAttribute('x',cfg.x);r.setAttribute('y',cfg.y);r.setAttribute('width',cfg.w);r.setAttribute('height',cfg.h);}
   const a=document.getElementById('foodSafeArea'); if(a){a.style.left=(cfg.x/1440*100)+'%';a.style.top=(cfg.y/1053*100)+'%';a.style.width=(cfg.w/1440*100)+'%';a.style.height=(cfg.h/1053*100)+'%';}
   const l=document.getElementById('foodCropLabel'); if(l) l.textContent=cfg.label;
-  const n=document.getElementById('foodResultNote'); if(n) n.innerHTML='<strong>怎麼看？</strong> '+cfg.note;
   const p=document.getElementById('foodPlusBlocker');
   if(p){
     p.classList.toggle('show',!!cfg.plus);
