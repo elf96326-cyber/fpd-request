@@ -3142,6 +3142,19 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .food-ui-blocker::after{content:"UI 遮擋";position:absolute;right:0;top:calc(100% + 5px);padding:4px 7px;border-radius:7px;background:rgba(17,24,39,.82);color:#fff;font-size:9px;font-weight:800;white-space:nowrap}
 .food-close-blocker::after{top:calc(100% + 5px)}
 
+
+/* 封面照片：多版型裁切與實際 UI 遮擋預覽 */
+.cover-mode-switch{flex-wrap:wrap}
+.cover-ui-overlay{position:absolute;pointer-events:none;z-index:6}
+.cover-ui-circle{position:absolute;display:grid;place-items:center;background:rgba(255,255,255,.94);color:#111827;border-radius:999px;box-shadow:0 3px 10px rgba(15,23,42,.18);font-weight:800}
+.cover-ui-heart{right:2.5%;top:5%;width:9%;aspect-ratio:1;font-size:clamp(18px,3vw,34px)}
+.cover-ui-sponsored{position:absolute;right:2.8%;bottom:5%;font-size:clamp(12px,2vw,24px);font-weight:900;color:#fff;text-shadow:0 2px 5px rgba(0,0,0,.75)}
+.cover-ui-back{left:4%;top:34%;width:10%;aspect-ratio:1;font-size:clamp(28px,5vw,54px)}
+.cover-ui-info{right:28%;top:34%;width:10%;aspect-ratio:1;font-size:clamp(20px,4vw,42px)}
+.cover-ui-fav{right:15%;top:34%;width:10%;aspect-ratio:1;font-size:clamp(24px,4vw,46px)}
+.cover-ui-more{right:3%;top:34%;width:10%;aspect-ratio:1;font-size:clamp(26px,5vw,50px)}
+.cover-ui-status{position:absolute;left:10%;right:9%;top:6%;display:flex;justify-content:space-between;align-items:center;color:#050505;font-size:clamp(14px,2.8vw,30px);font-weight:900;text-shadow:0 1px 2px rgba(255,255,255,.35)}
+
 </style>
 </head>
 <body>
@@ -3348,8 +3361,11 @@ button:disabled{opacity:.45;cursor:not-allowed}
         </div>
         <div class="cover-mode-switch" aria-label="封面顯示版本">
           <button type="button" class="cover-mode-btn active" data-cover-mode="mobile" onclick="setCoverPreviewMode('mobile')">📱 手機版本</button>
+          <button type="button" class="cover-mode-btn" data-cover-mode="mobileSwimlane" onclick="setCoverPreviewMode('mobileSwimlane')">📱 手機版（Swimlane）</button>
+          <button type="button" class="cover-mode-btn" data-cover-mode="mobileMerchant" onclick="setCoverPreviewMode('mobileMerchant')">📱 手機版（商家頁面）</button>
           <button type="button" class="cover-mode-btn" data-cover-mode="swimlane" onclick="setCoverPreviewMode('swimlane')">🖥️ 電腦版（Swimlane）</button>
           <button type="button" class="cover-mode-btn" data-cover-mode="list" onclick="setCoverPreviewMode('list')">🖥️ 電腦版（List）</button>
+          <button type="button" class="cover-mode-btn" data-cover-mode="desktopMerchant" onclick="setCoverPreviewMode('desktopMerchant')">🖥️ 電腦版（商家頁面）</button>
         </div>
         <div id="coverPreviewStage" class="cover-preview-stage">
           <div class="cover-preview-placeholder"><b>尚未選擇照片</b><span>上傳後會在這裡顯示裁切範圍</span></div>
@@ -3368,6 +3384,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
             <rect width="4000" height="2925" fill="url(#coverCropStripePattern)" mask="url(#coverCropFrameMask)"></rect>
           </svg>
           <div id="coverSafeArea" class="cover-safe-area"><span class="cover-safe-label">SAFE AREA｜重要內容建議放置區</span></div>
+          <div id="coverUiOverlay" class="cover-ui-overlay" aria-hidden="true"></div>
           <div id="coverCropLabel" class="cover-crop-label">上下斜線區域｜可能被系統裁切</div>
         </div>
         <div id="coverResultNote" class="cover-result-note"><strong>怎麼看？</strong> 中央未被遮罩覆蓋的區域是建議保留主要內容的位置；上下斜線區域可能被系統裁切，請避免放置 Logo、文字或不可被裁切的主體。</div>
@@ -8945,41 +8962,51 @@ let coverPhotoObjectUrl = "";
 let coverPreviewMode = "mobile";
 
 const COVER_PREVIEW_MODES = {
-  // 手機版沿用昨天已確認、目前 HTML 內既有的 Safe Area，不改動原本裁切規則。
-  mobile: { label:"手機版本", cropRatio:536/2925, detail:"依目前既有 Safe Area 規則顯示" },
-  // 依 2048 × 1497 原圖與實際 Swimlane 截圖反推：中央約保留 2048 × 1166。
-  swimlane: { label:"電腦版（Swimlane）", cropRatio:165.5/1497, detail:"中央約保留原圖高度 77.89%（2048 × 1497 範例約保留 2048 × 1166）" },
-  // 依實際 List 截圖反推：中央為 16:9，2048 × 1497 範例保留 2048 × 1152。
-  list: { label:"電腦版（List）", cropRatio:172.5/1497, detail:"中央為 16:9 顯示區（2048 × 1497 範例約保留 2048 × 1152）" }
+  mobile: { label:"手機版本", top:536/2925, right:0, bottom:536/2925, left:0, ui:"" },
+  mobileSwimlane: { label:"手機版（Swimlane）", top:0.162, right:0, bottom:0.162, left:0, ui:"mobileSwimlane" },
+  mobileMerchant: { label:"手機版（商家頁面）", top:0, right:0, bottom:0.262, left:0, ui:"" },
+  swimlane: { label:"電腦版（Swimlane）", top:165.5/1497, right:0, bottom:165.5/1497, left:0, ui:"" },
+  list: { label:"電腦版（List）", top:172.5/1497, right:0, bottom:172.5/1497, left:0, ui:"" },
+  desktopMerchant: { label:"電腦版（商家頁面）", top:0, right:275/2048, bottom:0, left:276/2048, ui:"" }
 };
 
 function setCoverPreviewMode(mode){
   const config = COVER_PREVIEW_MODES[mode] || COVER_PREVIEW_MODES.mobile;
   coverPreviewMode = COVER_PREVIEW_MODES[mode] ? mode : "mobile";
-  const cropPct = config.cropRatio * 100;
-  const safePct = 100 - cropPct * 2;
+  const topPct = config.top * 100, rightPct = config.right * 100, bottomPct = config.bottom * 100, leftPct = config.left * 100;
   const safeArea = document.getElementById("coverSafeArea");
   const safeRect = document.getElementById("coverCropSafeRect");
-  const summary = document.getElementById("coverModeSummary");
   const note = document.getElementById("coverResultNote");
-  document.querySelectorAll("[data-cover-mode]").forEach(function(btn){
-    btn.classList.toggle("active", btn.dataset.coverMode === coverPreviewMode);
-  });
+  const label = document.getElementById("coverCropLabel");
+  const ui = document.getElementById("coverUiOverlay");
+  document.querySelectorAll("[data-cover-mode]").forEach(function(btn){ btn.classList.toggle("active", btn.dataset.coverMode === coverPreviewMode); });
   if(safeArea){
-    safeArea.style.top = cropPct.toFixed(4) + "%";
-    safeArea.style.height = safePct.toFixed(4) + "%";
+    safeArea.style.top = topPct.toFixed(4) + "%";
+    safeArea.style.right = rightPct.toFixed(4) + "%";
+    safeArea.style.bottom = bottomPct.toFixed(4) + "%";
+    safeArea.style.left = leftPct.toFixed(4) + "%";
+    safeArea.style.width = "auto";
+    safeArea.style.height = "auto";
   }
-  // SVG 維持 4000 × 2925 的座標系，只按相同比例換算上下遮罩。
   if(safeRect){
-    const y = 2925 * config.cropRatio;
-    safeRect.setAttribute("y", y.toFixed(3));
-    safeRect.setAttribute("height", (2925 - y * 2).toFixed(3));
+    const x=4000*config.left, y=2925*config.top;
+    safeRect.setAttribute("x",x.toFixed(3)); safeRect.setAttribute("y",y.toFixed(3));
+    safeRect.setAttribute("width",(4000*(1-config.left-config.right)).toFixed(3));
+    safeRect.setAttribute("height",(2925*(1-config.top-config.bottom)).toFixed(3));
   }
-  if(summary){
-    summary.innerHTML = "<b>" + config.label + "</b>｜" + config.detail + "；左右不裁切，上下各約裁切 " + cropPct.toFixed(2) + "% 。";
+  if(label){
+    const vertical=(config.top||config.bottom), horizontal=(config.left||config.right);
+    label.textContent = vertical && horizontal ? "斜線區域｜可能被系統裁切" : horizontal ? "左右斜線區域｜可能被系統裁切" : "上下斜線區域｜可能被系統裁切";
   }
-  if(note){
-    note.innerHTML = "<strong>怎麼看？</strong> 中央未被遮罩覆蓋的區域是「" + config.label + "」建議保留主要內容的位置；上下斜線區域可能被系統裁切，左右維持完整，請避免將 Logo、文字或不可被裁切的主體放在斜線區域。";
+  if(note){ note.innerHTML = "<strong>怎麼看？</strong> 中央未被遮罩覆蓋的區域是「"+config.label+"」建議保留主要內容的位置；斜線區域可能被系統裁切，介面圖示則代表實際畫面可能遮擋的位置。"; }
+  if(ui){
+    ui.innerHTML=""; ui.className="cover-ui-overlay";
+    ui.style.top=topPct+"%"; ui.style.right=rightPct+"%"; ui.style.bottom=bottomPct+"%"; ui.style.left=leftPct+"%";
+    if(config.ui==="mobileSwimlane"){
+      ui.innerHTML='<span class="cover-ui-circle cover-ui-heart">♡</span><span class="cover-ui-sponsored">贊助</span>';
+    }else if(config.ui==="mobileMerchant"){
+      ui.innerHTML='<span class="cover-ui-circle cover-ui-back">‹</span><span class="cover-ui-circle cover-ui-info">ⓘ</span><span class="cover-ui-circle cover-ui-fav">♡</span><span class="cover-ui-circle cover-ui-more">⋮</span><div class="cover-ui-status"><b>11:36</b><span>▮▮▮⌁</span></div>';
+    }
   }
 }
 
