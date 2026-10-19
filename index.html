@@ -3094,6 +3094,30 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .cover-mode-summary{margin:-3px 0 12px;padding:10px 12px;border-radius:12px;background:#f8fafc;color:#64748b;font-size:12px;line-height:1.6}
 .cover-mode-summary b{color:#334155}
 
+
+
+/* 尺寸線僅疊加在預覽外圍，不參與裁切與上傳邏輯 */
+.dimension-preview-wrap{position:relative;padding:44px 14px 16px 60px;min-width:0}
+.dimension-preview-wrap .cover-preview-stage,.dimension-preview-wrap .food-preview-stage{overflow:hidden}
+.dimension-markers{position:absolute;inset:44px 14px 16px 60px;pointer-events:none;--dim-left:0%;--dim-top:0%;--dim-width:100%;--dim-height:100%;color:#ff2b85;font-size:12px;font-weight:900}
+.dimension-horizontal{position:absolute;left:var(--dim-left);top:-24px;width:var(--dim-width);height:1.5px;background:#ff2b85}
+.dimension-horizontal:before,.dimension-horizontal:after{content:"";position:absolute;top:-6px;height:13px;width:1.5px;background:#ff2b85}
+.dimension-horizontal:before{left:0}.dimension-horizontal:after{right:0}
+.dimension-horizontal span{position:absolute;left:50%;top:-22px;transform:translateX(-50%);background:#fff1f7;padding:1px 5px;white-space:nowrap;border-radius:3px}
+.dimension-vertical{position:absolute;left:-28px;top:var(--dim-top);height:var(--dim-height);width:1.5px;background:#ff2b85}
+.dimension-vertical:before,.dimension-vertical:after{content:"";position:absolute;left:-6px;width:13px;height:1.5px;background:#ff2b85}
+.dimension-vertical:before{top:0}.dimension-vertical:after{bottom:0}
+.dimension-vertical span{position:absolute;top:50%;left:-6px;transform:translate(-100%,-50%);background:#fff1f7;padding:2px 4px;white-space:nowrap;border-radius:3px}
+.dimension-markers:not(.is-visible){display:none!important}
+.preview-size-info:not(.is-visible){display:none!important}
+.dimension-preview-note{font-size:11px;color:#64748b;margin:2px 0 0 60px;line-height:1.5}
+@media(max-width:600px){.dimension-preview-wrap{padding:43px 7px 10px 51px}.dimension-markers{inset:43px 7px 10px 51px;font-size:10px}.dimension-vertical{left:-20px}.dimension-preview-note{margin-left:51px}}
+
+/* 僅供裁切預覽的尺寸提示，不影響圖片或 Safe Area */
+.preview-size-info{display:flex;flex-wrap:wrap;align-items:center;gap:5px 10px;margin:-3px 0 14px;padding:11px 13px;border:1px solid #dbeafe;border-radius:13px;background:#f8fbff;color:#475569;font-size:12px;line-height:1.6}
+.preview-size-info strong{font-size:13px;color:#1e40af}
+.preview-size-info .preview-size-note{flex-basis:100%;color:#64748b;font-size:11px}
+
 .cover-preview-title-row h3{margin:0}
 .cover-preview-badge{font-size:12px;font-weight:900;color:#166534;background:#dcfce7;border-radius:999px;padding:6px 9px}
 .cover-preview-stage{position:relative;width:100%;aspect-ratio:4000 / 2925;background:#f3f4f6;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb}
@@ -3377,6 +3401,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <button type="button" class="cover-mode-btn" data-cover-mode="swimlane" onclick="setCoverPreviewMode('swimlane')">🖥️ 電腦版（Swimlane）</button>
           <button type="button" class="cover-mode-btn" data-cover-mode="desktopMerchant" onclick="setCoverPreviewMode('desktopMerchant')">🖥️ 電腦版（商家頁面）</button>
         </div>
+        <div id="coverPreviewSizeInfo" class="preview-size-info" aria-live="polite"><strong>照片保留區域：4000 × 1853 px</strong><span>長寬比約 2.16:1</span><span class="preview-size-note">依 4000 × 2925 px 預覽基準換算，非平台固定輸出尺寸</span></div>
+        <div class="dimension-preview-wrap">
         <div id="coverPreviewStage" class="cover-preview-stage">
           <div class="cover-preview-placeholder"><b>尚未選擇照片</b><span>上傳後會在這裡顯示裁切範圍</span></div>
           <img id="coverPreviewImage" class="cover-preview-image" alt="封面照片預覽">
@@ -3399,6 +3425,11 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <div id="coverUiOverlay" class="cover-ui-overlay" aria-hidden="true"></div>
           <div id="coverCropLabel" class="cover-crop-label">上下斜線區域｜可能被系統裁切</div>
         </div>
+        <div class="dimension-markers" id="coverDimensionMarkers" aria-label="保留範圍尺寸標示">
+          <div class="dimension-horizontal"><span id="coverDimensionWidth">— px</span></div>
+          <div class="dimension-vertical"><span id="coverDimensionHeight">— px</span></div>
+        </div>
+      </div>
         <div class="cover-test-disclaimer">此工具依現行 Safe Area Guideline 的比例模擬，主要用途為協助品牌預先檢查構圖。實際顯示結果仍可能因系統介面、裝置或後續規格調整而略有差異。</div>
       </div>
     </div>
@@ -3461,6 +3492,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <button type="button" class="food-mode-btn" data-food-mode="menu" onclick="setFoodPreviewMode('menu')">🖥️ 電腦版（一般菜單）</button>
           <button type="button" class="food-mode-btn" data-food-mode="detail" onclick="setFoodPreviewMode('detail')">🔍 點開餐點</button>
         </div>
+        <div id="foodPreviewSizeInfo" class="preview-size-info" aria-live="polite"><strong>照片保留區域：1053 × 1053 px</strong><span>長寬比 1:1</span><span class="preview-size-note">依 1440 × 1053 px 預覽基準換算，非平台固定輸出尺寸</span></div>
+        <div class="dimension-preview-wrap">
         <div id="foodPreviewStage" class="food-preview-stage">
           <div class="cover-preview-placeholder"><b>尚未選擇照片</b><span>上傳後會在這裡顯示裁切範圍</span></div>
           <img id="foodPreviewImage" class="cover-preview-image" alt="餐點照片預覽">
@@ -3482,6 +3515,11 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <div id="foodPlusBlocker" class="food-ui-blocker food-plus-blocker">＋</div>
           <div id="foodCloseBlocker" class="food-ui-blocker food-close-blocker">×</div>
         </div>
+        <div class="dimension-markers" id="foodDimensionMarkers" aria-label="保留範圍尺寸標示">
+          <div class="dimension-horizontal"><span id="foodDimensionWidth">— px</span></div>
+          <div class="dimension-vertical"><span id="foodDimensionHeight">— px</span></div>
+        </div>
+      </div>
         <div class="cover-test-disclaimer">此工具依現行 Safe Area Guideline 的比例模擬，主要用途為協助品牌預先檢查構圖。實際顯示結果仍可能因系統介面、裝置或後續規格調整而略有差異。</div>
       </div>
     </div>
@@ -8980,9 +9018,33 @@ const COVER_PREVIEW_MODES = {
   desktopMerchant: { label:"電腦版（商家頁面）", top:0, right:275/2048, bottom:0, left:276/2048, ui:"" }
 };
 
+
+function updatePreviewDimensionMarkers(kind, left, top, width, height, widthPx, heightPx){
+  const el=document.getElementById(kind+'DimensionMarkers');
+  if(!el)return;
+  el.style.setProperty('--dim-left',(left*100)+'%');
+  el.style.setProperty('--dim-top',(top*100)+'%');
+  el.style.setProperty('--dim-width',(width*100)+'%');
+  el.style.setProperty('--dim-height',(height*100)+'%');
+  const w=document.getElementById(kind+'DimensionWidth');
+  const h=document.getElementById(kind+'DimensionHeight');
+  if(w)w.textContent=Math.round(widthPx).toLocaleString('en-US')+' px';
+  if(h)h.textContent=Math.round(heightPx).toLocaleString('en-US')+' px';
+}
+
 function setCoverPreviewMode(mode){
   const config = COVER_PREVIEW_MODES[mode] || COVER_PREVIEW_MODES.mobile;
   coverPreviewMode = COVER_PREVIEW_MODES[mode] ? mode : "mobile";
+  const coverSizeInfo = document.getElementById("coverPreviewSizeInfo");
+  if(coverSizeInfo){
+    const width = Math.round(4000*(1-config.left-config.right));
+    const height = Math.round(2925*(1-config.top-config.bottom));
+    const curved = coverPreviewMode === "mobileMerchant";
+    const headline = curved ? "照片保留區域：上下弧形裁切" : `照片保留區域：約 ${width} × ${height} px`;
+    const detail = curved ? "上方裁切 13.5%｜下方約 15.4%（弧形邊界）" : `長寬比約 ${(width/height).toFixed(2)}:1`;
+    coverSizeInfo.innerHTML = `<strong>${headline}</strong><span>${detail}</span><span class="preview-size-note">依 4000 × 2925 px 預覽基準換算，非平台固定輸出尺寸</span>`;
+  }
+  updatePreviewDimensionMarkers('cover',config.left,config.top,1-config.left-config.right,1-config.top-config.bottom,4000*(1-config.left-config.right),2925*(1-config.top-config.bottom));
   const topPct = config.top * 100, rightPct = config.right * 100, bottomPct = config.bottom * 100, leftPct = config.left * 100;
   const safeArea = document.getElementById("coverSafeArea");
   const safeRect = document.getElementById("coverCropSafeRect");
@@ -9076,6 +9138,8 @@ function handleCoverPhotoFile(file){
     }
     if(resetBtn) resetBtn.classList.add("show");
     stage.classList.add("has-image");
+    document.getElementById("coverDimensionMarkers")?.classList.add("is-visible");
+    document.getElementById("coverPreviewSizeInfo")?.classList.add("is-visible");
   };
   img.src = coverPhotoObjectUrl;
 }
@@ -9102,6 +9166,8 @@ function resetCoverPhotoTest(){
   if(input) input.value = "";
   if(img){ img.removeAttribute("src"); }
   if(stage) stage.classList.remove("has-image");
+  document.getElementById("coverDimensionMarkers")?.classList.remove("is-visible");
+  document.getElementById("coverPreviewSizeInfo")?.classList.remove("is-visible");
   if(meta){ meta.innerHTML = ""; meta.classList.remove("show"); }
   if(resetBtn) resetBtn.classList.remove("show");
 }
@@ -9142,6 +9208,11 @@ const FOOD_PREVIEW_MODES = {
 };
 function setFoodPreviewMode(mode){
   const cfg=FOOD_PREVIEW_MODES[mode]||FOOD_PREVIEW_MODES.mobile; foodPreviewMode=mode;
+  const foodSizeInfo = document.getElementById("foodPreviewSizeInfo");
+  if(foodSizeInfo){
+    foodSizeInfo.innerHTML = `<strong>照片保留區域：${cfg.w} × ${cfg.h} px</strong><span>長寬比約 ${(cfg.w/cfg.h).toFixed(2)}:1</span><span class="preview-size-note">依 1440 × 1053 px 預覽基準換算，非平台固定輸出尺寸</span>`;
+  }
+  updatePreviewDimensionMarkers('food',cfg.x/1440,cfg.y/1053,cfg.w/1440,cfg.h/1053,cfg.w,cfg.h);
   document.querySelectorAll('[data-food-mode]').forEach(b=>b.classList.toggle('active',b.dataset.foodMode===mode));
   const r=document.getElementById('foodCropSafeRect'); if(r){r.setAttribute('x',cfg.x);r.setAttribute('y',cfg.y);r.setAttribute('width',cfg.w);r.setAttribute('height',cfg.h);}
   const a=document.getElementById('foodSafeArea'); if(a){a.style.left=(cfg.x/1440*100)+'%';a.style.top=(cfg.y/1053*100)+'%';a.style.width=(cfg.w/1440*100)+'%';a.style.height=(cfg.h/1053*100)+'%';}
@@ -9220,6 +9291,8 @@ function handleFoodPhotoFile(file){
     }
     if(resetBtn) resetBtn.classList.add("show");
     stage.classList.add("has-image");
+    document.getElementById("foodDimensionMarkers")?.classList.add("is-visible");
+    document.getElementById("foodPreviewSizeInfo")?.classList.add("is-visible");
   };
   img.src = foodPhotoObjectUrl;
 }
@@ -9234,6 +9307,8 @@ function resetFoodPhotoTest(){
   if(input) input.value = "";
   if(img) img.removeAttribute("src");
   if(stage) stage.classList.remove("has-image");
+  document.getElementById("foodDimensionMarkers")?.classList.remove("is-visible");
+  document.getElementById("foodPreviewSizeInfo")?.classList.remove("is-visible");
   if(meta){ meta.innerHTML = ""; meta.classList.remove("show"); }
   if(resetBtn) resetBtn.classList.remove("show");
 }
