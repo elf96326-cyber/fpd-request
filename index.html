@@ -3743,7 +3743,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     </button>
     <button class="request workstream-campaign" data-workstream="campaign" onclick="selectWorkstream('campaign')" disabled title="正在確認檔期開放時間">
       <b style="font-size:22px;">📅檔期菜單</b>
-      <p>依檔期開放時間申請，活動及欄位由 Google Sheets 動態管理</p>
+      <p>各檔期皆有指定申請期間，請於開放時間內填寫</p>
     </button>
   </div>
   <div class="btn-row">
@@ -10736,7 +10736,7 @@ async function refreshCampaignAvailability(){
     button.disabled=openItems.length===0;
     const info=button.querySelector("p");
     if(info)info.textContent=openItems.length
-      ? "目前有 "+openItems.length+" 個檔期開放申請，活動及欄位由 Google Sheets 動態管理"
+      ? "目前有 "+openItems.length+" 個檔期，請於開放時間內填寫，逾期恕不受理"
       : "目前非開放申請時間，暫時無法進入";
     button.title=openItems.length?"選擇檔期菜單":"目前沒有開放中的檔期，請於開放時間再試";
     if(button.disabled&&currentWorkstream==="campaign"){
