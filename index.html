@@ -3189,6 +3189,31 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .cover-safe-area.mobile-merchant-curved::after{display:none !important;}
 .cover-safe-area.mobile-merchant-curved .cover-safe-label{top:10px}
 
+
+/* 檔期菜單：獨立預覽區，不影響原有需求表單 */
+.workstream-campaign{background:#f0fdfa!important;border:2px solid #14b8a6!important;grid-column:auto}
+.workstream-campaign.selected{background:#0f766e!important;border-color:#0f766e!important;color:white!important}
+.workstream-campaign.selected p{color:#ccfbf1!important}
+/* 三張分類卡等寬；窄螢幕沿用原本單欄 */
+#page2 > .request-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:760px){#page2 > .request-grid{grid-template-columns:1fr}}
+.workstream-campaign:disabled{opacity:1!important;background:#f1f5f9!important;border-color:#cbd5e1!important;color:#94a3b8!important;cursor:not-allowed!important;transform:none!important;box-shadow:none!important}
+.workstream-campaign:disabled p{color:#94a3b8!important}
+.workstream-campaign:disabled.selected{background:#f1f5f9!important;border-color:#cbd5e1!important;color:#94a3b8!important}
+.campaign-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.campaign-option{border:1px solid #99f6e4;border-radius:18px;background:#f0fdfa;padding:18px;text-align:left;width:100%;color:#134e4a}
+.campaign-option b{display:block;font-size:16px;margin-bottom:7px}
+.campaign-option p{font-size:12px;line-height:1.7;margin:7px 0;color:#475569}
+.campaign-option:disabled{opacity:1;cursor:not-allowed;background:#f1f5f9;border-color:#e2e8f0;color:#94a3b8}
+.campaign-option:disabled p{color:#94a3b8}
+.campaign-option:not(:disabled):hover{border-color:#0d9488;box-shadow:0 6px 16px #0f766e22}
+.campaign-option.selected{border:2px solid #0f766e;background:#ccfbf1}
+.campaign-status{display:inline-block;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;background:#e2e8f0;color:#64748b}
+.campaign-status.open{background:#d1fae5;color:#047857}
+.campaign-fields{margin-top:20px;padding:18px;border:1px solid #ccfbf1;border-radius:18px;background:#fff}
+.campaign-fields .field{margin-top:14px}
+.campaign-fields .campaign-check{width:auto;margin-right:8px}
+@media(max-width:760px){.campaign-list{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -3689,7 +3714,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <div class="title-row">
     <div>
       <h2>第二頁｜需求類別</h2>
-      <div class="sub">請先選擇本次申請的需求類別：菜單或活動 / 營運。</div>
+      <div class="sub">請先選擇本次申請的需求類別：菜單、活動 / 營運或檔期菜單。</div>
     </div>
   </div>
 
@@ -3716,6 +3741,10 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <b style="font-size:22px;">⚙️活動 / 營運</b>
       <p>活動申請、活動菜單調整、營運設定及設備相關需求</p>
     </button>
+    <button class="request workstream-campaign" data-workstream="campaign" onclick="selectWorkstream('campaign')" disabled title="正在確認檔期開放時間">
+      <b style="font-size:22px;">📅檔期菜單</b>
+      <p>依檔期開放時間申請，活動及欄位由 Google Sheets 動態管理</p>
+    </button>
   </div>
   <div class="btn-row">
     <button class="btn-outline" onclick="go(1)">‹ 上一步</button>
@@ -3725,6 +3754,19 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <button id="nextWorkstreamBtn" class="btn-primary" onclick="go(3)" disabled>下一步 ›</button>
     </div>
   </div>
+</section>
+
+<section class="page" id="pageCampaign">
+  <div class="title-row"><div><h2>第三頁｜檔期菜單</h2><div class="sub">選擇開放中的檔期；未開放與已截止的檔期將反灰且無法點擊。</div></div></div>
+  <div class="application-info-card" data-application-info>
+    <div class="application-info-main"><div class="application-info-title">目前申請資訊</div>
+      <div class="application-info-items"><span class="application-info-item">🏷️ 完整名稱：<b data-info-brand>未填寫</b></span><span class="application-info-item" data-info-group-wrap>📍 組別：<b data-info-group>尚未查詢</b></span></div>
+    </div><button type="button" class="application-info-edit" onclick="go(1)">修改基本資料</button>
+  </div>
+  <div id="campaignMessage" class="notice" role="status">正在讀取檔期清單…</div>
+  <div id="campaignList" class="campaign-list"></div>
+  <div id="campaignFormPreview" class="campaign-fields hidden"></div>
+  <div class="btn-row"><button class="btn-outline" onclick="go(2)">‹ 上一步</button><div class="btn-actions-right"><button type="button" class="portal-back-btn" onclick="requestInternalLeave(()=>backToPortalHome())">‹ 返回入口首頁</button><button type="button" class="btn-primary" disabled title="檔期菜單送件功能尚未啟用">送出申請（尚未開放）</button></div></div>
 </section>
 
 <section class="page" id="page3">
@@ -6033,6 +6075,12 @@ function getPhotoUpdateDateTimeSummary(){
 }
 
 function go(n){
+  if(n === 3 && currentWorkstream === "campaign" && document.querySelector("[data-workstream=campaign]")?.disabled){return;}
+  if(n === 3 && currentWorkstream === "campaign"){
+    if(!isBasicValid()){validateBasic();go(1);return;}
+    showCampaignPage();
+    return;
+  }
   /*
     任何要往第二頁之後的操作，
     都必須先完成店家查詢與選擇。
@@ -6078,6 +6126,7 @@ function go(n){
   }
 }
 function selectWorkstream(type){
+  if(type === "campaign" && document.querySelector("[data-workstream=campaign]")?.disabled) return;
   if(currentWorkstream !== type){
     currentWorkstream = type;
     currentType = "";
@@ -10664,5 +10713,155 @@ try{
 }
 </script>
 
+
+<script>
+/* 檔期菜單前端：獨立頁面；不接入既有案件送出、摘要或 Email 流程。 */
+let campaignItems = [];
+let campaignSelectedId = "";
+let campaignLoadSequence = 0;
+/* 每分鐘重新向後端確認開放狀態，未取得結果時禁止進入 */
+let campaignAvailabilityRequest = 0;
+async function refreshCampaignAvailability(){
+  const requestId=++campaignAvailabilityRequest;
+  const button=document.querySelector('[data-workstream="campaign"]');
+  if(!button)return;
+  try{
+    const response=await fetch(GAS_URL+"?action=getCampaignList&t="+Date.now(),{cache:"no-store"});
+    if(!response.ok)throw new Error("HTTP "+response.status);
+    const result=await response.json();
+    if(!result.success||!Array.isArray(result.data))throw new Error(result.message||"讀取失敗");
+    if(requestId!==campaignAvailabilityRequest)return;
+    campaignItems=result.data;
+    const openItems=campaignItems.filter(item=>item.status==="open"&&item.selectable===true);
+    button.disabled=openItems.length===0;
+    const info=button.querySelector("p");
+    if(info)info.textContent=openItems.length
+      ? "目前有 "+openItems.length+" 個檔期開放申請，活動及欄位由 Google Sheets 動態管理"
+      : "目前非開放申請時間，暫時無法進入";
+    button.title=openItems.length?"選擇檔期菜單":"目前沒有開放中的檔期，請於開放時間再試";
+    if(button.disabled&&currentWorkstream==="campaign"){
+      currentWorkstream="";
+      updateWorkstreamUI();
+      if(document.getElementById("pageCampaign")?.classList.contains("active"))go(2);
+    }
+    if(document.getElementById("pageCampaign")?.classList.contains("active"))renderCampaignList();
+  }catch(error){
+    if(requestId!==campaignAvailabilityRequest)return;
+    button.disabled=true;
+    button.title="無法確認檔期狀態，請稍後重試";
+    const info=button.querySelector("p");
+    if(info)info.textContent="暫時無法確認檔期開放狀態，請稍後重試";
+    if(currentWorkstream==="campaign"){
+      currentWorkstream="";updateWorkstreamUI();
+      if(document.getElementById("pageCampaign")?.classList.contains("active"))go(2);
+    }
+  }
+}
+refreshCampaignAvailability();
+setInterval(refreshCampaignAvailability,60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshCampaignAvailability();});
+function campaignEscape(value){
+  return String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));
+}
+function campaignTime(value){return String(value || "").replace(/-/g,"/").slice(0,16);}
+function showCampaignPage(){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("pageCampaign").classList.add("active");
+  for(let i=1;i<=6;i++){
+    const step=document.getElementById("s"+i);
+    if(step){step.classList.remove("active","done");if(i<3)step.classList.add("done");if(i===3)step.classList.add("active");}
+  }
+  const status=document.getElementById("statusText");if(status)status.textContent="填寫中";
+  updateApplicationInfo();
+  window.scrollTo(0,0);
+  loadCampaignList();
+}
+async function loadCampaignList(){
+  const sequence=++campaignLoadSequence;
+  const message=document.getElementById("campaignMessage");
+  const list=document.getElementById("campaignList");
+  const preview=document.getElementById("campaignFormPreview");
+  message.textContent="正在讀取檔期清單…";
+  list.replaceChildren();preview.classList.add("hidden");
+  campaignSelectedId="";
+  try{
+    const response=await fetch(GAS_URL+"?action=getCampaignList&t="+Date.now(),{cache:"no-store"});
+    if(!response.ok)throw new Error("HTTP "+response.status);
+    const result=await response.json();
+    if(!result.success || !Array.isArray(result.data))throw new Error(result.message||"無法取得檔期清單");
+    if(sequence!==campaignLoadSequence)return;
+    campaignItems=result.data;
+    renderCampaignList();
+  }catch(error){
+    if(sequence!==campaignLoadSequence)return;
+    message.textContent="檔期讀取失敗："+error.message+"。請確認 Apps Script 已部署最新版本，然後重新進入本頁。";
+  }
+}
+function renderCampaignList(){
+  const list=document.getElementById("campaignList");
+  const message=document.getElementById("campaignMessage");
+  list.replaceChildren();
+  message.textContent=campaignItems.length?"檔期時間以台灣時間為準；灰色選項不可點擊。":"目前沒有設定檔期。";
+  campaignItems.forEach(item=>{
+    const open=item.status==="open" && item.selectable===true;
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="campaign-option"+(campaignSelectedId===item.campaignId?" selected":"");
+    button.disabled=!open;
+    const timeInfo=[item.startTime?"開放："+campaignTime(item.startTime):"",item.endTime?"截止："+campaignTime(item.endTime):""].filter(Boolean).join("　");
+    button.innerHTML="<b>"+campaignEscape(item.campaignName||item.campaignId)+"</b>"+
+      "<span class=\"campaign-status "+(open?"open":"")+"\">"+campaignEscape(item.statusLabel||"未開放")+"</span>"+
+      (item.description?"<p>"+campaignEscape(item.description)+"</p>":"")+
+      (timeInfo?"<p>"+campaignEscape(timeInfo)+"</p>":"");
+    if(open)button.addEventListener("click",()=>loadCampaignFields(item.campaignId));
+    list.appendChild(button);
+  });
+}
+async function loadCampaignFields(campaignId){
+  const preview=document.getElementById("campaignFormPreview");
+  const message=document.getElementById("campaignMessage");
+  campaignSelectedId=campaignId;
+  renderCampaignList();
+  preview.classList.add("hidden");
+  message.textContent="正在讀取檔期欄位…";
+  try{
+    const response=await fetch(GAS_URL+"?action=getCampaignFields&campaignId="+encodeURIComponent(campaignId)+"&t="+Date.now(),{cache:"no-store"});
+    if(!response.ok)throw new Error("HTTP "+response.status);
+    const result=await response.json();
+    if(!result.success||!result.data)throw new Error(result.message||"讀取欄位失敗");
+    if(campaignSelectedId!==campaignId)return;
+    const data=result.data;
+    preview.replaceChildren();
+    const title=document.createElement("h3");title.textContent="📋 "+(data.campaignName||"檔期菜單")+"｜申請欄位";preview.appendChild(title);
+    const note=document.createElement("p");note.className="sub";note.textContent="Case Subject："+(data.caseSubject||"未設定")+"｜目前為表單預覽，尚未啟用送件。";preview.appendChild(note);
+    (data.fields||[]).forEach(field=>{
+      const wrapper=document.createElement("div");wrapper.className="field";
+      const label=document.createElement("label");label.textContent=field.label+(field.required?" *":"");wrapper.appendChild(label);
+      let input;
+      if(field.type==="textarea")input=document.createElement("textarea");
+      else if(field.type==="select"){
+        input=document.createElement("select");
+        const blank=document.createElement("option");blank.value="";blank.textContent="請選擇";input.appendChild(blank);
+        (field.options||[]).forEach(value=>{const option=document.createElement("option");option.value=value;option.textContent=value;input.appendChild(option);});
+      }else if(field.type==="radio"||field.type==="checkbox"){
+        input=document.createElement("div");
+        (field.options||[]).forEach((value,index)=>{
+          const choice=document.createElement("label");choice.style.fontWeight="400";
+          const check=document.createElement("input");check.type=field.type;check.className="campaign-check";check.name="campaign_"+field.fieldId;check.value=value;
+          choice.appendChild(check);choice.appendChild(document.createTextNode(value));input.appendChild(choice);
+        });
+      }else{input=document.createElement("input");input.type=["text","number","date"].includes(field.type)?field.type:"text";}
+      if(field.placeholder && "placeholder" in input)input.placeholder=field.placeholder;
+      wrapper.appendChild(input);preview.appendChild(wrapper);
+    });
+    preview.classList.remove("hidden");
+    message.textContent="已載入「"+(data.campaignName||campaignId)+"」的欄位；送件功能將於後端整合完成後開放。";
+  }catch(error){
+    if(campaignSelectedId!==campaignId)return;
+    message.textContent="無法開啟此檔期："+error.message;
+    campaignSelectedId="";renderCampaignList();
+  }
+}
+</script>
 </body>
 </html>
